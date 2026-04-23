@@ -1,0 +1,15 @@
+# Python & Django
+__pycache__/
+*.py[cod]
+*.pyo
+db.sqlite3
+*.log
+
+# Virtual Environment
+env/
+venv/
+.env
+
+# Tailwind 
+node_modules/
+theme/static_src/node_modules/
