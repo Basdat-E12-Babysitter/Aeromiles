@@ -2,7 +2,11 @@ const SUPABASE_URL = 'https://wvrzfalrgvepxfgwekuj.supabase.co'
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind2cnpmYWxyZ3ZlcHhmZ3dla3VqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyNjk1MTIsImV4cCI6MjA5Mjg0NTUxMn0.0W1bMeNujiZNTqiQ_h798SbVVT4PS4b_O6SeEp3UVFc'
 
 const { createClient } = supabase
-const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+  db: {
+    schema: 'aeromiles' 
+  }
+})
 
 async function fetchTable(tableName, options = {}) {
 	const columns = options.columns || '*'
