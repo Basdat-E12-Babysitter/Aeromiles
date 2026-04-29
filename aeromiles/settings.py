@@ -38,8 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'tailwind',
-    'theme',
     'miles',
+    'accounts',
+    'dashboard',
+    'core',
 ]
 
 MIDDLEWARE = [
@@ -119,4 +121,4 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-TAILWIND_APP_NAME = 'theme'
+TAILWIND_APP_NAME = 'core'
