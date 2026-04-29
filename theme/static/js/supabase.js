@@ -4,7 +4,7 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const { createClient } = supabase
 const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
   db: {
-    schema: 'aeromiles' 
+    schema: 'public' 
   }
 })
 
@@ -46,6 +46,14 @@ async function populateSelectFromTable(selectElement) {
 		columns: `${valueField}, ${labelField}`,
 		orderBy: { column: labelField, ascending: true },
 	})
+
+	if (!rows || rows.length === 0) {
+		return
+	}
+
+	while (selectElement.options.length > 1) {
+		selectElement.remove(1)
+	}
 
 	rows.forEach((row) => {
 		const option = document.createElement('option')
