@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}Aero Miles — Login & Registrasi{% endblock %}
+
+{% block navbar %}
+{% include "partials/navbar/navbar_guest.html" %}
+{% endblock %}
+
+{% block content %}
+<div class="flex flex-col lg:flex-row gap-10 lg:gap-16 items-start lg:items-center">
+  <div class="lg:w-5/12 space-y-7 lg:pl-2 xl:pl-4">
+    <div>
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-12 h-12 rounded-2xl flex items-center justify-center" style="background:linear-gradient(135deg,#00BFFF,#005A8C)">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21 4 19 4c-2 0-3 1-3.5 2.5L11 9l-7.8-1.8L2 8.6l6 4.4-1.8 1.8-3-.6-1.2 1.2 4.2 2.4 2.4 4.2 1.2-1.2-.6-3 1.8-1.8 4.4 6z"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-2xl font-extrabold tracking-tight" style="color:var(--ink)">Aero<span style="color:var(--sky)">Miles</span></h1>
+          <p class="text-xs font-medium" style="color:var(--muted)">Program Loyalitas Penerbangan</p>
+        </div>
+      </div>
+
+      <h2 class="text-3xl md:text-4xl font-extrabold leading-tight" style="color:var(--ink)">
+        Terbang lebih jauh,<br>
+        <span style="color:var(--sky)">dapatkan lebih banyak.</span>
+      </h2>
+      <p class="text-sm mt-3 leading-relaxed" style="color:var(--muted)">
+        Kumpulkan miles dari setiap penerbangan, tukarkan dengan hadiah eksklusif, dan nikmati keistimewaan sebagai member setia Aero Miles.
+      </p>
+    </div>
+
+    <div class="flex flex-wrap gap-2">
+      <span class="feature-pill">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#00BFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Kumpul Miles Setiap Penerbangan
+      </span>
+      <span class="feature-pill">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#00BFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><path d="M12 22V7"/></svg>
+        Redeem Hadiah Eksklusif
+      </span>
+      <span class="feature-pill">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#00BFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
+        Naik Tier & Nikmati Privilege
+      </span>
+      <span class="feature-pill">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#00BFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 16V4m0 0L3 8m4-4 4 4"/><path d="M17 8v12m0 0 4-4m-4 4-4-4"/></svg>
+        Transfer Miles ke Keluarga
+      </span>
+    </div>
+  </div>
+
+  <div class="lg:w-7/12 w-full">
+    <div class="card p-6 md:p-8">
+      <div class="panel-login">
+        <div class="mb-6">
+          <h3 class="text-xl font-extrabold" style="color:var(--ink)">Selamat Datang Kembali 👋</h3>
+          <p class="text-xs mt-1" style="color:var(--muted)">Masuk ke akun Aero Miles Anda</p>
+        </div>
+
+        <form method="POST" action="#">
+          {% csrf_token %}
+          <div class="space-y-4">
+            <div>
+              <label class="form-label">Alamat Email</label>
+              <div class="input-icon-wrap">
+                <span class="input-icon">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#aab4c4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                </span>
+                <input type="email" class="form-input" placeholder="nama@email.com" />
+              </div>
+            </div>
+
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <label class="form-label" style="margin-bottom:0">Password</label>
+                <a href="#" class="text-xs font-semibold" style="color:var(--sky)">Lupa Password?</a>
+              </div>
+              <div class="input-icon-wrap">
+                <span class="input-icon">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#aab4c4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                </span>
+                <input type="password" class="form-input" placeholder="Masukkan password" />
+              </div>
+            </div>
+
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" class="rounded" style="accent-color:var(--sky)" />
+              <span class="text-xs font-semibold" style="color:var(--muted)">Ingat saya di perangkat ini</span>
+            </label>
+
+            <button type="submit" class="btn-solid btn-full mt-2">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+              Log In ke Akun Saya
+            </button>
+
+            <div class="divider my-1">atau</div>
+
+            <p class="text-center text-xs" style="color:var(--muted)">
+              Belum punya akun?
+              <a href="#" class="font-bold" style="color:var(--sky)">Daftar sekarang →</a>
+            </p>
+          </div>
+        </form>
+      </div>
+
+      <p class="text-center text-xs mt-4 font-medium" style="color:var(--muted)">
+        🔒 Data Anda dilindungi dengan enkripsi SSL 256-bit
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}

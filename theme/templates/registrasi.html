@@ -1,0 +1,324 @@
+{% extends "base.html" %}
+
+{% block title %}Aero Miles — Login & Registrasi{% endblock %}
+
+{% block navbar %}
+{% include "partials/navbar/navbar_guest.html" %}
+{% endblock %}
+
+{% block content %}
+
+<div class="max-w-2xl mx-auto px-4 py-4 pb-16">
+
+  <!-- ── FORM CARD ── -->
+  <div class="form-card overflow-hidden">
+
+    <input type="radio" name="reg-role" id="role-member" value="member" class="role-radio" checked />
+    <input type="radio" name="reg-role" id="role-staf" value="staf" class="role-radio" />
+
+    <!-- Card top accent strip -->
+    <div style="height:4px; background:linear-gradient(90deg, #00BFFF 0%, #005A8C 100%)"></div>
+
+    <div class="form-body px-6 pt-8 pb-14 md:px-10 md:pt-10 md:pb-12 space-y-6">
+
+      <!-- ── Form Header ── -->
+      <div class="text-center space-y-2 pb-2">
+        <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl mx-auto" style="background:linear-gradient(135deg,#00BFFF,#005A8C)">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21 4 19 4c-2 0-3 1-3.5 2.5L11 9l-7.8-1.8L2 8.6l6 4.4-1.8 1.8-3-.6-1.2 1.2 4.2 2.4 2.4 4.2 1.2-1.2-.6-3 1.8-1.8 4.4 6z"/>
+          </svg>
+        </div>
+        <h1 class="text-2xl font-extrabold tracking-tight" style="color:var(--ink)">Daftar Akun Baru</h1>
+        <p class="text-sm" style="color:var(--muted)">Bergabung dengan program AeroMiles</p>
+      </div>
+
+      <!-- ── Role Toggle ── -->
+      <div>
+        <p class="label mb-2">Daftar sebagai <span class="req">*</span></p>
+        <div class="role-buttons flex gap-2 p-1.5 rounded-xl" style="background:var(--surface); border:1px solid var(--border)">
+
+          <label for="role-member" class="role-btn role-btn-member">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+            Member
+            <span class="text-xs font-normal opacity-70 hidden sm:inline">— Penumpang</span>
+          </label>
+
+          <label for="role-staf" class="role-btn role-btn-staf">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="7" width="20" height="14" rx="2"/>
+              <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+              <line x1="12" y1="12" x2="12" y2="16"/>
+              <line x1="10" y1="14" x2="14" y2="14"/>
+            </svg>
+            Staf
+            <span class="text-xs font-normal opacity-70 hidden sm:inline">— Pegawai Maskapai</span>
+          </label>
+
+        </div>
+      </div>
+
+
+      <!-- ── Email (single col) ── -->
+      <div>
+        <label for="email" class="label">Alamat Email <span class="req">*</span></label>
+        <div class="iw">
+          <span class="icon">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#aab4c4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="4" width="20" height="16" rx="2"/>
+              <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+            </svg>
+          </span>
+          <input id="email" name="email" type="email" class="input" placeholder="nama@email.com" />
+        </div>
+      </div>
+
+      <!-- ── Password + Konfirmasi (2-col) ── -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label for="password" class="label">Password <span class="req">*</span></label>
+          <div class="iw">
+            <span class="icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#aab4c4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+            </span>
+            <input id="password" name="password" type="password" class="input" placeholder="Min. 8 karakter" />
+          </div>
+        </div>
+        <div>
+          <label for="konfirmasi" class="label">Konfirmasi Password <span class="req">*</span></label>
+          <div class="iw">
+            <span class="icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#aab4c4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+            </span>
+            <input id="konfirmasi" name="password_confirm" type="password" class="input" placeholder="Ulangi password" />
+          </div>
+        </div>
+      </div>
+
+      <!-- ── SECTION DIVIDER: Data Pribadi ── -->
+      <div class="section-divider">Data Pribadi</div>
+
+      <!-- ── Salutation (single col) ── -->
+      <div>
+        <label for="salutation" class="label">Salutation <span class="req">*</span></label>
+        <div class="iw">
+          <span class="icon">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#aab4c4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="8" r="4"/>
+              <path d="M6 20v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/>
+            </svg>
+          </span>
+          <select
+            id="salutation"
+            name="salutation"
+            class="input"
+            data-supabase-table="ref_salutations"
+            data-value-field="value"
+            data-label-field="label"
+          >
+            <option value="" disabled selected>Pilih sapaan...</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- ── Nama Depan + Nama Belakang (2-col) ── -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label for="nama-depan" class="label">Nama Depan &amp; Tengah <span class="req">*</span></label>
+          <div class="iw">
+            <span class="icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#aab4c4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+              </svg>
+            </span>
+            <input id="nama-depan" name="first_mid_name" type="text" class="input" placeholder="cth. Adi Budi" />
+          </div>
+        </div>
+        <div>
+          <label for="nama-belakang" class="label">Nama Belakang <span class="req">*</span></label>
+          <div class="iw">
+            <span class="icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#aab4c4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+              </svg>
+            </span>
+            <input id="nama-belakang" name="last_name" type="text" class="input" placeholder="cth. Santoso" />
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Country Code + Nomor HP (2-col) ── -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label for="country-code" class="label">Kode Negara <span class="req">*</span></label>
+          <div class="iw">
+            <span class="icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#aab4c4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="2" y1="12" x2="22" y2="12"/>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+              </svg>
+            </span>
+            <select
+              id="country-code"
+              name="country_code"
+              class="input"
+              data-supabase-table="ref_country_codes"
+              data-value-field="value"
+              data-label-field="label"
+            >
+              <option value="" disabled selected>Pilih kode negara...</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label for="nomor-hp" class="label">Nomor HP <span class="req">*</span></label>
+          <div class="iw">
+            <span class="icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#aab4c4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.38 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9a16 16 0 0 0 6 6l1.14-1.13a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+              </svg>
+            </span>
+            <input id="nomor-hp" name="mobile_number" type="tel" class="input" placeholder="812-3456-7890" />
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Tanggal Lahir + Kewarganegaraan (2-col) ── -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label for="tgl-lahir" class="label">Tanggal Lahir <span class="req">*</span></label>
+          <div class="iw">
+            <span class="icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#aab4c4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                <line x1="16" y1="2" x2="16" y2="6"/>
+                <line x1="8" y1="2" x2="8" y2="6"/>
+                <line x1="3" y1="10" x2="21" y2="10"/>
+              </svg>
+            </span>
+            <input id="tgl-lahir" name="tanggal_lahir" type="date" class="input" style="padding-left:38px;color:var(--ink)" />
+          </div>
+        </div>
+        <div>
+          <label for="kewarganegaraan" class="label">Kewarganegaraan <span class="req">*</span></label>
+          <div class="iw">
+            <span class="icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#aab4c4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="10" r="3"/>
+                <path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 6.9 8 11.7z"/>
+              </svg>
+            </span>
+            <select
+              id="kewarganegaraan"
+              name="kewarganegaraan"
+              class="input"
+              data-supabase-table="ref_countries"
+              data-value-field="value"
+              data-label-field="label"
+            >
+              <option value="" disabled selected>Pilih negara...</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Kode Maskapai (Staf only — CSS-controlled) ── -->
+      <div class="role-content">
+      <div class="maskapai-field">
+        <div class="flex items-center gap-2 mb-3">
+          <div class="w-6 h-6 rounded-md flex items-center justify-center flex-shrink-0" style="background:var(--sky)">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="7" width="20" height="14" rx="2"/>
+              <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+            </svg>
+          </div>
+          <span class="text-xs font-bold" style="color:var(--sky-dark)">Informasi Tambahan — Staf Maskapai</span>
+        </div>
+        <label for="kode_maskapai" class="label" style="color:var(--sky-dark)">Kode Maskapai <span class="req">*</span></label>
+        <div class="iw">
+          <span class="icon">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#00BFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21 4 19 4c-2 0-3 1-3.5 2.5L11 9l-7.8-1.8L2 8.6l6 4.4-1.8 1.8-3-.6-1.2 1.2 4.2 2.4 2.4 4.2 1.2-1.2-.6-3 1.8-1.8 4.4 6z"/>
+            </svg>
+          </span>
+          <select
+            id="kode_maskapai"
+            name="kode_maskapai"
+            class="input"
+            data-supabase-table="maskapai"
+            data-value-field="kode_maskapai"
+            data-label-field="kode_maskapai"
+            style="background-color:#fff"
+          >
+            <option value="" disabled selected>Pilih maskapai tempat bertugas...</option>
+          </select>
+        </div>
+        <p class="text-xs mt-2.5 flex items-center gap-1.5" style="color:var(--sky-dark)">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          ID Staf akan di-generate otomatis oleh sistem setelah pendaftaran berhasil.
+        </p>
+      </div>
+
+      <!-- ── Terms ── -->
+      <label class="flex items-start gap-2.5 cursor-pointer">
+        <input type="checkbox" class="mt-0.5 flex-shrink-0 rounded" style="accent-color:var(--sky); width:15px; height:15px;" />
+        <span class="text-xs leading-relaxed" style="color:var(--muted)">
+          Dengan mendaftar, saya menyetujui
+          <a href="#" class="font-bold" style="color:var(--sky)">Syarat &amp; Ketentuan</a>
+          dan
+          <a href="#" class="font-bold" style="color:var(--sky)">Kebijakan Privasi</a>
+          program Aero Miles.
+        </span>
+      </label>
+
+      <!-- ── Submit Button ── -->
+      <button type="submit" class="btn-submit">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <line x1="19" y1="8" x2="19" y2="14"/>
+          <line x1="22" y1="11" x2="16" y2="11"/>
+        </svg>
+        Daftar
+      </button>
+
+      <!-- ── Footer Link ── -->
+      <p class="text-center text-sm" style="color:var(--muted)">
+        Sudah punya akun?
+        <a href="#" class="font-bold" style="color:var(--sky)">Log In →</a>
+      </p>
+
+      </div><!-- /maskapai-field -->
+      </div><!-- /role-content -->
+
+    </div><!-- /form-body -->
+  </div><!-- /form-card -->
+
+  <!-- Bottom trust note -->
+  <p class="text-center text-xs mt-5 flex items-center justify-center gap-1.5" style="color:var(--muted)">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+      <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+    </svg>
+    Data Anda dilindungi dengan enkripsi SSL 256-bit
+  </p>
+
+  </div>
+
+</body>
+</html>
+{% endblock %}
