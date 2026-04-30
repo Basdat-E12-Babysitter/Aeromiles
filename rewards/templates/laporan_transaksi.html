@@ -72,6 +72,7 @@
 
 {# ── VIEW 1: RIWAYAT TRANSAKSI ── #}
 <div id="section-riwayat" class="main-view-content">
+  {# Filter Bar #}
   <div class="card p-4 mb-4">
     <div class="flex flex-wrap items-end gap-4">
       <div class="flex flex-col gap-1.5" style="min-width:180px;">
@@ -104,6 +105,15 @@
     </div>
   </div>
 
+  {# Mini Tabs Tipe #}
+  <div class="flex gap-2 mb-5 flex-wrap">
+    <button onclick="setTab('')"           class="tab-btn active-tab px-4 py-1.5 rounded-full text-xs font-bold transition-all" data-tab="">Semua</button>
+    <button onclick="setTab('Transfer')"   class="tab-btn px-4 py-1.5 rounded-full text-xs font-bold transition-all border" style="background:var(--surface);color:var(--muted);border-color:var(--border);" data-tab="Transfer">Transfer</button>
+    <button onclick="setTab('Redeem')"     class="tab-btn px-4 py-1.5 rounded-full text-xs font-bold transition-all border" style="background:var(--surface);color:var(--muted);border-color:var(--border);" data-tab="Redeem">Redeem</button>
+    <button onclick="setTab('Beli Paket')" class="tab-btn px-4 py-1.5 rounded-full text-xs font-bold transition-all border" style="background:var(--surface);color:var(--muted);border-color:var(--border);" data-tab="Beli Paket">Beli Paket</button>
+    <button onclick="setTab('Klaim Miles')"class="tab-btn px-4 py-1.5 rounded-full text-xs font-bold transition-all border" style="background:var(--surface);color:var(--muted);border-color:var(--border);" data-tab="Klaim Miles">Klaim Miles</button>
+  </div>
+
   <div class="card overflow-hidden">
     <div class="overflow-x-auto">
       <table class="w-full text-sm">
@@ -131,8 +141,7 @@
   </div>
 
   <div class="flex flex-col gap-3 mb-8">
-    
-    {# Juara 1 - Horizontal Compact #}
+    {# Juara 1 #}
     <div class="card p-4 border-2 flex items-center justify-between relative overflow-hidden" style="border-color: #FEF3C7; background: linear-gradient(90deg, #FFF, #FFFBEB);">
       <div class="flex items-center gap-5">
         <div class="font-black text-xl italic opacity-30 w-8" style="color:#F59E0B">#1</div>
@@ -142,12 +151,9 @@
           <p class="text-[10px] font-bold uppercase tracking-widest" style="color:#D97706">Gold Member</p>
         </div>
       </div>
-      <div class="px-4 py-2 rounded-xl text-sm font-black" style="background:rgba(245,158,11,0.1); color:#F59E0B;">
-        45.200 Miles
-      </div>
+      <div class="px-4 py-2 rounded-xl text-sm font-black" style="background:rgba(245,158,11,0.1); color:#F59E0B;">45.200 Miles</div>
     </div>
-
-    {# Juara 2 - Horizontal Compact #}
+    {# Juara 2 #}
     <div class="card p-4 border-2 flex items-center justify-between relative overflow-hidden" style="border-color: #E2E8F0; background: linear-gradient(90deg, #FFF, #F8FAFC);">
       <div class="flex items-center gap-5">
         <div class="font-black text-xl italic opacity-30 w-8" style="color:#94A3B8">#2</div>
@@ -157,12 +163,9 @@
           <p class="text-[10px] font-bold uppercase tracking-widest" style="color:#64748B">Silver Member</p>
         </div>
       </div>
-      <div class="px-4 py-2 rounded-xl text-sm font-black" style="background:rgba(148,163,184,0.1); color:#475569;">
-        28.150 Miles
-      </div>
+      <div class="px-4 py-2 rounded-xl text-sm font-black" style="background:rgba(148,163,184,0.1); color:#475569;">28.150 Miles</div>
     </div>
-
-    {# Juara 3 - Horizontal Compact #}
+    {# Juara 3 #}
     <div class="card p-4 border-2 flex items-center justify-between relative overflow-hidden" style="border-color: #FFEDD5; background: linear-gradient(90deg, #FFF, #FFF7ED);">
       <div class="flex items-center gap-5">
         <div class="font-black text-xl italic opacity-30 w-8" style="color:#F97316">#3</div>
@@ -172,41 +175,33 @@
           <p class="text-[10px] font-bold uppercase tracking-widest" style="color:#C2410C">Silver Member</p>
         </div>
       </div>
-      <div class="px-4 py-2 rounded-xl text-sm font-black" style="background:rgba(249,115,22,0.1); color:#EA580C;">
-        8.450 Miles
-      </div>
+      <div class="px-4 py-2 rounded-xl text-sm font-black" style="background:rgba(249,115,22,0.1); color:#EA580C;">8.450 Miles</div>
     </div>
-
   </div>
 
-  {# Ranking 4-10 #}
+  {# Peringkat 4-10 #}
   <div class="card overflow-hidden">
     <div class="px-5 py-3 border-b font-bold text-xs uppercase tracking-widest" style="color:var(--muted); background:var(--surface);">Peringkat 4 - 10</div>
     <div class="divide-y divide-slate-100">
       <div class="px-5 py-3 flex items-center justify-between hover:bg-slate-50 transition-colors">
-        <div class="flex items-center gap-6">
-          <span class="font-bold text-slate-300 w-4">4</span>
-          <span class="text-sm font-bold text-slate-700">Hendra Gunawan</span>
-        </div>
+        <div class="flex items-center gap-6"><span class="font-bold text-slate-300 w-4">4</span><span class="text-sm font-bold text-slate-700">Hendra Gunawan</span></div>
         <span class="text-xs font-extrabold text-blue-500 bg-blue-50 px-3 py-1 rounded-lg">7.200 mi</span>
       </div>
       <div class="px-5 py-3 flex items-center justify-between hover:bg-slate-50 transition-colors">
-        <div class="flex items-center gap-6">
-          <span class="font-bold text-slate-300 w-4">5</span>
-          <span class="text-sm font-bold text-slate-700">Dian Permata</span>
-        </div>
+        <div class="flex items-center gap-6"><span class="font-bold text-slate-300 w-4">5</span><span class="text-sm font-bold text-slate-700">Dian Permata</span></div>
         <span class="text-xs font-extrabold text-blue-500 bg-blue-50 px-3 py-1 rounded-lg">6.150 mi</span>
       </div>
     </div>
   </div>
 </div>
 
-{# ── Footer & Modal ── #}
+{# ── Footer Staf ── #}
 <div class="flex items-center justify-end gap-2 pt-6 pb-2" style="border-top:1.5px solid var(--border);">
   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#aab4c4" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
   <p class="text-xs" style="color:var(--muted);">Petugas: <strong style="color:var(--ink);">Sarah Oktavia</strong></p>
 </div>
 
+{# ── MODAL: Konfirmasi Hapus ── #}
 <div id="modal-hapus-backdrop" class="modal-backdrop modal-closed" onclick="closeHapusModal()">
   <div class="modal-box" style="max-width:380px;" onclick="event.stopPropagation()">
     <div class="flex items-center justify-between mb-4">
@@ -220,8 +215,9 @@
     </div>
     <div class="flex justify-end gap-3">
       <button onclick="closeHapusModal()" class="btn-outline px-5 py-2.5 text-sm font-bold">Batal</button>
-      <form method="POST" action="{% url 'miles:laporan_hapus' %}">
-        {% csrf_token %}<input type="hidden" name="transaksi_id" id="input-hapus-id">
+      <form method="POST" action="{% url 'rewards:laporan_hapus' %}" id="form-hapus">
+        {% csrf_token %}
+        <input type="hidden" name="transaksi_id" id="input-hapus-id">
         <button type="submit" class="px-5 py-2.5 text-sm font-bold rounded-xl" style="background:#EF4444;color:white;border:none;cursor:pointer;">Hapus</button>
       </form>
     </div>
@@ -243,6 +239,7 @@
 </style>
 
 <script>
+  // ── Pindah Tampilan ──
   function switchMainView(view) {
     const riwayatSec = document.getElementById('section-riwayat');
     const topSec     = document.getElementById('section-top-member');
@@ -266,42 +263,69 @@
     }
   }
 
-  // --- LOGIKA PEWARNAAN MILES (+/-) ---
+  // ── Data Dummy ──
   const dataTransaksi = [
-    { id:1, noTrx:'TRX-0001', tipe:'Transfer',    email:'giulia.ferrari@yahoo.com',  miles:1000,  tanggal:'2025-01-10' },
-    { id:2, noTrx:'TRX-0002', tipe:'Klaim Miles',  email:'giulia.ferrari@yahoo.com',  miles:2500,  tanggal:'2026-04-29' },
-    { id:3, noTrx:'TRX-0003', tipe:'Redeem',       email:'agus.setiawan@gmail.com',   miles:3000,  tanggal:'2026-01-15' },
-    { id:4, noTrx:'TRX-0004', tipe:'Beli Paket',   email:'budi.santoso@gmail.com',    miles:5000,  tanggal:'2024-05-02' },
+    { id:1, noTrx:'TRX-0001', tipe:'Transfer',    email:'giulia.ferrari@yahoo.com',  miles:1000,  tanggal:'2025-01-10', status:'Berhasil'  },
+    { id:2, noTrx:'TRX-0002', tipe:'Klaim Miles',  email:'giulia.ferrari@yahoo.com',  miles:2500,  tanggal:'2026-04-29', status:'Disetujui' },
+    { id:3, noTrx:'TRX-0003', tipe:'Redeem',       email:'agus.setiawan@gmail.com',   miles:3000,  tanggal:'2026-01-15', status:'Berhasil'  },
+    { id:4, noTrx:'TRX-0004', tipe:'Beli Paket',   email:'budi.santoso@gmail.com',    miles:5000,  tanggal:'2024-05-02', status:'Berhasil'  },
+    { id:5, noTrx:'TRX-0005', tipe:'Transfer',     email:'maya.indah@yahoo.com',      miles:5000,  tanggal:'2025-03-10', status:'Berhasil'  },
   ];
 
+  let visibleData = [...dataTransaksi];
+
+  // ── Render Table dengan Warna Miles ──
   function renderTable(data) {
     const tbody = document.getElementById('transaksi-tbody');
     tbody.innerHTML = data.map(t => {
-      // Logic: Spending (Redeem/Transfer) = Red (-), Gaining (Klaim/Beli) = Green (+)
       const isNegative = (t.tipe === 'Redeem' || t.tipe === 'Transfer');
       const milesColor = isNegative ? 'text-red-600' : 'text-green-600';
       const milesSign  = isNegative ? '−' : '+';
+      
+      const aksiHtml = t.tipe === 'Klaim Miles' 
+        ? `<span style="font-size:0.7rem;color:var(--muted);">—</span>` 
+        : `<button class="p-1.5 bg-red-50 text-red-500 rounded-lg" onclick="openHapusModal(${t.id},'${t.noTrx}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>`;
 
       return `<tr class="border-b transition-colors hover:bg-slate-50">
         <td class="px-5 py-4 font-bold text-blue-500">${t.noTrx}</td>
         <td class="px-5 py-4 text-xs font-bold text-slate-600">${t.tipe}</td>
         <td class="px-5 py-4 text-slate-500">${t.email}</td>
-        <td class="px-5 py-4 font-black ${milesColor}">
-          ${milesSign}${t.miles.toLocaleString('id-ID')} mi
-        </td>
+        <td class="px-5 py-4 font-black ${milesColor}">${milesSign}${t.miles.toLocaleString('id-ID')} mi</td>
         <td class="px-5 py-4 text-slate-400">${t.tanggal}</td>
-        <td class="px-5 py-4">
-          <button class="p-1.5 bg-red-50 text-red-500 rounded-lg" onclick="openHapusModal(${t.id},'${t.noTrx}')">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
-          </button>
-        </td>
+        <td class="px-5 py-4">${aksiHtml}</td>
       </tr>`;
     }).join('');
   }
 
-  function applyFilter() { /* ... */ }
+  // ── Filter Logika ──
+  function setTab(tipe) { document.getElementById('filter-tipe').value = tipe; applyFilter(); }
+  function applyFilter() { 
+    const tipe = document.getElementById('filter-tipe').value;
+    const dari = document.getElementById('filter-dari').value;
+    const sampai = document.getElementById('filter-sampai').value;
+    
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      const match = btn.dataset.tab === tipe;
+      btn.classList.toggle('active-tab', match);
+      btn.style.background = match ? '' : 'var(--surface)';
+      btn.style.color = match ? '' : 'var(--muted)';
+    });
+
+    visibleData = dataTransaksi.filter(t => {
+      if (tipe && t.tipe !== tipe) return false;
+      if (dari && t.tanggal < dari) return false;
+      if (sampai && t.tanggal > sampai) return false;
+      return true;
+    });
+    renderTable(visibleData);
+  }
+  function resetFilter() { document.getElementById('filter-tipe').value = ''; document.getElementById('filter-dari').value = ''; document.getElementById('filter-sampai').value = ''; setTab(''); }
+
+  // ── Modals & Export ──
   function openHapusModal(id, noTrx) { document.getElementById('hapus-no-trx').textContent = noTrx; document.getElementById('input-hapus-id').value = id; document.getElementById('modal-hapus-backdrop').classList.remove('modal-closed'); }
   function closeHapusModal() { document.getElementById('modal-hapus-backdrop').classList.add('modal-closed'); }
+  function exportCSV() { /* Logika ekspor CSV */ }
+
   document.addEventListener('DOMContentLoaded', () => renderTable(dataTransaksi));
 </script>
 

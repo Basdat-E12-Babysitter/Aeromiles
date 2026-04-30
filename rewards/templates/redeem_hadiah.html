@@ -133,7 +133,7 @@
 
     <div class="flex justify-end gap-3">
       <button onclick="closeRedeemModal()" class="btn-outline px-5 py-2.5 text-sm font-bold">Batal</button>
-      <form method="POST" action="{% url 'miles:redeem_create' %}" id="form-redeem">
+      <form method="POST" action="{% url 'rewards:redeem_create' %}" id="form-redeem">
         {% csrf_token %}
         <input type="hidden" name="hadiah_id" id="input-hadiah-id">
         <button type="submit" class="btn-solid px-6 py-2.5 text-sm font-bold flex items-center gap-2">

@@ -249,7 +249,7 @@
 
     <div class="flex justify-end gap-3">
       <button onclick="closeBeliModal()" class="btn-outline px-5 py-2.5 text-sm font-bold">Batal</button>
-      <form method="POST" action="{% url 'miles:package_beli' %}" id="form-beli">
+      <form method="POST" action="{% url 'rewards:package_beli' %}" id="form-beli">
         {% csrf_token %}
         <input type="hidden" name="package_kode" id="input-package-kode">
         <button type="submit" class="btn-solid px-6 py-2.5 text-sm font-bold flex items-center gap-2">
