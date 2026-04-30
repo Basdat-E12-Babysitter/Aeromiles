@@ -465,9 +465,12 @@
   // Load Data Klaim dari Supabase
   async function loadKlaim() {
     try {
+      const currentMemberEmail = 'agus.setiawan@gmail.com'.trim().toLowerCase();
+
       const { data, error } = await window.AeroMilesSupabase.client
               .from('claim_missing_miles')
               .select('*')
+              .eq('email_member', currentMemberEmail)
               .order('id', { ascending: true }); // urut dari id terkecil
 
       if (error) throw error;
