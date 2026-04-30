@@ -10,7 +10,7 @@ const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
 
 async function fetchTable(tableName, options = {}) {
 	const columns = options.columns || '*'
-	const query = supabaseClient.from(tableName).select(columns)
+	let query = supabaseClient.from(tableName).select(columns)
 
 	if (options.orderBy) {
 		query.order(options.orderBy.column, { ascending: options.orderBy.ascending ?? true })
