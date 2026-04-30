@@ -1,0 +1,319 @@
+{% extends "base.html" %}
+
+{% block title %}Aero Miles — Profile{% endblock %}
+
+{% block navbar %}
+{% include "partials/navbar/navbar_member.html" %}
+{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto px-4 pb-16">
+ 
+  <!-- ── FORM CARD ── -->
+  <div style="background:var(--card);border-radius:20px;border:1px solid var(--border);box-shadow:0 4px 28px rgba(10,22,40,.08);overflow:hidden">
+ 
+    <!-- ── Hero strip ── -->
+    <div class="hero-strip">
+      <div style="position:relative;z-index:1;display:flex;align-items:center;gap:18px">
+        <div class="avatar flex-shrink-0" style="width:68px;height:68px;border-radius:18px;font-size:1.3rem;font-weight:800;border:3px solid rgba(255,255,255,.28)">AS</div>
+        <div>
+          <h1 style="font-size:1.25rem;font-weight:800;color:#fff;margin:0;line-height:1.2">Mr. Agus Setiawan</h1>
+          <p style="font-size:.82rem;color:rgba(255,255,255,.72);margin:3px 0 0">agus.setiawan@gmail.com</p>
+          <span style="display:inline-block;margin-top:8px;font-size:.72rem;font-weight:700;padding:3px 12px;border-radius:999px;background:rgba(255,255,255,.16);color:#fff;border:1px solid rgba(255,255,255,.22)">
+            🏅 Blue Tier &nbsp;·&nbsp; M0001
+          </span>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- ── Form body ── -->
+    <div style="padding:32px 28px 28px">
+ 
+      <!-- Page title row -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px">
+        <div>
+          <h2 style="font-size:1.05rem;font-weight:800;color:var(--ink);margin:0 0 3px">Pengaturan Profil</h2>
+          <p style="font-size:.75rem;color:var(--muted);margin:0">Perbarui informasi akun Anda</p>
+        </div>
+      </div>
+ 
+      <!-- ══ SECTION: Informasi Akun (read-only) ══ -->
+      <div style="margin-bottom:24px">
+        <div class="sdiv" style="margin-bottom:16px">Informasi Akun</div>
+ 
+        <!-- Email + Tanggal Bergabung -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4" style="margin-bottom:12px">
+          <div class="sm:col-span-2">
+            <label class="lbl">Email</label>
+            <div class="iw">
+              <span class="ic">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#CBD5E1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+              </span>
+              <input type="email" class="inp inp-ro" value="agus.setiawan@gmail.com" readonly />
+            </div>
+          </div>
+          <div>
+            <label class="lbl">Tgl. Bergabung</label>
+            <div class="iw">
+              <span class="ic">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#CBD5E1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              </span>
+              <input type="text" class="inp inp-ro" value="14 Juni 2023" readonly />
+            </div>
+          </div>
+        </div>
+ 
+        <!-- Nomor Member -->
+        <div>
+          <label class="lbl">Nomor Member</label>
+          <div class="iw">
+            <span class="ic">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#CBD5E1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+            </span>
+            <input type="text" class="inp inp-ro mono" value="M0001" readonly />
+          </div>
+          <p style="font-size:.67rem;color:#94A3B8;margin:5px 0 0;display:flex;align-items:center;gap:4px;font-weight:600">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            Di-generate otomatis saat pendaftaran dan bersifat permanen.
+          </p>
+        </div>
+      </div>
+ 
+      <!-- ══ SECTION: Data Pribadi (editable) ══ -->
+      <div style="margin-bottom:28px">
+        <div class="sdiv" style="margin-bottom:16px">Data Pribadi</div>
+ 
+        <!-- Salutation -->
+        <div style="margin-bottom:12px">
+          <label class="lbl" for="s-salutation">Salutation <span class="req">*</span></label>
+          <div class="iw">
+            <span class="ic">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#aab4c4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg>
+            </span>
+            <select id="s-salutation" class="inp">
+              <option value="Mr." selected>Mr.</option>
+                <option value="Mr.">Mr.</option>
+                <option value="Mrs.">Mrs.</option>
+                <option value="Dr.">Dr.</option>
+            </select>
+          </div>
+        </div>
+ 
+        <!-- Nama Depan + Nama Belakang -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" style="margin-bottom:12px">
+          <div>
+            <label class="lbl" for="s-depan">Nama Depan &amp; Tengah <span class="req">*</span></label>
+            <div class="iw">
+              <span class="ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#aab4c4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></span>
+              <input id="s-depan" type="text" class="inp" value="Agus" />
+            </div>
+          </div>
+          <div>
+            <label class="lbl" for="s-belakang">Nama Belakang <span class="req">*</span></label>
+            <div class="iw">
+              <span class="ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#aab4c4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></span>
+              <input id="s-belakang" type="text" class="inp" value="Setiawan" />
+            </div>
+          </div>
+        </div>
+ 
+        <!-- Country Code + Nomor HP -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" style="margin-bottom:12px">
+          <div>
+            <label class="lbl" for="s-cc">Kode Negara <span class="req">*</span></label>
+            <div class="iw">
+              <span class="ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#aab4c4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span>
+              <select id="s-cc" class="inp">
+                <option value="+62" selected>Indonesia (+62)</option>
+                <option value="+62">Indonesia (+62)</option>
+              <option value="+1">Amerika Serikat (+1)</option>
+              <option value="+44">Inggris (+44)</option>
+              <option value="+60">Malaysia (+60)</option>
+              <option value="+86">China (+86)</option>
+              <option value="+81">Jepang (+81)</option>
+              <option value="+55">Brasil (+55)</option>
+              <option value="+33">Prancis (+33)</option>
+              <option value="+49">Jerman (+49)</option>
+              <option value="+34">Spanyol (+34)</option>
+              <option value="+91">India (+91)</option>
+              <option value="+82">Korea Selatan (+82)</option>
+              <option value="+966">Arab Saudi (+966)</option>
+              <option value="+39">Italia (+39)</option>
+              <option value="+61">Australia (+61)</option>
+              <option value="+221">Senegal (+221)</option>
+              <option value="+233">Ghana (+233)</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="lbl" for="s-hp">Nomor HP <span class="req">*</span></label>
+            <div class="iw">
+              <span class="ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#aab4c4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.38 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9a16 16 0 0 0 6 6l1.14-1.13a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>
+              <input id="s-hp" type="tel" class="inp" value="817-8901-2345" />
+            </div>
+          </div>
+        </div>
+ 
+        <!-- Kewarganegaraan + Tanggal Lahir -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="lbl" for="s-warga">Kewarganegaraan <span class="req">*</span></label>
+            <div class="iw">
+              <span class="ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#aab4c4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="3"/><path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 6.9 8 11.7z"/></svg></span>
+              <select id="s-warga" class="inp">
+                <option value="ID" selected>Indonesia</option>
+                <option value="Indonesia">Indonesia</option>
+                <option value="Amerika Serikat">Amerika Serikat</option>
+                <option value="Inggris">Inggris</option>
+                <option value="Malaysia">Malaysia</option>
+                <option value="China">China</option>
+                <option value="Jepang">Jepang</option>
+                <option value="Brasil">Brasil</option>
+                <option value="Prancis">Prancis</option>
+                <option value="Jerman">Jerman</option>
+                <option value="Spanyol">Spanyol</option>
+                <option value="India">India</option>
+                <option value="Korea Selatan">Korea Selatan</option>
+                <option value="Arab Saudi">Arab Saudi</option>
+                <option value="Italia">Italia</option>
+                <option value="Australia">Australia</option>
+                <option value="Senegal">Senegal</option>
+                <option value="Ghana">Ghana</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="lbl" for="s-lahir">Tanggal Lahir <span class="req">*</span></label>
+            <div class="iw">
+              <span class="ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#aab4c4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
+              <input id="s-lahir" type="date" class="inp" value="1986-06-30" style="color:var(--ink)" />
+            </div>
+          </div>
+        </div>
+      </div>
+ 
+      <!-- ══ ACTION BUTTONS ══ -->
+      <div style="border-top:1px solid var(--border);padding-top:22px">
+        <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">
+ 
+          <!-- Simpan Perubahan -->
+          <button class="btn-sky">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v14a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            Simpan Perubahan
+          </button>
+ 
+          <!-- Ubah Password — opens modal -->
+          <label for="modal-pw" class="btn-out" style="cursor:pointer">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Ubah Password
+          </label>
+ 
+        </div>
+ 
+        <p style="font-size:.68rem;color:#94A3B8;margin-top:12px;display:flex;align-items:center;gap:5px;font-weight:600">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Data dienkripsi dan hanya dapat diakses oleh Anda.
+        </p>
+      </div>
+ 
+    </div><!-- /form body -->
+  </div><!-- /form card -->
+ 
+</div>
+
+<input type="checkbox" id="modal-pw" />
+ 
+<!-- ═══════════════════════════════════════════════════
+     MODAL OVERLAY
+═══════════════════════════════════════════════════ -->
+<div class="overlay">
+  <div class="modal-box">
+ 
+    <!-- Header -->
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:22px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:40px;height:40px;border-radius:12px;background:var(--sky-light);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#00BFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+        </div>
+        <div>
+          <h3 style="font-size:1rem;font-weight:800;color:var(--ink);margin:0 0 2px">Ubah Password</h3>
+          <p style="font-size:.72rem;color:var(--muted);margin:0">Perbarui kata sandi akun Anda</p>
+        </div>
+      </div>
+      <!-- ✕ Close -->
+      <label for="modal-pw"
+        style="width:32px;height:32px;border-radius:50%;background:#F1F5F9;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:background .15s"
+        onmouseover="this.style.background='#E2E8F0'" onmouseout="this.style.background='#F1F5F9'">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </label>
+    </div>
+ 
+    <!-- Fields -->
+    <div style="display:flex;flex-direction:column;gap:15px">
+ 
+      <!-- Password Lama -->
+      <div>
+        <label class="lbl" for="pw-old">Password Lama <span class="req">*</span></label>
+        <div class="iw">
+          <span class="ic">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#aab4c4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+          </span>
+          <input id="pw-old" type="password" class="m-inp" placeholder="Masukkan password saat ini" />
+        </div>
+      </div>
+ 
+      <!-- Thin divider -->
+      <div style="height:1px;background:var(--border)"></div>
+ 
+      <!-- Password Baru -->
+      <div>
+        <label class="lbl" for="pw-new">Password Baru <span class="req">*</span></label>
+        <div class="iw">
+          <span class="ic">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#aab4c4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+          </span>
+          <input id="pw-new" type="password" class="m-inp" placeholder="Min. 8 karakter" />
+        </div>
+      </div>
+ 
+      <!-- Konfirmasi Password Baru -->
+      <div>
+        <label class="lbl" for="pw-confirm">Konfirmasi Password Baru <span class="req">*</span></label>
+        <div class="iw">
+          <span class="ic">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#aab4c4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </span>
+          <input id="pw-confirm" type="password" class="m-inp" placeholder="Ulangi password baru" />
+        </div>
+      </div>
+ 
+    </div>
+ 
+    <!-- Footer actions -->
+    <div style="display:flex;gap:10px;margin-top:22px">
+      <button class="btn-sky" style="flex:1">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v14a2 2 0 0 1-2 2z"/>
+          <polyline points="17 21 17 13 7 13 7 21"/>
+          <polyline points="7 3 7 8 15 8"/>
+        </svg>
+        Simpan
+      </button>
+      <label for="modal-pw" class="btn-out" style="cursor:pointer">Batal</label>
+    </div>
+ 
+  </div><!-- /modal-box -->
+</div><!-- /overlay -->
+{% endblock %}

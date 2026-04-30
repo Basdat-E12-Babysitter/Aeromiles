@@ -1,0 +1,358 @@
+{% extends "base.html" %}
+
+{% block title %}Kelola Klaim — Aero Miles{% endblock %}
+
+{% block navbar %}
+{% include "partials/navbar/navbar_staf.html" %}
+{% endblock %}
+
+{% block content %}
+
+{# ── Page Header ── #}
+<div class="mb-6">
+    <h2 class="text-2xl font-extrabold" style="color:var(--ink)">Kelola Klaim Missing Miles</h2>
+    <p class="text-sm mt-1" style="color:var(--muted)">Verifikasi dan proses klaim missing miles dari seluruh member.</p>
+</div>
+
+{# ── Filter Bar ── #}
+<div class="flex gap-3 mb-5 flex-wrap">
+
+    {# Filter Status #}
+    <div class="select-wrap">
+        <select id="filter-status" class="form-input form-select text-sm" style="min-width:150px;" onchange="applyFilter()">
+            <option value="">Semua Status</option>
+            <option value="Menunggu">Menunggu</option>
+            <option value="Disetujui">Disetujui</option>
+            <option value="Ditolak">Ditolak</option>
+        </select>
+        <span class="select-arrow">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#aab4c4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </span>
+    </div>
+
+    {# Filter Maskapai #}
+    <div class="select-wrap">
+        <select id="filter-maskapai" class="form-input form-select text-sm" style="min-width:170px;" onchange="applyFilter()">
+            <option value="">Semua Maskapai</option>
+        </select>
+        <span class="select-arrow">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#aab4c4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </span>
+    </div>
+
+    {# Filter Tanggal Pengajuan #}
+    <div class="select-wrap">
+        <select id="filter-tanggal" class="form-input form-select text-sm" style="min-width:190px;" onchange="applyFilter()">
+            <option value="">Tanggal Pengajuan</option>
+            <option value="7">7 hari terakhir</option>
+            <option value="30">30 hari terakhir</option>
+            <option value="90">90 hari terakhir</option>
+        </select>
+        <span class="select-arrow">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#aab4c4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </span>
+    </div>
+
+</div>
+
+{# ── Tabel ── #}
+<div class="card overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+            <thead>
+            <tr style="background:var(--surface);border-bottom:1.5px solid var(--border);">
+                <th class="text-left px-5 py-3.5 font-bold text-xs uppercase tracking-wide" style="color:var(--muted)">No. Klaim</th>
+                <th class="text-left px-5 py-3.5 font-bold text-xs uppercase tracking-wide" style="color:var(--muted)">Member</th>
+                <th class="text-left px-5 py-3.5 font-bold text-xs uppercase tracking-wide" style="color:var(--muted)">Maskapai</th>
+                <th class="text-left px-5 py-3.5 font-bold text-xs uppercase tracking-wide" style="color:var(--muted)">Rute</th>
+                <th class="text-left px-5 py-3.5 font-bold text-xs uppercase tracking-wide" style="color:var(--muted)">Tanggal</th>
+                <th class="text-left px-5 py-3.5 font-bold text-xs uppercase tracking-wide" style="color:var(--muted)">Flight</th>
+                <th class="text-left px-5 py-3.5 font-bold text-xs uppercase tracking-wide" style="color:var(--muted)">Kelas</th>
+                <th class="text-left px-5 py-3.5 font-bold text-xs uppercase tracking-wide" style="color:var(--muted)">Tanggal Pengajuan</th>
+                <th class="text-left px-5 py-3.5 font-bold text-xs uppercase tracking-wide" style="color:var(--muted)">Status</th>
+                <th class="text-left px-5 py-3.5 font-bold text-xs uppercase tracking-wide" style="color:var(--muted)">Aksi</th>
+            </tr>
+            </thead>
+            <tbody id="klaim-tbody">
+            <tr id="loading-row">
+                <td colspan="10" style="padding:4rem 0;">
+                    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;color:var(--muted);">
+                        <svg class="animate-spin" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00BFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+                        <p style="font-size:0.875rem;font-weight:600;">Memuat data klaim...</p>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{# ── Modal Setujui ── #}
+<div id="modal-setujui-backdrop" class="modal-backdrop modal-closed" onclick="closeSetujui()">
+    <div class="modal-box" style="max-width:400px;" onclick="event.stopPropagation()">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-extrabold" style="color:var(--ink)">Setujui Klaim</h3>
+            <button onclick="closeSetujui()" class="modal-close-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <p class="text-sm mb-4" style="color:var(--muted)">Miles akan ditambahkan ke akun member sesuai rute dan kelas kabin.</p>
+        <div class="rounded-xl px-4 py-3 mb-5 space-y-1.5" style="background:var(--surface);border:1px solid var(--border);">
+            <p class="text-xs"><span style="color:var(--muted)">Klaim: </span><span id="setujui-noklaim" class="font-bold" style="color:#00BFFF;"></span></p>
+            <p class="text-xs"><span style="color:var(--muted)">Member: </span><span id="setujui-member" class="font-semibold" style="color:var(--ink);"></span></p>
+            <p class="text-xs"><span style="color:var(--muted)">Rute: </span><span id="setujui-rute" class="font-semibold" style="color:var(--ink);"></span></p>
+            <p class="text-xs"><span style="color:var(--muted)">Kelas: </span><span id="setujui-kelas" class="font-semibold" style="color:var(--ink);"></span></p>
+        </div>
+        <div class="flex justify-end gap-3">
+            <button onclick="closeSetujui()" class="btn-outline px-5 py-2.5 text-sm font-bold">Batal</button>
+            <button onclick="closeSetujui()" class="btn-solid px-5 py-2.5 text-sm font-bold" style="background:linear-gradient(135deg,#10B981,#065F46);">Setujui</button>
+        </div>
+    </div>
+</div>
+
+{# ── Modal Tolak ── #}
+<div id="modal-tolak-backdrop" class="modal-backdrop modal-closed" onclick="closeTolak()">
+    <div class="modal-box" style="max-width:400px;" onclick="event.stopPropagation()">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-extrabold" style="color:var(--ink)">Tolak Klaim</h3>
+            <button onclick="closeTolak()" class="modal-close-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <p class="text-sm mb-4" style="color:var(--muted)">Klaim akan ditolak dan member akan diinformasikan.</p>
+        <div class="rounded-xl px-4 py-3 mb-5 space-y-1.5" style="background:var(--surface);border:1px solid var(--border);">
+            <p class="text-xs"><span style="color:var(--muted)">Klaim: </span><span id="tolak-noklaim" class="font-bold" style="color:#00BFFF;"></span></p>
+            <p class="text-xs"><span style="color:var(--muted)">Member: </span><span id="tolak-member" class="font-semibold" style="color:var(--ink);"></span></p>
+            <p class="text-xs"><span style="color:var(--muted)">Rute: </span><span id="tolak-rute" class="font-semibold" style="color:var(--ink);"></span></p>
+            <p class="text-xs"><span style="color:var(--muted)">Kelas: </span><span id="tolak-kelas" class="font-semibold" style="color:var(--ink);"></span></p>
+        </div>
+        <div class="flex justify-end gap-3">
+            <button onclick="closeTolak()" class="btn-outline px-5 py-2.5 text-sm font-bold">Batal</button>
+            <button onclick="closeTolak()" class="btn-solid px-5 py-2.5 text-sm font-bold" style="background:linear-gradient(135deg,#EF4444,#991B1B);">Tolak</button>
+        </div>
+    </div>
+</div>
+
+{# ── Styles ── #}
+<style>
+    .status-badge {
+        display:inline-flex;align-items:center;gap:4px;
+        padding:3px 10px;border-radius:9999px;
+        font-size:0.7rem;font-weight:700;white-space:nowrap;
+    }
+    .action-btn {
+        display:inline-flex;align-items:center;justify-content:center;
+        width:28px;height:28px;border-radius:8px;border:none;
+        cursor:pointer;transition:opacity 0.15s,transform 0.15s;
+    }
+    .action-btn:hover { opacity:0.8;transform:scale(1.08); }
+    .modal-backdrop {
+        position:fixed;inset:0;background:rgba(10,22,40,0.55);
+        backdrop-filter:blur(4px);display:flex;align-items:center;
+        justify-content:center;z-index:50;padding:1rem;animation:fadeIn 0.18s ease;
+    }
+    .modal-backdrop.modal-closed { display:none !important; }
+    .modal-box {
+        background:var(--card,#fff);border-radius:20px;padding:2rem;
+        width:100%;max-width:620px;max-height:90vh;overflow-y:auto;
+        box-shadow:0 24px 60px rgba(0,0,0,0.18);
+        animation:slideUp 0.22s cubic-bezier(.16,1,.3,1);
+    }
+    .modal-close-btn {
+        width:32px;height:32px;border-radius:9999px;
+        border:1.5px solid var(--border,#E2ECF5);background:var(--surface,#F4F9FD);
+        display:flex;align-items:center;justify-content:center;
+        cursor:pointer;color:var(--muted,#6B7A95);transition:background 0.15s;
+    }
+    .modal-close-btn:hover { background:var(--border); }
+    .select-wrap { position:relative; }
+    .form-select { appearance:none;padding-right:2.5rem;cursor:pointer; }
+    .select-arrow {
+        position:absolute;right:12px;top:50%;transform:translateY(-50%);
+        pointer-events:none;display:flex;align-items:center;
+    }
+    .btn-outline {
+        border:1.5px solid var(--border,#E2ECF5);background:transparent;
+        color:var(--muted,#6B7A95);border-radius:12px;cursor:pointer;
+        font-family:inherit;transition:background 0.15s,color 0.15s;
+    }
+    .btn-outline:hover { background:var(--surface);color:var(--ink); }
+    @keyframes fadeIn { from{opacity:0}to{opacity:1} }
+    @keyframes slideUp { from{transform:translateY(24px);opacity:0}to{transform:translateY(0);opacity:1} }
+    @keyframes spin { to{transform:rotate(360deg)} }
+    .animate-spin { animation:spin 1s linear infinite; }
+</style>
+
+{# ── JavaScript ── #}
+<script>
+    let allKlaim = [];
+    let filteredKlaim = [];
+
+    // Load Data
+    async function loadKlaim() {
+        try {
+            const { data, error } = await window.AeroMilesSupabase.client
+                .from('claim_missing_miles')
+                .select('*')
+                .order('id', { ascending: true });
+
+            if (error) throw error;
+
+            allKlaim = data || [];
+
+            // Populate filter maskapai dari data yang ada
+            const maskapaiSet = [...new Set(allKlaim.map(k => k.maskapai).filter(Boolean))].sort();
+            const filterMaskapai = document.getElementById('filter-maskapai');
+            maskapaiSet.forEach(m => {
+                const opt = document.createElement('option');
+                opt.value = m;
+                opt.textContent = m;
+                filterMaskapai.appendChild(opt);
+            });
+
+            applyFilter();
+
+        } catch (err) {
+            console.error(err);
+            document.getElementById('klaim-tbody').innerHTML = `
+        <tr><td colspan="10" style="padding:4rem 0;">
+          <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;">
+            <p style="font-size:0.875rem;font-weight:600;color:#EF4444;">Gagal memuat data.</p>
+            <p style="font-size:0.75rem;color:var(--muted);">${err.message}</p>
+          </div>
+        </td></tr>`;
+        }
+    }
+
+    // Apply Filter
+    function applyFilter() {
+        const status = document.getElementById('filter-status').value;
+        const maskapai = document.getElementById('filter-maskapai').value;
+        const hari = parseInt(document.getElementById('filter-tanggal').value) || 0;
+
+        filteredKlaim = allKlaim.filter(k => {
+            if (status && k.status_penerimaan !== status) return false;
+            if (maskapai && k.maskapai !== maskapai) return false;
+            if (hari) {
+                const batas = new Date();
+                batas.setDate(batas.getDate() - hari);
+                if (new Date(k.timestamp) < batas) return false;
+            }
+            return true;
+        });
+
+        renderTable(filteredKlaim);
+    }
+
+    // Render Table
+    function renderTable(data) {
+        const tbody = document.getElementById('klaim-tbody');
+
+        if (data.length === 0) {
+            tbody.innerHTML = `
+        <tr><td colspan="10" style="padding:4rem 0;">
+          <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;color:var(--muted);">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#C1D3E3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21 4 19 4c-2 0-3 1-3.5 2.5L11 9l-7.8-1.8L2 8.6l6 4.4-1.8 1.8-3-.6-1.2 1.2 4.2 2.4 2.4 4.2 1.2-1.2-.6-3 1.8-1.8 4.4 6z"/>
+            </svg>
+            <p style="font-size:0.875rem;font-weight:600;">Tidak ada klaim ditemukan.</p>
+          </div>
+        </td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = data.map((k, index) => {
+            const nomorKlaim = `CLM-${String(index + 1).padStart(3, '0')}`;
+            const tanggal    = k.tanggal_penerbangan
+                ? new Date(k.tanggal_penerbangan).toLocaleDateString('id-ID', {day:'2-digit',month:'short',year:'numeric'})
+                : '—';
+            const timestamp  = k.timestamp
+                ? new Date(k.timestamp).toLocaleString('id-ID', {day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})
+                : '—';
+            const status = k.status_penerimaan || '—';
+
+            const badges = {
+                'Disetujui': `<span class="status-badge" style="background:#D1FAE5;color:#065F46;">✓ Disetujui</span>`,
+                'Menunggu':  `<span class="status-badge" style="background:#FEF3C7;color:#92400E;">⏳ Menunggu</span>`,
+                'Ditolak':   `<span class="status-badge" style="background:#FEE2E2;color:#991B1B;">✕ Ditolak</span>`,
+            };
+            const badgeHtml = badges[status] || `<span class="status-badge" style="background:var(--surface);color:var(--muted);">${status}</span>`;
+
+            // Tombol setujui & tolak hanya muncul kalau status Menunggu
+            const aksiHtml = status === 'Menunggu' ? `
+        <div style="display:flex;align-items:center;gap:6px;">
+          <button class="action-btn" style="color:#10B981;background:#D1FAE5;" title="Setujui" onclick="openSetujui(${k.id}, '${nomorKlaim}')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </button>
+          <button class="action-btn" style="color:#EF4444;background:#FEE2E2;" title="Tolak" onclick="openTolak(${k.id}, '${nomorKlaim}')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>` : `<span style="color:var(--muted);font-size:0.75rem;">—</span>`;
+
+            return `
+        <tr style="border-bottom:1px solid var(--border);transition:background 0.15s;"
+            onmouseover="this.style.background='rgba(0,191,255,0.04)'"
+            onmouseout="this.style.background=''">
+          <td class="px-5 py-4 font-bold" style="color:#00BFFF;">${nomorKlaim}</td>
+          <td class="px-5 py-4" style="color:var(--ink);">
+            <p class="font-semibold" style="font-size:0.8rem;">${k.email_member || '—'}</p>
+          </td>
+          <td class="px-5 py-4 font-semibold" style="color:var(--ink);">${k.maskapai || '—'}</td>
+          <td class="px-5 py-4 font-medium" style="color:var(--ink);">
+            <span style="display:inline-flex;align-items:center;gap:4px;">
+              ${k.bandara_asal || '—'}
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#aab4c4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              ${k.bandara_tujuan || '—'}
+            </span>
+          </td>
+          <td class="px-5 py-4" style="color:var(--muted);">${tanggal}</td>
+          <td class="px-5 py-4 font-semibold" style="font-family:monospace;font-size:0.75rem;color:var(--ink);">${k.flight_number || '—'}</td>
+          <td class="px-5 py-4" style="font-size:0.75rem;color:var(--muted);">${k.kelas_kabin || '—'}</td>
+          <td class="px-5 py-4" style="font-size:0.75rem;color:var(--muted);">${timestamp}</td>
+          <td class="px-5 py-4">${badgeHtml}</td>
+          <td class="px-5 py-4">${aksiHtml}</td>
+        </tr>`;
+        }).join('');
+    }
+
+    // Modal Setujui
+    function openSetujui(id, nomorKlaim) {
+        const k = allKlaim.find(x => x.id === id);
+        if (!k) return;
+        document.getElementById('setujui-noklaim').textContent = nomorKlaim;
+        document.getElementById('setujui-member').textContent  = k.email_member || '—';
+        document.getElementById('setujui-rute').textContent    = `${k.bandara_asal} → ${k.bandara_tujuan}`;
+        document.getElementById('setujui-kelas').textContent   = k.kelas_kabin || '—';
+        document.getElementById('modal-setujui-backdrop').classList.remove('modal-closed');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeSetujui() {
+        document.getElementById('modal-setujui-backdrop').classList.add('modal-closed');
+        document.body.style.overflow = '';
+    }
+
+    // Modal Tolak
+    function openTolak(id, nomorKlaim) {
+        const k = allKlaim.find(x => x.id === id);
+        if (!k) return;
+        document.getElementById('tolak-noklaim').textContent = nomorKlaim;
+        document.getElementById('tolak-member').textContent  = k.email_member || '—';
+        document.getElementById('tolak-rute').textContent    = `${k.bandara_asal} → ${k.bandara_tujuan}`;
+        document.getElementById('tolak-kelas').textContent   = k.kelas_kabin || '—';
+        document.getElementById('modal-tolak-backdrop').classList.remove('modal-closed');
+        document.body.style.overflow = 'modal-closed';
+    }
+    function closeTolak() {
+        document.getElementById('modal-tolak-backdrop').classList.add('modal-closed');
+        document.body.style.overflow = '';
+    }
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') { closeSetujui(); closeTolak(); }
+    });
+
+    // Init
+    document.addEventListener('DOMContentLoaded', loadKlaim);
+</script>
+
+{% endblock %}

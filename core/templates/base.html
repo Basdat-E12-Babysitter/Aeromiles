@@ -1,0 +1,23 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Aero Miles{% endblock %}</title>
+  {% tailwind_css %}
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body class="bg-pattern">
+  {% block navbar %}{% endblock %}
+
+  <main class="max-w-screen-xl mx-auto px-8 py-10 md:py-16">
+    {% block content %}{% endblock %}
+  </main>
+
+  {% block scripts %}
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="{% static 'js/supabase.js' %}" defer></script>
+  {% endblock %}
+</body>
+</html>

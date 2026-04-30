@@ -1,0 +1,29 @@
+{% extends "partials/navbar/navbar_base.html" %}
+
+{% block navbar_left %}
+<a href="#" class="flex items-center gap-2 flex-shrink-0">
+  <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:linear-gradient(135deg,#00BFFF,#005A8C)">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21 4 19 4c-2 0-3 1-3.5 2.5L11 9l-7.8-1.8L2 8.6l6 4.4-1.8 1.8-3-.6-1.2 1.2 4.2 2.4 2.4 4.2 1.2-1.2-.6-3 1.8-1.8 4.4 6z"/>
+    </svg>
+  </div>
+  <span class="font-extrabold text-sm tracking-tight" style="color:var(--ink)">Aero<span style="color:var(--sky)">Miles</span></span>
+</a>
+{% endblock %}
+
+{% block navbar_center %}
+<p class="hidden md:block text-xs font-medium" style="color:var(--muted)">Program Loyalitas Penerbangan Terpercaya</p>
+{% endblock %}
+
+{% block navbar_right %}
+<div class="flex items-center gap-2 flex-shrink-0">
+  <a href="#" class="btn-outline">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+    Login
+  </a>
+  <a href="#" class="btn-solid">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+    Registrasi
+  </a>
+</div>
+{% endblock %}

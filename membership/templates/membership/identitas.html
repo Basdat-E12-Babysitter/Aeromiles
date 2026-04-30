@@ -1,0 +1,492 @@
+{% extends "base.html" %}
+
+{% block title %}Identitas Saya — AeroMiles{% endblock %}
+
+{% block navbar %}
+{% include "partials/navbar/navbar_member.html" %}
+{% endblock %}
+
+{% block content %}
+
+<!-- Header -->
+<div class="flex items-center justify-between mb-6">
+  <div>
+    <h2 class="text-2xl font-extrabold" style="color:var(--ink)">Identitas Saya</h2>
+    <p class="text-sm mt-1" style="color:var(--muted)">Kelola dokumen identitas yang terdaftar pada akun Anda.</p>
+  </div>
+  <button class="btn-solid flex items-center gap-2 px-5 py-2.5 text-sm font-bold" onclick="openTambahModal()">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    Tambah Identitas
+  </button>
+</div>
+
+<!-- Tabel Identitas -->
+<div class="card overflow-hidden">
+  <div class="overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead>
+        <tr style="background:var(--surface); border-bottom:1.5px solid var(--border);">
+          <th class="text-left px-5 py-3.5 font-bold text-xs uppercase tracking-wide" style="color:var(--muted)">No. Dokumen</th>
+          <th class="text-left px-5 py-3.5 font-bold text-xs uppercase tracking-wide" style="color:var(--muted)">Jenis</th>
+          <th class="text-left px-5 py-3.5 font-bold text-xs uppercase tracking-wide" style="color:var(--muted)">Negara Penerbit</th>
+          <th class="text-left px-5 py-3.5 font-bold text-xs uppercase tracking-wide" style="color:var(--muted)">Tanggal Terbit</th>
+          <th class="text-left px-5 py-3.5 font-bold text-xs uppercase tracking-wide" style="color:var(--muted)">Tanggal Habis</th>
+          <th class="text-left px-5 py-3.5 font-bold text-xs uppercase tracking-wide" style="color:var(--muted)">Status</th>
+          <th class="text-left px-5 py-3.5 font-bold text-xs uppercase tracking-wide" style="color:var(--muted)">Aksi</th>
+        </tr>
+      </thead>
+      <tbody id="identitasTableBody">
+        <tr>
+          <td colspan="7" class="px-5 py-16 text-center" style="color:var(--muted)">
+            <div class="flex flex-col items-center gap-3">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#C1D3E3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+              <p class="text-sm font-semibold">Memuat data identitas...</p>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="hidden fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-3.5 rounded-2xl shadow-xl text-sm font-semibold text-white">
+  <span id="toast-icon"></span>
+  <span id="toast-msg"></span>
+</div>
+
+
+<!-- Tambah Identitas -->
+<div id="modal-tambah" class="modal-backdrop hidden" onclick="closeTambahModal()">
+  <div class="modal-box" style="max-width:500px" onclick="event.stopPropagation()">
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h3 class="text-lg font-extrabold" style="color:var(--ink)">Tambah Identitas Baru</h3>
+        <p class="text-xs mt-0.5" style="color:var(--muted)">Nomor dokumen harus unik dalam sistem.</p>
+      </div>
+      <button onclick="closeTambahModal()" class="modal-close-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="grid grid-cols-1 gap-4">
+      <div>
+        <label class="form-label">Nomor Dokumen</label>
+        <input id="f-no-dokumen" type="text" class="form-input" placeholder="cth. A12345678" />
+      </div>
+      <div>
+        <label class="form-label">Jenis Dokumen</label>
+        <div class="select-wrap">
+          <select id="f-jenis" class="form-input form-select">
+            <option value="">— Pilih Jenis —</option>
+            <option value="Paspor">Paspor</option>
+            <option value="KTP">KTP</option>
+            <option value="SIM">SIM</option>
+          </select>
+          <span class="select-arrow"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#aab4c4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+        </div>
+      </div>
+      <div>
+        <label class="form-label">Negara Penerbit</label>
+        <div class="select-wrap">
+          <select id="f-negara" class="form-input form-select">
+            <option>Indonesia</option><option>Malaysia</option><option>Singapura</option>
+            <option>Thailand</option><option>Filipina</option><option>Vietnam</option>
+            <option>Myanmar</option><option>Kamboja</option><option>Laos</option>
+            <option>Brunei</option><option>Timor Leste</option>
+            <option>Australia</option><option>Selandia Baru</option>
+            <option>Jepang</option><option>Korea Selatan</option><option>China</option>
+            <option>Hong Kong</option><option>Taiwan</option>
+            <option>India</option><option>Pakistan</option><option>Bangladesh</option>
+            <option>Sri Lanka</option><option>Nepal</option>
+            <option>Amerika Serikat</option><option>Kanada</option><option>Meksiko</option>
+            <option>Brasil</option><option>Argentina</option><option>Kolombia</option><option>Chile</option>
+            <option>Inggris</option><option>Jerman</option><option>Prancis</option>
+            <option>Italia</option><option>Spanyol</option><option>Belanda</option>
+            <option>Belgia</option><option>Swiss</option><option>Austria</option>
+            <option>Swedia</option><option>Norwegia</option><option>Denmark</option>
+            <option>Finlandia</option><option>Polandia</option><option>Rusia</option>
+            <option>Turki</option><option>Arab Saudi</option><option>UAE</option>
+            <option>Qatar</option><option>Kuwait</option><option>Iran</option>
+            <option>Mesir</option><option>Afrika Selatan</option><option>Nigeria</option>
+            <option>Kenya</option><option>Maroko</option><option>Ethiopia</option>
+            <option>Tanzania</option><option>Ghana</option>
+          </select>
+          <span class="select-arrow"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#aab4c4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="form-label">Tanggal Terbit</label>
+          <input id="f-tgl-terbit" type="date" class="form-input" />
+        </div>
+        <div>
+          <label class="form-label">Tanggal Habis</label>
+          <input id="f-tgl-habis" type="date" class="form-input" />
+        </div>
+      </div>
+    </div>
+    <div id="tambah-error" class="hidden mt-4 rounded-xl px-4 py-3 text-xs font-semibold" style="background:#FEE2E2;color:#991B1B;"></div>
+    <div class="flex justify-end gap-3 mt-6">
+      <button type="button" onclick="closeTambahModal()" class="btn-outline px-5 py-2.5 text-sm font-bold">Batal</button>
+      <button type="button" onclick="validateTambah()" class="btn-solid px-6 py-2.5 text-sm font-bold flex items-center gap-2">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Simpan
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Konfirmasi Tambah Identitas -->
+<div id="modal-konfirmasi-tambah" class="modal-backdrop hidden" onclick="closeKonfirmasiTambah()">
+  <div class="modal-box" style="max-width:440px" onclick="event.stopPropagation()">
+    <div class="flex items-center justify-between mb-5">
+      <h3 class="text-lg font-extrabold" style="color:var(--ink)">Konfirmasi Tambah Identitas</h3>
+      <button onclick="closeKonfirmasiTambah()" class="modal-close-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <p class="text-sm mb-4" style="color:var(--muted)">Pastikan data berikut sudah benar sebelum disimpan:</p>
+    <div id="konfirmasi-tambah-summary" class="rounded-xl p-4 text-sm" style="background:var(--surface);border:1px solid var(--border);"></div>
+    <div class="flex justify-end gap-3 mt-6">
+      <button type="button" onclick="closeKonfirmasiTambah()" class="btn-outline px-5 py-2.5 text-sm font-bold">Kembali Edit</button>
+      <button type="button" onclick="submitTambah()" class="btn-solid px-6 py-2.5 text-sm font-bold flex items-center gap-2">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Ya, Simpan
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Identitas -->
+<div id="modal-edit" class="modal-backdrop hidden" onclick="closeEditModal()">
+  <div class="modal-box" style="max-width:500px" onclick="event.stopPropagation()">
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h3 class="text-lg font-extrabold" style="color:var(--ink)">Edit Identitas</h3>
+        <p class="text-xs mt-0.5" style="color:var(--muted)">Nomor dokumen tidak dapat diubah.</p>
+      </div>
+      <button onclick="closeEditModal()" class="modal-close-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="grid grid-cols-1 gap-4">
+      <div>
+        <label class="form-label">Nomor Dokumen</label>
+        <input id="edit-no-dokumen" type="text" class="form-input" readonly style="background:var(--surface);color:var(--muted);cursor:not-allowed;" />
+      </div>
+      <div>
+        <label class="form-label">Jenis Dokumen</label>
+        <div class="select-wrap">
+          <select id="edit-jenis" class="form-input form-select">
+            <option value="Paspor">Paspor</option><option value="KTP">KTP</option><option value="SIM">SIM</option>
+          </select>
+          <span class="select-arrow"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#aab4c4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+        </div>
+      </div>
+      <div>
+        <label class="form-label">Negara Penerbit</label>
+        <div class="select-wrap">
+          <select id="edit-negara" class="form-input form-select">
+            <option>Indonesia</option><option>Malaysia</option><option>Singapura</option>
+            <option>Thailand</option><option>Filipina</option><option>Vietnam</option>
+            <option>Myanmar</option><option>Kamboja</option><option>Laos</option>
+            <option>Brunei</option><option>Timor Leste</option>
+            <option>Australia</option><option>Selandia Baru</option>
+            <option>Jepang</option><option>Korea Selatan</option><option>China</option>
+            <option>Hong Kong</option><option>Taiwan</option>
+            <option>India</option><option>Pakistan</option><option>Bangladesh</option>
+            <option>Sri Lanka</option><option>Nepal</option>
+            <option>Amerika Serikat</option><option>Kanada</option><option>Meksiko</option>
+            <option>Brasil</option><option>Argentina</option><option>Kolombia</option><option>Chile</option>
+            <option>Inggris</option><option>Jerman</option><option>Prancis</option>
+            <option>Italia</option><option>Spanyol</option><option>Belanda</option>
+            <option>Belgia</option><option>Swiss</option><option>Austria</option>
+            <option>Swedia</option><option>Norwegia</option><option>Denmark</option>
+            <option>Finlandia</option><option>Polandia</option><option>Rusia</option>
+            <option>Turki</option><option>Arab Saudi</option><option>UAE</option>
+            <option>Qatar</option><option>Kuwait</option><option>Iran</option>
+            <option>Mesir</option><option>Afrika Selatan</option><option>Nigeria</option>
+            <option>Kenya</option><option>Maroko</option><option>Ethiopia</option>
+            <option>Tanzania</option><option>Ghana</option>
+          </select>
+          <span class="select-arrow"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#aab4c4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="form-label">Tanggal Terbit</label>
+          <input id="edit-tgl-terbit" type="date" class="form-input" />
+        </div>
+        <div>
+          <label class="form-label">Tanggal Habis</label>
+          <input id="edit-tgl-habis" type="date" class="form-input" />
+        </div>
+      </div>
+    </div>
+    <div class="flex justify-end gap-3 mt-6">
+      <button type="button" onclick="closeEditModal()" class="btn-outline px-5 py-2.5 text-sm font-bold">Batal</button>
+      <button type="button" onclick="validateEdit()" class="btn-solid px-6 py-2.5 text-sm font-bold flex items-center gap-2">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Simpan
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Konfirmasi Edit Identitas -->
+<div id="modal-konfirmasi-edit" class="modal-backdrop hidden" onclick="closeKonfirmasiEdit()">
+  <div class="modal-box" style="max-width:440px" onclick="event.stopPropagation()">
+    <div class="flex items-center justify-between mb-5">
+      <h3 class="text-lg font-extrabold" style="color:var(--ink)">Konfirmasi Edit Identitas</h3>
+      <button onclick="closeKonfirmasiEdit()" class="modal-close-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <p class="text-sm mb-4" style="color:var(--muted)">Pastikan perubahan berikut sudah benar sebelum disimpan:</p>
+    <div id="konfirmasi-edit-summary" class="rounded-xl p-4 text-sm" style="background:var(--surface);border:1px solid var(--border);"></div>
+    <div class="flex justify-end gap-3 mt-6">
+      <button type="button" onclick="closeKonfirmasiEdit()" class="btn-outline px-5 py-2.5 text-sm font-bold">Kembali Edit</button>
+      <button type="button" onclick="submitEdit()" class="btn-solid px-6 py-2.5 text-sm font-bold flex items-center gap-2">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Ya, Simpan
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Hapus Identitas -->
+<div id="modal-hapus" class="modal-backdrop hidden" onclick="closeHapusModal()">
+  <div class="modal-box" style="max-width:420px" onclick="event.stopPropagation()">
+    <div class="flex items-center justify-between mb-5">
+      <h3 class="text-lg font-extrabold" style="color:var(--ink)">Hapus Identitas?</h3>
+      <button onclick="closeHapusModal()" class="modal-close-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="rounded-xl px-4 py-3 mb-5 flex gap-2.5 items-start" style="background:#FEE2E2;border:1px solid #FECACA;">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mt-0.5 shrink-0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <p class="text-xs leading-relaxed" style="color:#991B1B;">
+        Dokumen identitas ini akan dihapus permanen. <strong>Tindakan ini tidak dapat dibatalkan.</strong>
+      </p>
+    </div>
+    <input type="hidden" id="hapus-no-dokumen" />
+    <div class="flex justify-end gap-3">
+      <button type="button" onclick="closeHapusModal()" class="btn-outline px-5 py-2.5 text-sm font-bold">Batal</button>
+      <button type="button" onclick="submitHapus()" class="flex items-center gap-2 px-5 py-2.5 text-sm font-bold text-white rounded-xl" style="background:#DC2626">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+        Hapus
+      </button>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+{{ block.super }}
+<style>
+  .status-badge { display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:9999px;font-size:.7rem;font-weight:700;white-space:nowrap; }
+  .action-btn { display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:8px;border:none;cursor:pointer;transition:opacity .15s,transform .15s; }
+  .action-btn:hover { opacity:.8;transform:scale(1.08); }
+  .modal-backdrop { position:fixed;inset:0;background:rgba(10,22,40,.55);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:50;padding:1rem;animation:fadeIn .18s ease; }
+  .modal-backdrop.hidden { display:none!important; }
+  .modal-box { background:var(--card,#fff);border-radius:20px;padding:2rem;width:100%;max-width:620px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 60px rgba(0,0,0,.18);animation:slideUp .22s cubic-bezier(.16,1,.3,1); }
+  .modal-close-btn { width:32px;height:32px;border-radius:9999px;border:1.5px solid var(--border,#E2ECF5);background:var(--surface,#F4F9FD);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted,#6B7A95);transition:background .15s; }
+  .modal-close-btn:hover { background:var(--border); }
+  .select-wrap { position:relative; }
+  .form-select { appearance:none;padding-right:2.5rem;cursor:pointer; }
+  .select-arrow { position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;display:flex;align-items:center; }
+  .btn-outline { border:1.5px solid var(--border,#E2ECF5);background:transparent;color:var(--muted,#6B7A95);border-radius:12px;cursor:pointer;font-family:inherit;transition:background .15s,color .15s; }
+  .btn-outline:hover { background:var(--surface);color:var(--ink); }
+  .s-row { display:flex;gap:8px;padding:5px 0;border-bottom:1px solid var(--border,#E2ECF5); }
+  .s-row:last-child { border-bottom:none; }
+  .s-label { font-weight:600;color:var(--muted,#6B7A95);min-width:130px;flex-shrink:0;font-size:.8rem; }
+  .s-val { color:var(--ink,#0A1628);font-size:.85rem; }
+  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+  @keyframes slideUp { from{transform:translateY(24px);opacity:0} to{transform:translateY(0);opacity:1} }
+</style>
+
+<script>
+  const EMAIL_MEMBER = 'agus.setiawan@gmail.com'
+
+  // Toast 
+  function showToast(msg, type = 'success') {
+    const toast = document.getElementById('toast')
+    document.getElementById('toast-icon').innerHTML = type === 'success'
+      ? `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`
+      : `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`
+    document.getElementById('toast-msg').textContent = msg
+    toast.style.background = type === 'success' ? '#059669' : '#DC2626'
+    toast.classList.remove('hidden')
+    setTimeout(() => toast.classList.add('hidden'), 3000)
+  }
+
+  // READ dari Supabase 
+  // Tabel: identitas | Kolom: nomor, email_member, jenis, negara_penerbit, tanggal_terbit, tanggal_habis
+  async function loadIdentitas() {
+    try {
+      const { data, error } = await window.AeroMilesSupabase.client
+        .from('identitas')
+        .select('nomor, jenis, negara_penerbit, tanggal_terbit, tanggal_habis')
+        .eq('email_member', EMAIL_MEMBER)
+        .order('tanggal_terbit', { ascending: false })
+      if (error) throw error
+      renderTable(data)
+    } catch (err) {
+      document.getElementById('identitasTableBody').innerHTML = `
+        <tr><td colspan="7" class="px-5 py-16 text-center">
+          <div class="flex flex-col items-center gap-3">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <p class="text-sm font-semibold" style="color:#EF4444">Gagal memuat data: ${err.message}</p>
+          </div>
+        </td></tr>`
+    }
+  }
+
+  function renderTable(data) {
+    const tbody = document.getElementById('identitasTableBody')
+    if (!data || !data.length) {
+      tbody.innerHTML = `<tr><td colspan="7" class="px-5 py-16 text-center" style="color:var(--muted)">
+        <div class="flex flex-col items-center gap-3">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#C1D3E3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+          <p class="text-sm font-semibold">Belum ada dokumen identitas.</p>
+          <p class="text-xs">Klik <strong>Tambah Identitas</strong> untuk mulai menambahkan.</p>
+        </div></td></tr>`
+      return
+    }
+    const today = new Date(); today.setHours(0,0,0,0)
+    tbody.innerHTML = data.map(row => {
+      const expired = new Date(row.tanggal_habis) < today
+      const statusBadge = expired
+        ? `<span class="status-badge" style="background:#FEE2E2;color:#991B1B;">✕ Kedaluwarsa</span>`
+        : `<span class="status-badge" style="background:#D1FAE5;color:#065F46;">✓ Aktif</span>`
+      const safe = JSON.stringify(row).replace(/"/g, '&quot;')
+      return `<tr class="border-b transition-colors hover:bg-blue-50/30" style="border-color:var(--border);">
+        <td class="px-5 py-4 font-bold" style="color:var(--sky-500,#00BFFF)">${row.nomor}</td>
+        <td class="px-5 py-4 font-semibold" style="color:var(--ink)">${row.jenis}</td>
+        <td class="px-5 py-4" style="color:var(--muted)">${row.negara_penerbit}</td>
+        <td class="px-5 py-4" style="color:var(--muted)">${row.tanggal_terbit}</td>
+        <td class="px-5 py-4" style="color:var(--muted)">${row.tanggal_habis}</td>
+        <td class="px-5 py-4">${statusBadge}</td>
+        <td class="px-5 py-4">
+          <div class="flex items-center gap-2">
+            <button class="action-btn" style="color:#00BFFF;background:#E0F7FF;" title="Edit identitas" onclick='openEditModal(${safe})'>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </button>
+            <button class="action-btn" style="color:#EF4444;background:#FEE2E2;" title="Hapus identitas" onclick="openHapusModal('${row.nomor}')">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+            </button>
+          </div>
+        </td>
+      </tr>`
+    }).join('')
+  }
+
+  // Helper summary row
+  function sRow(label, val) {
+    return `<div class="s-row"><span class="s-label">${label}</span><span class="s-val">${val || '-'}</span></div>`
+  }
+
+  // TAMBAH
+  function openTambahModal() {
+    document.getElementById('modal-tambah').classList.remove('hidden')
+    document.body.style.overflow = 'hidden'
+  }
+  function closeTambahModal() {
+    document.getElementById('modal-tambah').classList.add('hidden')
+    document.body.style.overflow = ''
+    document.getElementById('tambah-error').classList.add('hidden')
+  }
+  function closeKonfirmasiTambah() {
+    document.getElementById('modal-konfirmasi-tambah').classList.add('hidden')
+    document.getElementById('modal-tambah').classList.remove('hidden')
+  }
+  function validateTambah() {
+    const errEl     = document.getElementById('tambah-error')
+    const noDok     = document.getElementById('f-no-dokumen').value.trim()
+    const jenis     = document.getElementById('f-jenis').value
+    const tglTerbit = document.getElementById('f-tgl-terbit').value
+    const tglHabis  = document.getElementById('f-tgl-habis').value
+    if (!noDok || !jenis || !tglTerbit || !tglHabis) {
+      errEl.textContent = 'Semua field wajib diisi.'; errEl.classList.remove('hidden'); return
+    }
+    if (new Date(tglHabis) <= new Date(tglTerbit)) {
+      errEl.textContent = 'Tanggal habis harus setelah tanggal terbit.'; errEl.classList.remove('hidden'); return
+    }
+    document.getElementById('konfirmasi-tambah-summary').innerHTML =
+      sRow('Nomor Dokumen', noDok) +
+      sRow('Jenis Dokumen', jenis) +
+      sRow('Negara Penerbit', document.getElementById('f-negara').value) +
+      sRow('Tanggal Terbit', tglTerbit) +
+      sRow('Tanggal Habis', tglHabis)
+    document.getElementById('modal-tambah').classList.add('hidden')
+    document.getElementById('modal-konfirmasi-tambah').classList.remove('hidden')
+  }
+  function submitTambah() {
+    document.getElementById('modal-konfirmasi-tambah').classList.add('hidden')
+    document.body.style.overflow = ''
+    showToast('Identitas berhasil ditambahkan!')
+  }
+
+  // EDIT 
+  function openEditModal(row) {
+    document.getElementById('modal-edit').classList.remove('hidden')
+    document.body.style.overflow = 'hidden'
+    document.getElementById('edit-no-dokumen').value = row.nomor
+    document.getElementById('edit-jenis').value      = row.jenis
+    document.getElementById('edit-negara').value     = row.negara_penerbit
+    document.getElementById('edit-tgl-terbit').value = row.tanggal_terbit
+    document.getElementById('edit-tgl-habis').value  = row.tanggal_habis
+  }
+  function closeEditModal() {
+    document.getElementById('modal-edit').classList.add('hidden')
+    document.body.style.overflow = ''
+  }
+  function closeKonfirmasiEdit() {
+    document.getElementById('modal-konfirmasi-edit').classList.add('hidden')
+    document.getElementById('modal-edit').classList.remove('hidden')
+  }
+  function validateEdit() {
+    const tglTerbit = document.getElementById('edit-tgl-terbit').value
+    const tglHabis  = document.getElementById('edit-tgl-habis').value
+    document.getElementById('konfirmasi-edit-summary').innerHTML =
+      sRow('Nomor Dokumen', document.getElementById('edit-no-dokumen').value) +
+      sRow('Jenis Dokumen', document.getElementById('edit-jenis').value) +
+      sRow('Negara Penerbit', document.getElementById('edit-negara').value) +
+      sRow('Tanggal Terbit', tglTerbit) +
+      sRow('Tanggal Habis', tglHabis)
+    document.getElementById('modal-edit').classList.add('hidden')
+    document.getElementById('modal-konfirmasi-edit').classList.remove('hidden')
+  }
+  function submitEdit() {
+    document.getElementById('modal-konfirmasi-edit').classList.add('hidden')
+    document.body.style.overflow = ''
+    showToast('Identitas berhasil diperbarui!')
+  }
+
+  // HAPUS 
+  function openHapusModal(nomor) {
+    document.getElementById('modal-hapus').classList.remove('hidden')
+    document.body.style.overflow = 'hidden'
+    document.getElementById('hapus-no-dokumen').value = nomor
+  }
+  function closeHapusModal() {
+    document.getElementById('modal-hapus').classList.add('hidden')
+    document.body.style.overflow = ''
+  }
+  function submitHapus() {
+    closeHapusModal()
+    showToast('Identitas berhasil dihapus!')
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      closeTambahModal(); closeKonfirmasiTambah()
+      closeEditModal();   closeKonfirmasiEdit()
+      closeHapusModal()
+    }
+  })
+  document.addEventListener('DOMContentLoaded', loadIdentitas)
+</script>
+{% endblock %}

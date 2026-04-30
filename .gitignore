@@ -13,3 +13,7 @@ venv/
 # Tailwind 
 node_modules/
 theme/static_src/node_modules/
+
+#ide
+.idea/
+*.iml

@@ -1,0 +1,116 @@
+{% extends "partials/navbar/navbar_base.html" %}
+{% load nav_active %}
+
+{% block navbar_left %}
+<a href="#" class="flex items-center gap-2 flex-shrink-0 mr-1">
+  <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:linear-gradient(135deg,#00BFFF,#005A8C)">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21 4 19 4c-2 0-3 1-3.5 2.5L11 9l-7.8-1.8L2 8.6l6 4.4-1.8 1.8-3-.6-1.2 1.2 4.2 2.4 2.4 4.2 1.2-1.2-.6-3 1.8-1.8 4.4 6z"/>
+    </svg>
+  </div>
+  <div class="hidden sm:block">
+    <span class="font-extrabold text-sm tracking-tight" style="color:var(--ink)">Aero<span style="color:var(--sky)">Miles</span></span>
+    <span class="block text-xs font-semibold" style="color:var(--muted);line-height:1;margin-top:1px">Staff Portal</span>
+  </div>
+</a>
+
+<!-- Divider -->
+<div class="hidden lg:block w-px h-5 flex-shrink-0" style="background:var(--border)"></div>
+{% endblock %}
+
+{% block navbar_center %}
+<div class="nav-scroll flex-1">
+  <div class="flex items-center gap-1" style="min-width:max-content">
+
+    <!-- Dashboard -->
+    <a href="{% url 'dashboard:staf' %}" class="nav-link {% nav_active 'dashboard:staf' %}">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/>
+        <rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/>
+      </svg>
+      Dashboard
+    </a>
+
+    <!-- Kelola Member -->
+    <a a href="{% url 'membership:kelola_member' %}" class="nav-link {% nav_active 'membership:kelola_member' %}">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+        <circle cx="9" cy="7" r="4"/>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+      </svg>
+      Kelola Member
+    </a>
+
+    <!-- Kelola Klaim -->
+    <a href="#" class="nav-link">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/>
+      </svg>
+      Kelola Klaim
+      <span class="ml-0.5 w-4 h-4 rounded-full text-white flex items-center justify-center font-bold" style="background:#EF4444;font-size:0.58rem;line-height:1">24</span>
+    </a>
+
+    <!-- Kelola Hadiah & Penyedia -->
+    <a href="#" class="nav-link">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 12 20 22 4 22 4 12"/>
+        <rect x="2" y="7" width="20" height="5"/>
+        <path d="M12 22V7"/>
+        <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/>
+        <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/>
+      </svg>
+      Kelola Hadiah &amp; Penyedia
+    </a>
+
+    <!-- Kelola Mitra -->
+    <a href="#" class="nav-link">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+      </svg>
+      Kelola Mitra
+    </a>
+
+    <a href="{% url 'rewards:laporan_transaksi' %}" class="nav-link {% nav_active 'rewards:laporan_transaksi' %}">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="20" x2="18" y2="10"/>
+        <line x1="12" y1="20" x2="12" y2="4"/>
+        <line x1="6" y1="20" x2="6" y2="14"/>
+      </svg>
+      Laporan Transaksi
+    </a>
+
+    <!-- Pengaturan Profil -->
+    <a href="#" class="nav-link {% nav_active 'accounts:profile_staf' %}">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+      </svg>
+      Pengaturan Profil
+    </a>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block navbar_right %}
+<div class="flex items-center gap-2.5 flex-shrink-0 ml-1">
+  <!-- Avatar + Name -->
+  <div class="hidden md:flex items-center gap-2">
+    <div class="avatar w-8 h-8 text-xs">SO</div>
+    <div class="hidden lg:block">
+      <p class="text-xs font-bold leading-tight" style="color:var(--ink)">Sarah Oktavia</p>
+      <p class="text-xs leading-tight" style="color:var(--muted)">Staf · Emirates</p>
+    </div>
+  </div>
+  <!-- Logout -->
+  <a href="#" class="nav-logout">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+      <polyline points="16 17 21 12 16 7"/>
+      <line x1="21" y1="12" x2="9" y2="12"/>
+    </svg>
+    Logout
+  </a>
+</div>
+{% endblock %}
