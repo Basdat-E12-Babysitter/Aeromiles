@@ -707,7 +707,7 @@ select.inp {
   opacity: 0; pointer-events: none;
   transition: opacity .22s ease;
 }
-.modal-box {
+.pw-modal-box {
   background: #fff;
   border-radius: 20px;
   border: 1px solid var(--border);
@@ -721,8 +721,8 @@ select.inp {
 }
 
 /* Checked → visible */
-#modal-pw:checked ~ .overlay        { opacity: 1; pointer-events: auto; }
-#modal-pw:checked ~ .overlay .modal-box { transform: translateY(0) scale(1); opacity: 1; }
+#modal-pw:checked ~ .overlay          { opacity: 1; pointer-events: auto; }
+#modal-pw:checked ~ .overlay .pw-modal-box { transform: translateY(0) scale(1); opacity: 1; }
 
 /* Modal input */
 .m-inp {
