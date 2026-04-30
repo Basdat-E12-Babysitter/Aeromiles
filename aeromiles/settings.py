@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'dashboard',
     'core',
     'membership',
+    'theme',
+    'partners',
 ]
 
 MIDDLEWARE = [
@@ -122,4 +124,4 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-TAILWIND_APP_NAME = 'core'
+TAILWIND_APP_NAME = 'theme'
