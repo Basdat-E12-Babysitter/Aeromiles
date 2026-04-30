@@ -1,0 +1,357 @@
+{% extends "base.html" %}
+
+{% block title %}Beli Package Miles — Aero Miles{% endblock %}
+
+{% block navbar %}
+{% include "partials/navbar/navbar_member.html" %}
+{% endblock %}
+
+{% block content %}
+
+{# ── Page Header ── #}
+<div class="flex items-center justify-between mb-6">
+  <div>
+    <h2 class="text-2xl font-extrabold" style="color:var(--ink)">Beli Package Miles</h2>
+    <p class="text-sm mt-1" style="color:var(--muted)">Tambah saldo miles Anda dengan membeli paket yang tersedia.</p>
+  </div>
+  <div class="flex items-center gap-2 px-4 py-2.5 rounded-xl" style="background:var(--surface);border:1.5px solid var(--border);">
+    <div class="flex items-center justify-center rounded-full font-extrabold text-xs" style="width:28px;height:28px;flex-shrink:0;background:linear-gradient(135deg,#00BFFF,#005A8C);color:white;">AS</div>
+    <span class="text-sm font-extrabold" style="color:var(--ink)">Halo, Agus Setiawan</span>
+  </div>
+</div>
+
+{# ── Info Banner ── #}
+<div class="flex gap-2.5 items-start rounded-xl px-4 py-3 mb-6" style="background:#E0F7FF;border:1px solid #B3EAFF;">
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#005A8C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-top:1px;flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+  <p class="text-xs leading-relaxed" style="color:#005A8C;">
+    Miles yang dibeli akan langsung ditambahkan ke saldo akun Anda setelah pembayaran dikonfirmasi. Transaksi bersifat <strong>tidak dapat dibatalkan</strong>.
+  </p>
+</div>
+
+{# ── Package Grid ── #}
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+
+  {# AMP-001 #}
+  <div class="package-card">
+    <div class="flex items-center justify-between mb-3">
+      <span class="pkg-kode-badge">AMP-001</span>
+      <span class="pkg-label-badge" style="background:#F0FDF4;color:#15803D;border-color:#BBF7D0;">Paket Hemat</span>
+    </div>
+    <div class="flex items-end gap-1 mb-1">
+      <span class="pkg-miles">1.000</span>
+      <span class="pkg-miles-unit">miles</span>
+    </div>
+    <p class="text-xs mb-4" style="color:var(--muted);">Cocok untuk penukaran hadiah ringan.</p>
+    <div class="pkg-footer">
+      <div>
+        <p class="text-xs" style="color:var(--muted);">Harga</p>
+        <p class="text-base font-extrabold" style="color:var(--ink);">Rp 150.000</p>
+      </div>
+      <button onclick="openBeliModal('AMP-001','Paket Hemat',1000,150000)" class="btn-solid px-4 py-2 text-xs font-bold rounded-xl flex items-center gap-1.5">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        Beli Sekarang
+      </button>
+    </div>
+  </div>
+
+  {# AMP-002 #}
+  <div class="package-card">
+    <div class="flex items-center justify-between mb-3">
+      <span class="pkg-kode-badge">AMP-002</span>
+      <span class="pkg-label-badge" style="background:#EFF6FF;color:#1D4ED8;border-color:#BFDBFE;">Paket Standar</span>
+    </div>
+    <div class="flex items-end gap-1 mb-1">
+      <span class="pkg-miles">5.000</span>
+      <span class="pkg-miles-unit">miles</span>
+    </div>
+    <p class="text-xs mb-4" style="color:var(--muted);">Ideal untuk anggota yang aktif terbang.</p>
+    <div class="pkg-footer">
+      <div>
+        <p class="text-xs" style="color:var(--muted);">Harga</p>
+        <p class="text-base font-extrabold" style="color:var(--ink);">Rp 650.000</p>
+      </div>
+      <button onclick="openBeliModal('AMP-002','Paket Standar',5000,650000)" class="btn-solid px-4 py-2 text-xs font-bold rounded-xl flex items-center gap-1.5">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        Beli Sekarang
+      </button>
+    </div>
+  </div>
+
+  {# AMP-003 — Popular #}
+  <div class="package-card package-popular">
+    <div class="popular-badge">⭐ Terpopuler</div>
+    <div class="flex items-center justify-between mb-3">
+      <span class="pkg-kode-badge">AMP-003</span>
+      <span class="pkg-label-badge" style="background:#FFF7ED;color:#C2410C;border-color:#FED7AA;">Paket Populer</span>
+    </div>
+    <div class="flex items-end gap-1 mb-1">
+      <span class="pkg-miles">10.000</span>
+      <span class="pkg-miles-unit">miles</span>
+    </div>
+    <p class="text-xs mb-4" style="color:var(--muted);">Hemat lebih dengan paket unggulan kami.</p>
+    <div class="pkg-footer">
+      <div>
+        <p class="text-xs" style="color:var(--muted);">Harga</p>
+        <p class="text-base font-extrabold" style="color:var(--ink);">Rp 1.200.000</p>
+      </div>
+      <button onclick="openBeliModal('AMP-003','Paket Populer',10000,1200000)" class="btn-solid px-4 py-2 text-xs font-bold rounded-xl flex items-center gap-1.5">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        Beli Sekarang
+      </button>
+    </div>
+  </div>
+
+  {# AMP-004 #}
+  <div class="package-card">
+    <div class="flex items-center justify-between mb-3">
+      <span class="pkg-kode-badge">AMP-004</span>
+      <span class="pkg-label-badge" style="background:#FDF4FF;color:#7E22CE;border-color:#E9D5FF;">Paket Premium</span>
+    </div>
+    <div class="flex items-end gap-1 mb-1">
+      <span class="pkg-miles">25.000</span>
+      <span class="pkg-miles-unit">miles</span>
+    </div>
+    <p class="text-xs mb-4" style="color:var(--muted);">Untuk pelancong setia yang sering terbang.</p>
+    <div class="pkg-footer">
+      <div>
+        <p class="text-xs" style="color:var(--muted);">Harga</p>
+        <p class="text-base font-extrabold" style="color:var(--ink);">Rp 2.750.000</p>
+      </div>
+      <button onclick="openBeliModal('AMP-004','Paket Premium',25000,2750000)" class="btn-solid px-4 py-2 text-xs font-bold rounded-xl flex items-center gap-1.5">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        Beli Sekarang
+      </button>
+    </div>
+  </div>
+
+  {# AMP-005 #}
+  <div class="package-card">
+    <div class="flex items-center justify-between mb-3">
+      <span class="pkg-kode-badge">AMP-005</span>
+      <span class="pkg-label-badge" style="background:linear-gradient(135deg,#FEF3C7,#FDE68A);color:#92400E;border-color:#FCD34D;">Paket Ultimate</span>
+    </div>
+    <div class="flex items-end gap-1 mb-1">
+      <span class="pkg-miles">50.000</span>
+      <span class="pkg-miles-unit">miles</span>
+    </div>
+    <p class="text-xs mb-4" style="color:var(--muted);">Maksimalkan miles untuk perjalanan impian.</p>
+    <div class="pkg-footer">
+      <div>
+        <p class="text-xs" style="color:var(--muted);">Harga</p>
+        <p class="text-base font-extrabold" style="color:var(--ink);">Rp 5.000.000</p>
+      </div>
+      <button onclick="openBeliModal('AMP-005','Paket Ultimate',50000,5000000)" class="btn-solid px-4 py-2 text-xs font-bold rounded-xl flex items-center gap-1.5">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        Beli Sekarang
+      </button>
+    </div>
+  </div>
+
+</div>
+
+{# ── Riwayat Pembelian ── #}
+<div class="flex items-center justify-between mb-4">
+  <div>
+    <h3 class="text-base font-extrabold" style="color:var(--ink)">Riwayat Pembelian</h3>
+    <p class="text-xs mt-0.5" style="color:var(--muted)">Histori pembelian package miles Anda.</p>
+  </div>
+</div>
+
+<div class="card overflow-hidden">
+  <div class="overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead>
+        <tr style="background:var(--surface);border-bottom:1.5px solid var(--border);">
+          <th class="text-left px-5 py-3.5 font-bold text-xs uppercase tracking-wide" style="color:var(--muted)">No.</th>
+          <th class="text-left px-5 py-3.5 font-bold text-xs uppercase tracking-wide" style="color:var(--muted)">Tanggal</th>
+          <th class="text-left px-5 py-3.5 font-bold text-xs uppercase tracking-wide" style="color:var(--muted)">Kode Paket</th>
+          <th class="text-left px-5 py-3.5 font-bold text-xs uppercase tracking-wide" style="color:var(--muted)">Nama Paket</th>
+          <th class="text-left px-5 py-3.5 font-bold text-xs uppercase tracking-wide" style="color:var(--muted)">Miles</th>
+          <th class="text-left px-5 py-3.5 font-bold text-xs uppercase tracking-wide" style="color:var(--muted)">Harga</th>
+          <th class="text-left px-5 py-3.5 font-bold text-xs uppercase tracking-wide" style="color:var(--muted)">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid var(--border);transition:background 0.15s;"
+            onmouseover="this.style.background='rgba(0,191,255,0.04)'"
+            onmouseout="this.style.background=''">
+          <td class="px-5 py-4 font-bold" style="color:#00BFFF;">PKG-001</td>
+          <td class="px-5 py-4" style="color:var(--muted);">01 Mei 2024</td>
+          <td class="px-5 py-4 font-bold" style="font-family:monospace;font-size:0.75rem;color:var(--ink);">AMP-001</td>
+          <td class="px-5 py-4 font-semibold" style="color:var(--ink);">Paket Hemat</td>
+          <td class="px-5 py-4 font-extrabold" style="color:#00BFFF;">+1.000 <span style="font-size:0.7rem;font-weight:600;color:var(--muted);">mi</span></td>
+          <td class="px-5 py-4 font-semibold" style="color:var(--ink);">Rp 150.000</td>
+          <td class="px-5 py-4"><span class="status-badge" style="background:#D1FAE5;color:#065F46;">✓ Berhasil</span></td>
+        </tr>
+        <tr style="transition:background 0.15s;"
+            onmouseover="this.style.background='rgba(0,191,255,0.04)'"
+            onmouseout="this.style.background=''">
+          <td class="px-5 py-4 font-bold" style="color:#00BFFF;">PKG-002</td>
+          <td class="px-5 py-4" style="color:var(--muted);">20 Mei 2024</td>
+          <td class="px-5 py-4 font-bold" style="font-family:monospace;font-size:0.75rem;color:var(--ink);">AMP-005</td>
+          <td class="px-5 py-4 font-semibold" style="color:var(--ink);">Paket Ultimate</td>
+          <td class="px-5 py-4 font-extrabold" style="color:#00BFFF;">+50.000 <span style="font-size:0.7rem;font-weight:600;color:var(--muted);">mi</span></td>
+          <td class="px-5 py-4 font-semibold" style="color:var(--ink);">Rp 5.000.000</td>
+          <td class="px-5 py-4"><span class="status-badge" style="background:#D1FAE5;color:#065F46;">✓ Berhasil</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{# ── MODAL: Konfirmasi Pembelian ── #}
+<div id="modal-beli-backdrop" class="modal-backdrop modal-closed" onclick="closeBeliModal()">
+  <div class="modal-box" style="max-width:440px;" onclick="event.stopPropagation()">
+    <div class="flex items-center justify-between mb-5">
+      <div>
+        <h3 class="text-lg font-extrabold" style="color:var(--ink)">Konfirmasi Pembelian</h3>
+        <p class="text-xs mt-0.5" style="color:var(--muted)">Periksa detail paket sebelum melanjutkan.</p>
+      </div>
+      <button onclick="closeBeliModal()" class="modal-close-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    {# Identitas Member #}
+    <div class="flex items-center gap-3 rounded-xl px-4 py-3 mb-4" style="background:var(--surface);border:1.5px solid var(--border);">
+      <div class="flex items-center justify-center rounded-full font-extrabold text-xs" style="width:36px;height:36px;flex-shrink:0;background:linear-gradient(135deg,#00BFFF,#005A8C);color:white;">AS</div>
+      <div>
+        <p class="text-sm font-extrabold" style="color:var(--ink);">Agus Setiawan</p>
+        <p class="text-xs" style="color:var(--muted);">agus.setiawan@gmail.com</p>
+      </div>
+    </div>
+
+    {# Detail Paket #}
+    <div class="rounded-xl p-4 mb-4" style="background:var(--surface);border:1.5px solid var(--border);">
+      <div class="flex items-center gap-3">
+        <div class="flex items-center justify-center rounded-xl" style="width:42px;height:42px;flex-shrink:0;background:linear-gradient(135deg,#00BFFF22,#005A8C22);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00BFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21 4 19 4c-2 0-3 1-3.5 2.5L11 9l-7.8-1.8L2 8.6l6 4.4-1.8 1.8-3-.6-1.2 1.2 4.2 2.4 2.4 4.2 1.2-1.2-.6-3 1.8-1.8 4.4 6z"/></svg>
+        </div>
+        <div>
+          <p class="text-xs font-bold uppercase tracking-wide mb-0.5" style="color:var(--muted);font-family:monospace;" id="modal-kode">—</p>
+          <p class="text-base font-extrabold" style="color:var(--ink);" id="modal-nama">—</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="space-y-2.5 mb-5">
+      <div class="flex items-center justify-between px-4 py-3 rounded-xl" style="background:var(--surface);border:1px solid var(--border);">
+        <span class="text-sm" style="color:var(--muted);">Miles yang didapat</span>
+        <span class="text-sm font-extrabold" style="color:#00BFFF;" id="modal-miles">—</span>
+      </div>
+      <div class="flex items-center justify-between px-4 py-3 rounded-xl" style="background:#E0F7FF;border:1px solid #B3EAFF;">
+        <span class="text-sm font-semibold" style="color:#005A8C;">Total Pembayaran</span>
+        <span class="text-base font-extrabold" style="color:#005A8C;" id="modal-harga">—</span>
+      </div>
+    </div>
+
+    <p class="text-xs mb-5" style="color:var(--muted);">Dengan melanjutkan, Anda menyetujui bahwa transaksi ini <strong>tidak dapat dibatalkan</strong> setelah pembayaran dikonfirmasi.</p>
+
+    <div class="flex justify-end gap-3">
+      <button onclick="closeBeliModal()" class="btn-outline px-5 py-2.5 text-sm font-bold">Batal</button>
+      <form method="POST" action="{% url 'miles:package_beli' %}" id="form-beli">
+        {% csrf_token %}
+        <input type="hidden" name="package_kode" id="input-package-kode">
+        <button type="submit" class="btn-solid px-6 py-2.5 text-sm font-bold flex items-center gap-2">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+          Konfirmasi Beli
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+{# ── Styles ── #}
+<style>
+  .package-card {
+    position:relative;
+    background:var(--card,#fff);
+    border:1.5px solid var(--border,#E2ECF5);
+    border-radius:16px;
+    padding:1.5rem;
+    display:flex;flex-direction:column;
+    transition:box-shadow 0.18s,transform 0.18s,border-color 0.18s;
+  }
+  .package-card:hover {
+    box-shadow:0 8px 28px rgba(0,191,255,0.14);
+    transform:translateY(-3px);
+    border-color:#B3EAFF;
+  }
+  .package-popular {
+    border-color:#00BFFF;
+    box-shadow:0 4px 20px rgba(0,191,255,0.15);
+  }
+  .popular-badge {
+    position:absolute;top:-1px;left:50%;transform:translateX(-50%);
+    background:linear-gradient(135deg,#00BFFF,#005A8C);
+    color:white;font-size:0.65rem;font-weight:800;
+    padding:3px 14px;border-radius:0 0 10px 10px;
+    white-space:nowrap;letter-spacing:0.03em;
+  }
+  .pkg-kode-badge {
+    font-size:0.7rem;font-weight:700;padding:3px 10px;border-radius:9999px;
+    background:#E0F7FF;color:#005A8C;border:1px solid #B3EAFF;font-family:monospace;
+  }
+  .pkg-label-badge {
+    font-size:0.7rem;font-weight:600;padding:3px 10px;border-radius:9999px;
+    border:1px solid transparent;
+  }
+  .pkg-miles { font-size:1.875rem;font-weight:900;color:#00BFFF;line-height:1; }
+  .pkg-miles-unit { font-size:0.875rem;font-weight:700;color:var(--muted);margin-bottom:3px; }
+  .pkg-footer {
+    display:flex;align-items:center;justify-content:space-between;
+    padding-top:0.75rem;border-top:1px solid var(--border);margin-top:auto;
+  }
+  .status-badge {
+    display:inline-flex;align-items:center;gap:4px;
+    padding:3px 10px;border-radius:9999px;
+    font-size:0.7rem;font-weight:700;white-space:nowrap;
+  }
+  .modal-backdrop {
+    position:fixed;inset:0;background:rgba(10,22,40,0.55);
+    backdrop-filter:blur(4px);display:flex;align-items:center;
+    justify-content:center;z-index:50;padding:1rem;animation:fadeIn 0.18s ease;
+  }
+  .modal-backdrop.modal-closed { display:none !important; }
+  .modal-box {
+    background:var(--card,#fff);border-radius:20px;padding:2rem;
+    width:100%;max-width:620px;max-height:90vh;overflow-y:auto;
+    box-shadow:0 24px 60px rgba(0,0,0,0.18);
+    animation:slideUp 0.22s cubic-bezier(.16,1,.3,1);
+  }
+  .modal-close-btn {
+    width:32px;height:32px;border-radius:9999px;
+    border:1.5px solid var(--border,#E2ECF5);background:var(--surface,#F4F9FD);
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;color:var(--muted,#6B7A95);transition:background 0.15s;
+  }
+  .modal-close-btn:hover { background:var(--border); }
+  .btn-outline {
+    border:1.5px solid var(--border,#E2ECF5);background:transparent;
+    color:var(--muted,#6B7A95);border-radius:12px;cursor:pointer;
+    font-family:inherit;transition:background 0.15s,color 0.15s;
+  }
+  .btn-outline:hover { background:var(--surface);color:var(--ink); }
+  @keyframes fadeIn { from{opacity:0}to{opacity:1} }
+  @keyframes slideUp { from{transform:translateY(24px);opacity:0}to{transform:translateY(0);opacity:1} }
+</style>
+
+{# ── Script ── #}
+<script>
+  function openBeliModal(kode, nama, miles, harga) {
+    document.getElementById('modal-kode').textContent  = kode;
+    document.getElementById('modal-nama').textContent  = nama;
+    document.getElementById('modal-miles').textContent = Number(miles).toLocaleString('id-ID') + ' miles';
+    document.getElementById('modal-harga').textContent = 'Rp ' + Number(harga).toLocaleString('id-ID');
+    document.getElementById('input-package-kode').value = kode;
+    document.getElementById('modal-beli-backdrop').classList.remove('modal-closed');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeBeliModal() {
+    document.getElementById('modal-beli-backdrop').classList.add('modal-closed');
+    document.body.style.overflow = '';
+  }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeBeliModal(); });
+</script>
+
+{% endblock %}

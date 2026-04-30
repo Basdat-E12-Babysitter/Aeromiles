@@ -1,0 +1,251 @@
+{% extends "base.html" %}
+
+{% block title %}Info Tier — Aero Miles{% endblock %}
+
+{% block navbar %}
+{% include "partials/navbar/navbar_member.html" %}
+{% endblock %}
+
+{% block content %}
+
+{# ── Page Header ── #}
+<div class="mb-6">
+  <h2 class="text-2xl font-extrabold" style="color:var(--ink)">Info Tier Keanggotaan</h2>
+  <p class="text-sm mt-1" style="color:var(--muted)">Lihat status tier Anda dan manfaat yang bisa dinikmati di setiap level.</p>
+</div>
+
+{# ── Current Status Card ── #}
+<div class="card mb-6 relative overflow-hidden" style="padding:2rem;">
+  <div class="tier-bg-deco"></div>
+  <div class="relative flex flex-col sm:flex-row sm:items-center justify-between gap-6" style="z-index:1;">
+    <div class="flex items-center gap-5">
+      <div class="rounded-2xl flex items-center justify-center" style="width:72px;height:72px;flex-shrink:0;background:linear-gradient(135deg,#00BFFF22,#005A8C33);border:2px solid #B3EAFF;">
+        {# Tier icon — ganti sesuai tier member #}
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#00BFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21 4 19 4c-2 0-3 1-3.5 2.5L11 9l-7.8-1.8L2 8.6l6 4.4-1.8 1.8-3-.6-1.2 1.2 4.2 2.4 2.4 4.2 1.2-1.2-.6-3 1.8-1.8 4.4 6z"/></svg>
+      </div>
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-widest mb-1" style="color:var(--muted);">Tier Anda Saat Ini</p>
+        <p class="font-extrabold" style="font-size:1.75rem;color:var(--ink);line-height:1.1;">{{ member.tier | default:"Silver" }}</p>
+        <p class="text-sm mt-1" style="color:var(--muted);">Member sejak {{ member.tanggal_bergabung | default:"Jan 2023" }}</p>
+      </div>
+    </div>
+    <div class="flex gap-8 sm:gap-12">
+      <div class="text-center">
+        <p class="font-extrabold" style="font-size:1.75rem;color:#00BFFF;line-height:1.1;">{{ member.total_miles | default:"8.450" }}</p>
+        <p class="text-sm font-semibold mt-1" style="color:var(--muted);">Total Miles</p>
+      </div>
+      <div class="text-center">
+        <p class="font-extrabold" style="font-size:1.75rem;color:var(--ink);line-height:1.1;">{{ member.frekuensi_terbang | default:"12" }}</p>
+        <p class="text-sm font-semibold mt-1" style="color:var(--muted);">Total Penerbangan</p>
+      </div>
+    </div>
+  </div>
+
+  {# Progress ke tier berikutnya #}
+  <div class="relative" style="margin-top:1.75rem;z-index:1;">
+    <div class="flex items-center justify-between mb-2">
+      <p class="text-sm font-semibold" style="color:var(--muted);">Progress menuju <strong style="color:var(--ink);">Gold</strong></p>
+      <p class="text-sm font-bold" style="color:#00BFFF;">8.450 / 15.000 miles</p>
+    </div>
+    <div class="w-full rounded-full overflow-hidden" style="height:12px;background:var(--surface);border:1px solid var(--border);">
+      <div class="progress-bar-fill" style="width:56.3%;height:100%;border-radius:9999px;background:linear-gradient(90deg,#00BFFF,#005A8C);transition:width 1s cubic-bezier(.16,1,.3,1);"></div>
+    </div>
+    <p class="text-sm mt-2" style="color:var(--muted);">Butuh <strong style="color:var(--ink);">6.550 miles lagi</strong> atau <strong style="color:var(--ink);">8 penerbangan lagi</strong> untuk naik ke Gold.</p>
+  </div>
+</div>
+
+{# ── Tier List ── #}
+<h3 class="text-base font-extrabold mb-4" style="color:var(--ink)">Semua Tingkatan Tier</h3>
+<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4" id="tier-grid">
+
+  {# Blue Tier #}
+  <div class="tier-card">
+    <div class="tier-card-header" style="background:linear-gradient(135deg,#DBEAFE,#BFDBFE);">
+      <div class="tier-icon-wrap" style="background:#3B82F6;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+      </div>
+      <span class="tier-name" style="color:#1D4ED8;">Blue</span>
+    </div>
+    <div class="tier-card-body">
+      <div class="tier-requirement">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#00BFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21 4 19 4c-2 0-3 1-3.5 2.5L11 9l-7.8-1.8L2 8.6l6 4.4-1.8 1.8-3-.6-1.2 1.2 4.2 2.4 2.4 4.2 1.2-1.2-.6-3 1.8-1.8 4.4 6z"/></svg>
+        <span><strong>0</strong> miles</span>
+      </div>
+      <div class="tier-requirement">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#00BFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        <span><strong>0</strong> penerbangan</span>
+      </div>
+      <ul class="tier-benefits">
+        <li>Akses program loyalitas dasar</li>
+        <li>Kumpul miles setiap terbang</li>
+        <li>Redeem hadiah standar</li>
+      </ul>
+    </div>
+  </div>
+
+  {# Silver Tier — ACTIVE #}
+  <div class="tier-card tier-current">
+    <div class="current-label">✦ Tier Anda</div>
+    <div class="tier-card-header" style="background:linear-gradient(135deg,#F1F5F9,#CBD5E1);">
+      <div class="tier-icon-wrap" style="background:linear-gradient(135deg,#64748B,#475569);">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      </div>
+      <span class="tier-name" style="color:#334155;">Silver</span>
+    </div>
+    <div class="tier-card-body">
+      <div class="tier-requirement">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#00BFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21 4 19 4c-2 0-3 1-3.5 2.5L11 9l-7.8-1.8L2 8.6l6 4.4-1.8 1.8-3-.6-1.2 1.2 4.2 2.4 2.4 4.2 1.2-1.2-.6-3 1.8-1.8 4.4 6z"/></svg>
+        <span><strong>5.000</strong> miles</span>
+      </div>
+      <div class="tier-requirement">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#00BFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        <span><strong>5</strong> penerbangan / tahun</span>
+      </div>
+      <ul class="tier-benefits">
+        <li>Semua benefit Blue</li>
+        <li>Bonus miles 10% tiap penerbangan</li>
+        <li>Priority check-in</li>
+        <li>1 free upgrade kabin/tahun</li>
+      </ul>
+    </div>
+  </div>
+
+  {# Gold Tier #}
+  <div class="tier-card">
+    <div class="tier-card-header" style="background:linear-gradient(135deg,#FEF9C3,#FDE68A);">
+      <div class="tier-icon-wrap" style="background:linear-gradient(135deg,#D97706,#B45309);">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
+      </div>
+      <span class="tier-name" style="color:#92400E;">Gold</span>
+    </div>
+    <div class="tier-card-body">
+      <div class="tier-requirement">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#00BFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21 4 19 4c-2 0-3 1-3.5 2.5L11 9l-7.8-1.8L2 8.6l6 4.4-1.8 1.8-3-.6-1.2 1.2 4.2 2.4 2.4 4.2 1.2-1.2-.6-3 1.8-1.8 4.4 6z"/></svg>
+        <span><strong>15.000</strong> miles</span>
+      </div>
+      <div class="tier-requirement">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#00BFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        <span><strong>20</strong> penerbangan / tahun</span>
+      </div>
+      <ul class="tier-benefits">
+        <li>Semua benefit Silver</li>
+        <li>Bonus miles 25% tiap penerbangan</li>
+        <li>Lounge access (2x/bulan)</li>
+        <li>Extra baggage 5kg</li>
+        <li>Dedicated customer service</li>
+      </ul>
+    </div>
+  </div>
+
+  {# Platinum Tier #}
+  <div class="tier-card">
+    <div class="tier-card-header" style="background:linear-gradient(135deg,#F5F3FF,#DDD6FE);">
+      <div class="tier-icon-wrap" style="background:linear-gradient(135deg,#7C3AED,#5B21B6);">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7z"/></svg>
+      </div>
+      <span class="tier-name" style="color:#4C1D95;">Platinum</span>
+    </div>
+    <div class="tier-card-body">
+      <div class="tier-requirement">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#00BFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21 4 19 4c-2 0-3 1-3.5 2.5L11 9l-7.8-1.8L2 8.6l6 4.4-1.8 1.8-3-.6-1.2 1.2 4.2 2.4 2.4 4.2 1.2-1.2-.6-3 1.8-1.8 4.4 6z"/></svg>
+        <span><strong>50.000</strong> miles</span>
+      </div>
+      <div class="tier-requirement">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#00BFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        <span><strong>50</strong> penerbangan / tahun</span>
+      </div>
+      <ul class="tier-benefits">
+        <li>Semua benefit Gold</li>
+        <li>Bonus miles 50% tiap penerbangan</li>
+        <li>Unlimited lounge access</li>
+        <li>Free upgrade kabin tak terbatas</li>
+        <li>Concierge service 24/7</li>
+        <li>Priority boarding & baggage</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+{# ── Styles ── #}
+<style>
+  .tier-bg-deco {
+    position:absolute;right:-40px;top:-40px;
+    width:220px;height:220px;border-radius:9999px;
+    background:radial-gradient(circle,rgba(0,191,255,0.08),transparent 70%);
+    pointer-events:none;z-index:0;
+  }
+  .tier-card {
+    position:relative;
+    background:var(--card,#fff);
+    border:1.5px solid var(--border,#E2ECF5);
+    border-radius:16px;
+    overflow:hidden;
+    transition:box-shadow 0.18s, transform 0.18s;
+    display:flex;flex-direction:column;
+  }
+  .tier-card:hover {
+    box-shadow:0 8px 24px rgba(0,0,0,0.08);
+    transform:translateY(-2px);
+  }
+  .tier-card.tier-current {
+    border-color:#D4A017;
+    box-shadow:0 0 0 3px rgba(212,160,23,0.15), 0 8px 28px rgba(0,0,0,0.1);
+  }
+  .current-label {
+    position:absolute;top:0;left:50%;transform:translateX(-50%);
+    background:linear-gradient(135deg,#D4A017,#B8860B);
+    color:white;font-size:0.65rem;font-weight:800;
+    padding:3px 16px;border-radius:0 0 10px 10px;
+    white-space:nowrap;letter-spacing:0.03em;
+  }
+  .tier-card-header {
+    padding:1.25rem 1.25rem 1rem;
+    display:flex;align-items:center;gap:0.875rem;
+  }
+  .tier-icon-wrap {
+    width:38px;height:38px;border-radius:10px;
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+  }
+  .tier-name {
+    font-size:1.25rem;font-weight:900;letter-spacing:-0.01em;
+  }
+  .tier-card-body {
+    padding:0 1.25rem 1.25rem;
+    display:flex;flex-direction:column;gap:0.5rem;flex:1;
+  }
+  .tier-requirement {
+    display:flex;align-items:center;gap:0.5rem;
+    font-size:0.75rem;color:var(--muted);font-weight:500;
+  }
+  .tier-requirement strong { color:var(--ink); }
+  .tier-benefits {
+    margin-top:0.5rem;padding:0;list-style:none;
+    display:flex;flex-direction:column;gap:0.375rem;
+    border-top:1px solid var(--border);padding-top:0.75rem;
+  }
+  .tier-benefits li {
+    font-size:0.72rem;color:var(--muted);
+    padding-left:1.125rem;position:relative;
+  }
+  .tier-benefits li::before {
+    content:"✓";position:absolute;left:0;
+    color:#00BFFF;font-weight:800;font-size:0.65rem;
+  }
+</style>
+
+{# ── Script ── #}
+<script>
+  // Animasikan progress bar saat halaman load
+  document.addEventListener('DOMContentLoaded', () => {
+    const bars = document.querySelectorAll('.progress-bar-fill');
+    bars.forEach(bar => {
+      const target = bar.style.width;
+      bar.style.width = '0%';
+      setTimeout(() => { bar.style.width = target; }, 100);
+    });
+  });
+</script>
+
+{% endblock %}
