@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     'dashboard',
     'core',
     'membership',
-    'theme',
     'partners',
 ]
 

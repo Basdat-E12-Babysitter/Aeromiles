@@ -480,7 +480,12 @@
 </style>
 
 <script>
-  const TIER_COLOR = { Blue:'#3B82F6', Silver:'#6B7280', Gold:'#D97706', Platinum:'#7C3AED' }
+ const TIER_STYLE = { 
+    Blue:     { bg: '#E0F7FF', text: '#005A8C' },
+    Silver:   { bg: '#F1F5F9', text: '#64748B' },
+    Gold:     { bg: '#FEF3C7', text: '#B45309' },
+    Platinum: { bg: '#F3E8FF', text: '#7E22CE' }
+    }
   let allMembers = []
 
   //TOAST
@@ -547,13 +552,13 @@
       const p     = row.pengguna || {}
       const nama  = `${p.salutation || ''} ${p.first_mid_name || ''} ${p.last_name || ''}`.trim()
       const tier  = row.tier?.nama || '-'
-      const color = TIER_COLOR[tier] || '#6B7280'
-      const safe  = JSON.stringify(row).replace(/"/g, '&quot;')
-      return `<tr class="border-b transition-colors hover:bg-blue-50/30" style="border-color:var(--border);">
+        const styleObj = TIER_STYLE[tier] || { bg: '#F1F5F9', text: '#64748B' }
+        const safe = JSON.stringify(row).replace(/"/g, '&quot;')
+        return `<tr class="border-b transition-colors hover:bg-blue-50/30" style="border-color:var(--border);">
         <td class="px-5 py-4 font-bold" style="color:var(--sky-500,#00BFFF)">${row.nomor_member || '-'}</td>
         <td class="px-5 py-4 font-semibold" style="color:var(--ink)">${nama || '-'}</td>
         <td class="px-5 py-4" style="color:var(--muted)">${row.email}</td>
-        <td class="px-5 py-4"><span class="tier-badge" style="background:${color}">${tier}</span></td>
+       <td class="px-5 py-4"><span class="tier-badge" style="background:${styleObj.bg}; color:${styleObj.text};">${tier}</span></td>
         <td class="px-5 py-4 font-semibold" style="color:var(--ink)">${(row.total_miles || 0).toLocaleString('id-ID')}</td>
         <td class="px-5 py-4 font-semibold" style="color:var(--ink)">${(row.award_miles || 0).toLocaleString('id-ID')}</td>
         <td class="px-5 py-4" style="color:var(--muted)">${row.tanggal_bergabung || '-'}</td>
