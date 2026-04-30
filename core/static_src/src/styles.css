@@ -359,12 +359,15 @@ select.form-input { appearance: none; background-image: url("data:image/svg+xml,
 
 /* ── TIER BADGE ── */
 .tier-badge {
+  background: linear-gradient(135deg, #00BFFF 0%, #0082CC 100%);
   border-radius: 999px;
   padding: 4px 14px;
   font-size: 0.72rem;
   font-weight: 800;
   letter-spacing: 0.08em;
+  color: #fff;
   text-transform: uppercase;
+  box-shadow: 0 2px 10px rgba(0,191,255,0.4);
   display: inline-block;
 }
 
@@ -707,7 +710,7 @@ select.inp {
   opacity: 0; pointer-events: none;
   transition: opacity .22s ease;
 }
-.pw-modal-box {
+.modal-box {
   background: #fff;
   border-radius: 20px;
   border: 1px solid var(--border);
@@ -722,7 +725,75 @@ select.inp {
 
 /* Checked → visible */
 #modal-pw:checked ~ .overlay          { opacity: 1; pointer-events: auto; }
-#modal-pw:checked ~ .overlay .pw-modal-box { transform: translateY(0) scale(1); opacity: 1; }
+#modal-pw:checked ~ .overlay .modal-box { transform: translateY(0) scale(1); opacity: 1; }
+
+/* Modal Backdrop (JavaScript-controlled) */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(10, 22, 40, 0.52);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 1;
+  pointer-events: auto;
+  transition: opacity 0.22s ease;
+}
+
+.modal-backdrop.modal-closed {
+  display: none !important;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.modal-backdrop .modal-box {
+  background: #fff;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  box-shadow: 0 24px 64px rgba(10, 22, 40, 0.2);
+  width: 100%;
+  max-width: 440px;
+  padding: 30px 28px 26px;
+  position: relative;
+  transform: translateY(0) scale(1);
+  opacity: 1;
+  animation: modalSlideIn 0.26s ease;
+}
+
+@keyframes modalSlideIn {
+  from {
+    transform: translateY(20px) scale(0.97);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.modal-close-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.modal-close-btn:hover {
+  background: var(--surface);
+  color: var(--ink);
+  border-color: var(--sky);
+}
 
 /* Modal input */
 .m-inp {

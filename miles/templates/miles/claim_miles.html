@@ -64,7 +64,7 @@
 </div>
 
 {# ── MODAL — Ajukan Klaim Baru ── #}
-<div id="modal-backdrop" class="modal-backdrop hidden" onclick="closeModal()">
+<div id="modal-backdrop" class="modal-backdrop modal-closed" onclick="closeModal()">
   <div class="modal-box" onclick="event.stopPropagation()">
     <div class="flex items-center justify-between mb-6">
       <div>
@@ -213,7 +213,7 @@
   </div>
 </div>
 
-<div id="modal-edit-backdrop" class="modal-backdrop hidden" onclick="closeEditModal()">
+<div id="modal-edit-backdrop" class="modal-backdrop modal-closed" onclick="closeEditModal()">
   <div class="modal-box" onclick="event.stopPropagation()">
     <div class="flex items-center justify-between mb-6">
       <div>
@@ -291,7 +291,7 @@
   </div>
 </div>
 
-<div id="modal-hapus-backdrop" class="modal-backdrop hidden" onclick="closeHapusModal()">
+<div id="modal-hapus-backdrop" class="modal-backdrop modal-closed" onclick="closeHapusModal()">
   <div class="modal-box" style="max-width:380px;" onclick="event.stopPropagation()">
     <h3 class="text-lg font-extrabold mb-1" style="color:var(--ink)">Hapus Klaim?</h3>
     <p class="text-sm mb-6" style="color:var(--muted)">Klaim akan dihapus secara permanen.</p>
@@ -320,7 +320,7 @@
     backdrop-filter:blur(4px);display:flex;align-items:center;
     justify-content:center;z-index:50;padding:1rem;animation:fadeIn 0.18s ease;
   }
-  .modal-backdrop.hidden { display:none !important; }
+  .modal-backdrop.modal-closed { display:none !important; }
   .modal-box {
     background:var(--card,#fff);border-radius:20px;padding:2rem;
     width:100%;max-width:620px;max-height:90vh;overflow-y:auto;
@@ -360,13 +360,14 @@
 <script>
   // Modal
   function openModal() {
-    document.getElementById('modal-backdrop').classList.remove('hidden');
+    document.getElementById('modal-backdrop').classList.remove('modal-closed');
     document.body.style.overflow = 'hidden';
   }
   function closeModal() {
-    document.getElementById('modal-backdrop').classList.add('hidden');
+    document.getElementById('modal-backdrop').classList.add('modal-closed');
     document.body.style.overflow = '';
-    document.getElementById('form-error').classList.add('hidden');
+    const errorEl = document.getElementById('form-error');
+    if (errorEl) errorEl.classList.add('hidden');
   }
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
@@ -500,21 +501,21 @@
     document.getElementById('edit-flight').value   = k.flight_number || '—';
     document.getElementById('edit-tiket').value    = k.nomor_tiket || '—';
     document.getElementById('edit-pnr').value      = k.pnr || '—';
-    document.getElementById('modal-edit-backdrop').classList.remove('hidden');
+    document.getElementById('modal-edit-backdrop').classList.remove('modal-closed');
     document.body.style.overflow = 'hidden';
   }
 
   function closeEditModal() {
-    document.getElementById('modal-edit-backdrop').classList.add('hidden');
+    document.getElementById('modal-edit-backdrop').classList.add('modal-closed');
     document.body.style.overflow = '';
   }
 
   function openHapusModal() {
-    document.getElementById('modal-hapus-backdrop').classList.remove('hidden');
+    document.getElementById('modal-hapus-backdrop').classList.remove('modal-closed');
     document.body.style.overflow = 'hidden';
   }
   function closeHapusModal() {
-    document.getElementById('modal-hapus-backdrop').classList.add('hidden');
+    document.getElementById('modal-hapus-backdrop').classList.add('modal-closed');
     document.body.style.overflow = '';
   }
 
