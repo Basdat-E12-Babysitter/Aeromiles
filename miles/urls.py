@@ -10,4 +10,6 @@ urlpatterns = [
     path('klaim/baru/', TemplateView.as_view(template_name='miles/claim_miles.html'), name='klaim_create'),
     path('klaim/<int:pk>/hapus/', TemplateView.as_view(template_name='miles/claim_miles.html'), name='klaim_delete'),
     path('kelola/', TemplateView.as_view(template_name='miles/kelola_klaim.html'), name='kelola_klaim'),
+    path('transfer/', TemplateView.as_view(template_name='miles/transfer_miles.html'), name='transfer_list'),
+    path('transfer/baru/', TemplateView.as_view(template_name='miles/transfer_miles.html'), name='transfer_create'),
 ]
