@@ -35,6 +35,11 @@
 {# ── Klaim Table ── #}
 <div class="card overflow-hidden">
   <div class="overflow-x-auto">
+    {% if messages %}
+  {% for message in messages %}
+    <p style="color:red;font-weight:bold;">{{ message }}</p>
+  {% endfor %}
+{% endif %}
     <table class="w-full text-sm">
       <thead>
       <tr style="background:var(--surface); border-bottom:1.5px solid var(--border);">
@@ -76,7 +81,7 @@
       </button>
     </div>
 
-    <form method="POST" action="{% url 'rewards:klaim_create' %}">
+    <form method="POST" action="{% url 'miles:klaim_create' %}">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
         {# Maskapai #}
@@ -373,7 +378,8 @@
 
   // Filter Tabs
   let currentFilter = '';
-  let allKlaim = [];
+  const allKlaim = {{ klaim_list | safe }};
+  document.addEventListener('DOMContentLoaded', () => filterKlaim(''));
 
   function filterKlaim(status) {
     currentFilter = status;
@@ -460,37 +466,6 @@
           <td class="px-5 py-4">${aksiHtml}</td>
         </tr>`;
     }).join('');
-  }
-
-  // Load Data Klaim dari Supabase
-  async function loadKlaim() {
-    try {
-      const currentMemberEmail = 'agus.setiawan@gmail.com'.trim().toLowerCase();
-
-      const { data, error } = await window.AeroMilesSupabase.client
-              .from('claim_missing_miles')
-              .select('*')
-              .eq('email_member', currentMemberEmail)
-              .order('id', { ascending: true }); // urut dari id terkecil
-
-      if (error) throw error;
-
-      allKlaim = data || [];
-      filterKlaim(currentFilter);
-
-    } catch (err) {
-      console.error('Gagal memuat klaim:', err);
-      document.getElementById('klaim-tbody').innerHTML = `
-        <tr>
-          <td colspan="9" style="padding:4rem 0;">
-            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#FCA5A5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-              <p style="font-size:0.875rem;font-weight:600;color:#EF4444;">Gagal memuat data.</p>
-              <p style="font-size:0.75rem;color:var(--muted);">${err.message}</p>
-            </div>
-          </td>
-        </tr>`;
-    }
   }
 
   function openEditModal(id) {

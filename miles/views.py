@@ -1,3 +1,108 @@
-from django.shortcuts import render
+# miles/views.py
 
-# Create your views here.
+from django.shortcuts import render, redirect
+from django.db import connection, IntegrityError
+from django.contrib import messages
+from django.views.decorators.http import require_http_methods
+from django.views.decorators.csrf import csrf_exempt
+
+def _member_required(request):
+    return (
+        request.session.get("user_email") and
+        request.session.get("user_role") == "member"
+    )
+
+def _staf_required(request):
+    return (
+        request.session.get("user_email") and
+        request.session.get("user_role") == "staf"
+    )
+
+# KLAIM MISSING MILES (MEMBER)
+
+def klaim_list(request):
+    if not _member_required(request):
+        return redirect("accounts:login")
+
+    email = request.session["user_email"]
+
+    with connection.cursor() as cur:
+        cur.execute("""
+            SELECT
+                c.id,
+                c.maskapai AS kode_maskapai,
+                mk.nama_maskapai AS maskapai,
+                c.bandara_asal,
+                c.bandara_tujuan,
+                c.tanggal_penerbangan,
+                c.flight_number,
+                c.nomor_tiket,
+                c.kelas_kabin,
+                c.pnr,
+                c.status_penerimaan,
+                TO_CHAR(c.tanggal_penerbangan, 'YYYY-MM-DD') AS tanggal_penerbangan
+            FROM CLAIM_MISSING_MILES c
+            JOIN MASKAPAI mk ON mk.kode_maskapai = c.maskapai
+            WHERE c.email_member = %s
+            ORDER BY c.id ASC
+        """, [email])
+        cols  = [col[0] for col in cur.description]
+        klaim = [dict(zip(cols, row)) for row in cur.fetchall()]
+
+    # Dropdown: daftar maskapai & bandara untuk form
+    with connection.cursor() as cur:
+        cur.execute("SELECT kode_maskapai, nama_maskapai FROM MASKAPAI ORDER BY nama_maskapai")
+        maskapai_list = [{"kode": r[0], "nama": r[1]} for r in cur.fetchall()]
+
+        cur.execute("SELECT iata_code, nama FROM BANDARA ORDER BY nama")
+        bandara_list  = [{"kode": r[0], "nama": r[1]} for r in cur.fetchall()]
+
+    return render(request, "miles/claim_miles.html", {
+        "klaim_list":    klaim,
+        "maskapai_list": maskapai_list,
+        "bandara_list":  bandara_list,
+    })
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def klaim_create(request):
+    if not _member_required(request):
+        return redirect("accounts:login")
+
+    email = request.session["user_email"]
+
+    maskapai = request.POST.get("maskapai", "").strip()
+    kelas_kabin = request.POST.get("kelas_kabin", "").strip()
+    bandara_asal = request.POST.get("bandara_asal", "").strip()
+    bandara_tujuan = request.POST.get("bandara_tujuan", "").strip()
+    tanggal = request.POST.get("tanggal_penerbangan", "").strip()
+    flight_number = request.POST.get("flight_number", "").strip().upper()
+    nomor_tiket = request.POST.get("nomor_tiket", "").strip()
+    pnr = request.POST.get("pnr", "").strip().upper()
+
+    try:
+        with connection.cursor() as cur:
+            cur.execute("""
+                INSERT INTO CLAIM_MISSING_MILES
+                    (email_member, maskapai, bandara_asal, bandara_tujuan,
+                     tanggal_penerbangan, flight_number, nomor_tiket,
+                     kelas_kabin, pnr, status_penerimaan, timestamp)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, 'Menunggu', NOW())
+            """, [email, maskapai, bandara_asal, bandara_tujuan,
+                  tanggal, flight_number, nomor_tiket, kelas_kabin, pnr])
+
+        messages.success(request, "Klaim berhasil diajukan.")
+
+    except IntegrityError as e:
+        err = str(e)
+        if "ERROR:" in err:
+            err = err.split("ERROR:")[-1].strip()
+        messages.error(request, err)
+
+    except Exception as e:
+        err = str(e)
+        if "ERROR:" in err:
+            err = err.split("ERROR:")[-1].strip()
+        messages.error(request, err)
+
+    return redirect("miles:klaim_list")
