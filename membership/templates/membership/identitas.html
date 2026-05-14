@@ -308,8 +308,6 @@
 </style>
 
 <script>
-  const EMAIL_MEMBER = 'agus.setiawan@gmail.com'
-
   // Toast 
   function showToast(msg, type = 'success') {
     const toast = document.getElementById('toast')
@@ -322,16 +320,15 @@
     setTimeout(() => toast.classList.add('hidden'), 3000)
   }
 
-  // READ dari Supabase 
-  // Tabel: identitas | Kolom: nomor, email_member, jenis, negara_penerbit, tanggal_terbit, tanggal_habis
+  // READ dari Django endpoint (session user login)
   async function loadIdentitas() {
     try {
-      const { data, error } = await window.AeroMilesSupabase.client
-        .from('identitas')
-        .select('nomor, jenis, negara_penerbit, tanggal_terbit, tanggal_habis')
-        .eq('email_member', EMAIL_MEMBER)
-        .order('tanggal_terbit', { ascending: false })
-      if (error) throw error
+      const response = await fetch('{% url "membership:get_identitas" %}', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+      })
+      if (!response.ok) throw new Error(`HTTP ${response.status}`)
+      const data = await response.json()
       renderTable(data)
     } catch (err) {
       document.getElementById('identitasTableBody').innerHTML = `
@@ -423,10 +420,35 @@
     document.getElementById('modal-tambah').classList.add('hidden')
     document.getElementById('modal-konfirmasi-tambah').classList.remove('hidden')
   }
-  function submitTambah() {
-    document.getElementById('modal-konfirmasi-tambah').classList.add('hidden')
-    document.body.style.overflow = ''
-    showToast('Identitas berhasil ditambahkan!')
+  async function submitTambah() {
+    const payload = {
+      nomor: document.getElementById('f-no-dokumen').value.trim(),
+      jenis: document.getElementById('f-jenis').value,
+      negara_penerbit: document.getElementById('f-negara').value,
+      tanggal_terbit: document.getElementById('f-tgl-terbit').value,
+      tanggal_habis: document.getElementById('f-tgl-habis').value
+    }
+
+    try {
+      const res = await fetch("{% url 'membership:tambah_identitas' %}", {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      const data = await res.json()
+
+      if (res.ok && data.success) {
+        document.getElementById('modal-konfirmasi-tambah').classList.add('hidden')
+        closeTambahModal()
+        showToast('Identitas berhasil ditambahkan!')
+        loadIdentitas()
+      } else {
+        showToast(data.error || 'Gagal menambahkan identitas.', 'error')
+        closeKonfirmasiTambah()
+      }
+    } catch (err) {
+      showToast('Terjadi kesalahan pada server.', 'error')
+    }
   }
 
   // EDIT 
@@ -459,10 +481,38 @@
     document.getElementById('modal-edit').classList.add('hidden')
     document.getElementById('modal-konfirmasi-edit').classList.remove('hidden')
   }
-  function submitEdit() {
-    document.getElementById('modal-konfirmasi-edit').classList.add('hidden')
-    document.body.style.overflow = ''
-    showToast('Identitas berhasil diperbarui!')
+  async function submitEdit() {
+    const nomor = document.getElementById('edit-no-dokumen').value
+    const payload = {
+      jenis: document.getElementById('edit-jenis').value,
+      negara_penerbit: document.getElementById('edit-negara').value,
+      tanggal_terbit: document.getElementById('edit-tgl-terbit').value,
+      tanggal_habis: document.getElementById('edit-tgl-habis').value
+    }
+
+    try {
+      const urlTemplate = "{% url 'membership:edit_identitas' 'DUMMY_NOMOR' %}"
+      const submitUrl = urlTemplate.replace('DUMMY_NOMOR', encodeURIComponent(nomor))
+
+      const res = await fetch(submitUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      const data = await res.json()
+
+      if (res.ok && data.success) {
+        document.getElementById('modal-konfirmasi-edit').classList.add('hidden')
+        closeEditModal()
+        showToast('Identitas berhasil diperbarui!')
+        loadIdentitas()
+      } else {
+        showToast(data.error || 'Gagal memperbarui identitas.', 'error')
+        closeKonfirmasiEdit()
+      }
+    } catch (err) {
+      showToast('Terjadi kesalahan pada server.', 'error')
+    }
   }
 
   // HAPUS 
@@ -475,9 +525,26 @@
     document.getElementById('modal-hapus').classList.add('hidden')
     document.body.style.overflow = ''
   }
-  function submitHapus() {
-    closeHapusModal()
-    showToast('Identitas berhasil dihapus!')
+  async function submitHapus() {
+    const nomor = document.getElementById('hapus-no-dokumen').value
+
+    try {
+      const urlTemplate = "{% url 'membership:hapus_identitas' 'DUMMY_NOMOR' %}"
+      const submitUrl = urlTemplate.replace('DUMMY_NOMOR', encodeURIComponent(nomor))
+
+      const res = await fetch(submitUrl, { method: 'POST' })
+      const data = await res.json()
+
+      if (res.ok && data.success) {
+        closeHapusModal()
+        showToast('Identitas berhasil dihapus!')
+        loadIdentitas()
+      } else {
+        showToast(data.error || 'Gagal menghapus identitas.', 'error')
+      }
+    } catch (err) {
+      showToast('Terjadi kesalahan pada server.', 'error')
+    }
   }
 
   document.addEventListener('keydown', e => {

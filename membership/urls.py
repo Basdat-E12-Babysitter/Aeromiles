@@ -13,6 +13,7 @@ urlpatterns = [
 
     # Identitas (Member)
     path("identitas/", views.identitas, name="identitas"),
+    path("identitas/list/", views.get_identitas, name="get_identitas"),
     path("identitas/tambah/", views.tambah_identitas, name="tambah_identitas"),
     path("identitas/<str:nomor>/edit/", views.edit_identitas, name="edit_identitas"),
     path("identitas/<str:nomor>/hapus/", views.hapus_identitas, name="hapus_identitas"),

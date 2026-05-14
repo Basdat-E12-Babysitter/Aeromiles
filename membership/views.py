@@ -159,6 +159,30 @@ def identitas(request):
 
 
 @csrf_exempt
+@require_http_methods(["GET"])
+def get_identitas(request):
+    if not _require_member(request):
+        return JsonResponse({"error": "Unauthorized"}, status=403)
+    try:
+        email = request.session["user_email"]
+        with connection.cursor() as cur:
+            cur.execute("""
+                SELECT nomor, jenis, negara_penerbit, tanggal_terbit, tanggal_habis
+                FROM IDENTITAS
+                WHERE email_member = %s
+                ORDER BY tanggal_terbit DESC
+            """, [email])
+            cols = [col[0] for col in cur.description]
+            items = [dict(zip(cols, row)) for row in cur.fetchall()]
+        return JsonResponse(items, safe=False)
+    except Exception as e:
+        error_msg = str(e)
+        if "ERROR:" in error_msg:
+            error_msg = error_msg.split("ERROR:")[-1].strip()
+        return JsonResponse({"error": error_msg}, status=400)
+
+
+@csrf_exempt
 @require_http_methods(["POST"])
 def tambah_identitas(request):
     if not _require_member(request):
