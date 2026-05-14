@@ -106,3 +106,103 @@ def klaim_create(request):
         messages.error(request, err)
 
     return redirect("miles:klaim_list")
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def klaim_update(request, pk):
+    if not _member_required(request):
+        return redirect("accounts:login")
+
+    email = request.session["user_email"]
+
+    # Pastikan klaim milik member ini dan masih Menunggu
+    with connection.cursor() as cur:
+        cur.execute("""
+            SELECT status_penerimaan FROM CLAIM_MISSING_MILES
+            WHERE id = %s AND email_member = %s
+        """, [pk, email])
+        row = cur.fetchone()
+
+    if not row:
+        messages.error(request, "Klaim tidak ditemukan.")
+        return redirect("miles:klaim_list")
+    if row[0] != "Menunggu":
+        messages.error(request, "Hanya klaim berstatus Menunggu yang dapat diedit.")
+        return redirect("miles:klaim_list")
+
+    maskapai = request.POST.get("maskapai", "").strip()
+    kelas_kabin = request.POST.get("kelas_kabin", "").strip()
+    bandara_asal = request.POST.get("bandara_asal", "").strip()
+    bandara_tujuan = request.POST.get("bandara_tujuan", "").strip()
+    tanggal = request.POST.get("tanggal_penerbangan", "").strip()
+    flight_number = request.POST.get("flight_number", "").strip().upper()
+    nomor_tiket = request.POST.get("nomor_tiket", "").strip()
+    pnr = request.POST.get("pnr", "").strip().upper()
+
+    try:
+        with connection.cursor() as cur:
+            cur.execute("""
+                UPDATE CLAIM_MISSING_MILES
+                SET
+                    maskapai = %s,
+                    kelas_kabin = %s,
+                    bandara_asal = %s,
+                    bandara_tujuan = %s,
+                    tanggal_penerbangan = %s,
+                    flight_number = %s,
+                    nomor_tiket = %s,
+                    pnr = %s,
+                    timestamp = NOW()
+                WHERE id = %s
+                  AND email_member = %s
+                  AND status_penerimaan = 'Menunggu'
+            """, [maskapai, kelas_kabin, bandara_asal, bandara_tujuan,
+                  tanggal, flight_number, nomor_tiket, pnr, pk, email])
+
+        messages.success(request, "Klaim berhasil diperbarui.")
+
+    except IntegrityError as e:
+        err = str(e)
+        if "ERROR:" in err:
+            err = err.split("ERROR:")[-1].strip()
+        messages.error(request, err)
+
+    except Exception as e:
+        err = str(e)
+        if "ERROR:" in err:
+            err = err.split("ERROR:")[-1].strip()
+        messages.error(request, err)
+
+    return redirect("miles:klaim_list")
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def klaim_delete(request, pk):
+    if not _member_required(request):
+        return redirect("accounts:login")
+
+    email = request.session["user_email"]
+
+    with connection.cursor() as cur:
+        cur.execute("""
+            SELECT status_penerimaan FROM CLAIM_MISSING_MILES
+            WHERE id = %s AND email_member = %s
+        """, [pk, email])
+        row = cur.fetchone()
+
+    if not row:
+        messages.error(request, "Klaim tidak ditemukan.")
+        return redirect("miles:klaim_list")
+    if row[0] != "Menunggu":
+        messages.error(request, "Hanya klaim berstatus Menunggu yang dapat dihapus.")
+        return redirect("miles:klaim_list")
+
+    with connection.cursor() as cur:
+        cur.execute("""
+            DELETE FROM CLAIM_MISSING_MILES
+            WHERE id = %s AND email_member = %s
+        """, [pk, email])
+
+    messages.success(request, "Klaim berhasil dihapus.")
+    return redirect("miles:klaim_list")
