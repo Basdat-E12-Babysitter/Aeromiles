@@ -146,52 +146,129 @@ def register(request):
             error_msg = error_msg.split("ERROR:")[-1].strip()
         return render(request, "register.html", {"ERROR": error_msg})
     
+def _get_member(email):
+    with connection.cursor() as cur:
+        cur.execute("""
+            SELECT pg.email, pg.salutation, pg.first_mid_name, pg.last_name,
+                   pg.country_code, pg.mobile_number, pg.tanggal_lahir, pg.kewarganegaraan,
+                   m.nomor_member, m.tanggal_bergabung, m.award_miles, m.total_miles,
+                   t.nama AS nama_tier
+            FROM PENGGUNA pg
+            JOIN MEMBER m ON m.email   = pg.email
+            JOIN TIER   t ON t.id_tier = m.id_tier
+            WHERE pg.email = %s
+        """, [email])
+        row  = cur.fetchone()
+        cols = [col[0] for col in cur.description]
+        return dict(zip(cols, row))
+    
+@csrf_exempt
+@require_http_methods(["GET", "POST"])
 def profile_member(request):
     if not request.session.get("user_email") or request.session.get("user_role") != "member":
         return redirect("accounts:login")
  
     email = request.session["user_email"]
  
+    if request.method == "GET":
+        return render(request, "profile_member.html", {"member": _get_member(email)})
+ 
+    # POST — update data pribadi
+    try:
+        with connection.cursor() as cur:
+            cur.execute("""
+                UPDATE PENGGUNA SET
+                    salutation      = %s,
+                    first_mid_name  = %s,
+                    last_name       = %s,
+                    country_code    = %s,
+                    mobile_number   = %s,
+                    tanggal_lahir   = %s,
+                    kewarganegaraan = %s
+                WHERE email = %s
+            """, [
+                request.POST.get("salutation"),
+                request.POST.get("first_mid_name"),
+                request.POST.get("last_name"),
+                request.POST.get("country_code"),
+                request.POST.get("mobile_number"),
+                request.POST.get("tanggal_lahir"),
+                request.POST.get("kewarganegaraan"),
+                email
+            ])
+        # Update session name
+        request.session["user_name"]       = f"{request.POST.get('first_mid_name')} {request.POST.get('last_name')}"
+        request.session["user_salutation"] = request.POST.get("salutation")
+        return render(request, "profile_member.html", {
+            "member":  _get_member(email),
+            "success": "Profil berhasil diperbarui!"
+        })
+    except Exception as e:
+        return render(request, "profile_member.html", {
+            "member": _get_member(email),
+            "error":  str(e)
+        })
+
+def _get_staf(email):
     with connection.cursor() as cur:
         cur.execute("""
-            SELECT
-                pg.email, pg.salutation, pg.first_mid_name, pg.last_name,
-                pg.country_code, pg.mobile_number, pg.tanggal_lahir, pg.kewarganegaraan,
-                m.nomor_member, m.tanggal_bergabung, m.award_miles, m.total_miles,
-                t.nama AS nama_tier
+            SELECT pg.email, pg.salutation, pg.first_mid_name, pg.last_name,
+                   pg.country_code, pg.mobile_number, pg.tanggal_lahir, pg.kewarganegaraan,
+                   s.id_staf, mk.nama_maskapai, mk.kode_maskapai
             FROM PENGGUNA pg
-            JOIN MEMBER m ON m.email = pg.email
-            JOIN TIER   t ON t.id_tier = m.id_tier
+            JOIN STAF     s  ON s.email          = pg.email
+            JOIN MASKAPAI mk ON mk.kode_maskapai = s.kode_maskapai
             WHERE pg.email = %s
         """, [email])
         row  = cur.fetchone()
         cols = [col[0] for col in cur.description]
-        member = dict(zip(cols, row))
- 
-    return render(request, "profile_member.html", {"member": member})
+        return dict(zip(cols, row))
 
+@csrf_exempt
+@require_http_methods(["GET", "POST"])
 def profile_staf(request):
     if not request.session.get("user_email") or request.session.get("user_role") != "staf":
         return redirect("accounts:login")
  
     email = request.session["user_email"]
  
-    with connection.cursor() as cur:
-        cur.execute("""
-            SELECT
-                pg.email, pg.salutation, pg.first_mid_name, pg.last_name,
-                pg.country_code, pg.mobile_number, pg.tanggal_lahir, pg.kewarganegaraan,
-                s.id_staf, mk.nama_maskapai, mk.kode_maskapai
-            FROM PENGGUNA pg
-            JOIN STAF     s  ON s.email         = pg.email
-            JOIN MASKAPAI mk ON mk.kode_maskapai = s.kode_maskapai
-            WHERE pg.email = %s
-        """, [email])
-        row  = cur.fetchone()
-        cols = [col[0] for col in cur.description]
-        staf = dict(zip(cols, row))
+    if request.method == "GET":
+        return render(request, "profile_staf.html", {"staf": _get_staf(email)})
  
-    return render(request, "profile_staf.html", {"staf": staf})
+    # POST — update data pribadi
+    try:
+        with connection.cursor() as cur:
+            cur.execute("""
+                UPDATE PENGGUNA SET
+                    salutation      = %s,
+                    first_mid_name  = %s,
+                    last_name       = %s,
+                    country_code    = %s,
+                    mobile_number   = %s,
+                    tanggal_lahir   = %s,
+                    kewarganegaraan = %s
+                WHERE email = %s
+            """, [
+                request.POST.get("salutation"),
+                request.POST.get("first_mid_name"),
+                request.POST.get("last_name"),
+                request.POST.get("country_code"),
+                request.POST.get("mobile_number"),
+                request.POST.get("tanggal_lahir"),
+                request.POST.get("kewarganegaraan"),
+                email
+            ])
+        request.session["user_name"]       = f"{request.POST.get('first_mid_name')} {request.POST.get('last_name')}"
+        request.session["user_salutation"] = request.POST.get("salutation")
+        return render(request, "profile_staf.html", {
+            "staf":    _get_staf(email),
+            "success": "Profil berhasil diperbarui!"
+        })
+    except Exception as e:
+        return render(request, "profile_staf.html", {
+            "staf":  _get_staf(email),
+            "error": str(e)
+        })
 
 @csrf_exempt
 @require_http_methods(["POST"])
