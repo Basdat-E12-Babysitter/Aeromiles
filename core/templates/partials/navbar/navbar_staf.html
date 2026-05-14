@@ -97,10 +97,10 @@
 <div class="flex items-center gap-2.5 flex-shrink-0 ml-1">
   <!-- Avatar + Name -->
   <div class="hidden md:flex items-center gap-2">
-    <div class="avatar w-8 h-8 text-xs">SO</div>
+    <div class="avatar w-8 h-8 text-xs">{{ staf.first_mid_name|first|upper }}{{ staf.last_name|first|upper }}</div>
     <div class="hidden lg:block">
-      <p class="text-xs font-bold leading-tight" style="color:var(--ink)">Sarah Oktavia</p>
-      <p class="text-xs leading-tight" style="color:var(--muted)">Staf · Emirates</p>
+      <p class="text-xs font-bold leading-tight" style="color:var(--ink)">{{ staf.first_mid_name }} {{ staf.last_name }}</p>
+      <p class="text-xs leading-tight" style="color:var(--muted)">Staf · {{ staf.nama_maskapai }}</p>
     </div>
   </div>
   <!-- Logout -->
