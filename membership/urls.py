@@ -1,9 +1,19 @@
 from django.urls import path
-from django.views.generic import TemplateView
+from . import views
 
 app_name = "membership"
 
 urlpatterns = [
-    path("kelola/", TemplateView.as_view(template_name="membership/kelola_member.html"), name="kelola_member"),
-    path("identitas/", TemplateView.as_view(template_name="membership/identitas.html"), name="identitas"),
+    # Kelola Member (Staf)
+    path("kelola/", views.kelola_member, name="kelola_member"),
+    path("kelola/list/", views.get_members, name="get_members"),
+    path("kelola/tambah/", views.tambah_member, name="tambah_member"),
+    path("kelola/<str:email>/edit/", views.edit_member, name="edit_member"),
+    path("kelola/<str:email>/hapus/", views.hapus_member, name="hapus_member"),
+
+    # Identitas (Member)
+    path("identitas/", views.identitas, name="identitas"),
+    path("identitas/tambah/", views.tambah_identitas, name="tambah_identitas"),
+    path("identitas/<str:nomor>/edit/", views.edit_identitas, name="edit_identitas"),
+    path("identitas/<str:nomor>/hapus/", views.hapus_identitas, name="hapus_identitas"),
 ]
