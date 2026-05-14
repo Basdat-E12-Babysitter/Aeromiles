@@ -192,3 +192,83 @@ def profile_staf(request):
         staf = dict(zip(cols, row))
  
     return render(request, "profile_staf.html", {"staf": staf})
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def ubah_password(request):
+    if not request.session.get("user_email"):
+        return redirect("accounts:login")
+ 
+    email            = request.session["user_email"]
+    password_lama    = request.POST.get("password_lama", "").strip()
+    password_baru    = request.POST.get("password_baru", "").strip()
+    password_confirm = request.POST.get("password_confirm", "").strip()
+    role             = request.session.get("user_role")
+
+    template = "profile_member.html" if role == "member" else "profile_staf.html"
+ 
+    def render_with_data(context):
+        # Re-fetch data profil supaya template tetap bisa render
+        with connection.cursor() as cur:
+            if role == "member":
+                cur.execute("""
+                    SELECT pg.email, pg.salutation, pg.first_mid_name, pg.last_name,
+                           pg.country_code, pg.mobile_number, pg.tanggal_lahir, pg.kewarganegaraan,
+                           m.nomor_member, m.tanggal_bergabung, m.award_miles, m.total_miles,
+                           t.nama AS nama_tier
+                    FROM PENGGUNA pg
+                    JOIN MEMBER m ON m.email   = pg.email
+                    JOIN TIER   t ON t.id_tier = m.id_tier
+                    WHERE pg.email = %s
+                """, [email])
+                row  = cur.fetchone()
+                cols = [col[0] for col in cur.description]
+                context["member"] = dict(zip(cols, row))
+            else:
+                cur.execute("""
+                    SELECT pg.email, pg.salutation, pg.first_mid_name, pg.last_name,
+                           pg.country_code, pg.mobile_number, pg.tanggal_lahir, pg.kewarganegaraan,
+                           s.id_staf, mk.nama_maskapai, mk.kode_maskapai
+                    FROM PENGGUNA pg
+                    JOIN STAF     s  ON s.email          = pg.email
+                    JOIN MASKAPAI mk ON mk.kode_maskapai = s.kode_maskapai
+                    WHERE pg.email = %s
+                """, [email])
+                row  = cur.fetchone()
+                cols = [col[0] for col in cur.description]
+                context["staf"] = dict(zip(cols, row))
+        return render(request, template, context)
+ 
+    # Validasi input
+    if not password_lama or not password_baru or not password_confirm:
+        return render_with_data({"password_error": "Semua field password wajib diisi."})
+ 
+    if len(password_baru) < 8:
+        return render_with_data({"password_error": "Password baru minimal 8 karakter."})
+ 
+    if password_baru != password_confirm:
+        return render_with_data({"password_error": "Konfirmasi password tidak cocok."})
+ 
+    # Ambil hash password lama dari DB
+    try:
+        with connection.cursor() as cur:
+            cur.execute("SELECT password FROM PENGGUNA WHERE email = %s", [email])
+            row = cur.fetchone()
+            hash_lama = row[0]
+ 
+        # Verifikasi password lama
+        if not bcrypt.checkpw(password_lama.encode("utf-8"), hash_lama.encode("utf-8")):
+            return render_with_data({"password_error": "Password lama tidak sesuai."})
+ 
+        # Hash password baru dan update
+        hash_baru = bcrypt.hashpw(password_baru.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
+        with connection.cursor() as cur:
+            cur.execute(
+                "UPDATE PENGGUNA SET password = %s WHERE email = %s",
+                [hash_baru, email]
+            )
+ 
+        return render_with_data({"password_success": "Password berhasil diubah!"})
+ 
+    except Exception as e:
+        return render_with_data({"password_error": str(e)})
