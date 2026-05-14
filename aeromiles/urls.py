@@ -27,4 +27,5 @@ urlpatterns = [
     path('membership/', include('membership.urls')),
     path('partners/', include('partners.urls')),
     path('rewards/', include('rewards.urls')),
+    
 ]
