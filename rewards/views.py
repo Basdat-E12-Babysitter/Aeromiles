@@ -449,48 +449,67 @@ def laporan_transaksi(request):
     filter_member  = request.GET.get('member', '').strip()
 
     with connection.cursor() as cur:
+        cur.execute("SELECT COUNT(*) FROM REDEEM")
+        total_redeem = cur.fetchone()[0]
 
-        cur.execute("SELECT COALESCE(SUM(total_miles), 0) FROM MEMBER")
-        total_miles_beredar = cur.fetchone()[0]
+        cur.execute("SELECT COUNT(*) FROM MEMBER_AWARD_MILES_PACKAGE")
+        total_package = cur.fetchone()[0]
 
-        cur.execute("""
-            SELECT COALESCE(SUM(h.miles), 0)
-            FROM REDEEM r
-            JOIN HADIAH h ON h.kode_hadiah = r.kode_hadiah
-            WHERE DATE_TRUNC('month', r.timestamp) = DATE_TRUNC('month', NOW())
-        """)
-        total_redeem_bulan_ini = cur.fetchone()[0]
+        cur.execute("SELECT COUNT(*) FROM CLAIM_MISSING_MILES WHERE status_penerimaan = 'Disetujui'")
+        total_klaim = cur.fetchone()[0]
 
-        cur.execute("""
-            SELECT COUNT(*) FROM CLAIM_MISSING_MILES
-            WHERE status_penerimaan = 'Disetujui'
-        """)
-        total_klaim_disetujui = cur.fetchone()[0]
+        cur.execute("SELECT COUNT(*) FROM TRANSFER")
+        total_transfer = cur.fetchone()[0]
+
+        cur.execute("SELECT COUNT(*) FROM MEMBER")
+        active_members = cur.fetchone()[0]
+
+        total_transaksi = total_redeem + total_package + total_transfer + total_klaim
+
+        stats = {
+            'total_transaksi': total_transaksi,
+            'total_redeem': total_redeem,
+            'total_package': total_package,
+            'active_members': active_members,
+        }
 
         transaksi = _get_riwayat_transaksi(
             filter_tipe, filter_dari, filter_sampai, filter_member
         )
 
-        top5 = _get_top5_member(cur)
+        cur.execute("""
+            SELECT 
+                pg.salutation,
+                pg.first_mid_name,
+                pg.last_name,
+                m.email,
+                t.nama AS nama_tier,
+                m.total_miles
+            FROM MEMBER m
+            JOIN PENGGUNA pg ON m.email = pg.email
+            JOIN TIER t ON m.id_tier = t.id_tier
+            ORDER BY m.total_miles DESC
+            LIMIT 10
+        """)
+        cols_rank = [col[0] for col in cur.description]
+        ranking = [dict(zip(cols_rank, row)) for row in cur.fetchall()]
 
     context = {
-        'total_miles_beredar':    total_miles_beredar,
-        'total_redeem_bulan_ini': total_redeem_bulan_ini,
-        'total_klaim_disetujui':  total_klaim_disetujui,
-        'transaksi':              transaksi,
-        'top5':                   top5,
-        'filter_tipe':            filter_tipe,
-        'filter_dari':            filter_dari,
-        'filter_sampai':          filter_sampai,
-        'filter_member':          filter_member,
+        'stats':          stats,   
+        'ranking':        ranking,  
+        'transaksi':      transaksi,
+        'filter_tipe':    filter_tipe,
+        'filter_dari':    filter_dari,
+        'filter_sampai':  filter_sampai,
+        'filter_member':  filter_member,
         'transaksi_json': json.dumps([
             {
-                'id':           t['id_unik'],
+                'id':           t['id'],
                 'noTrx':        t['no_trx'],
                 'tipe':         t['tipe'],
-                'email':        t['email_member'],
+                'email':        t['email'],
                 'miles':        t['miles'],
-                'tanggal':      t['timestamp'],
+                'tanggal':      str(t['timestamp']),
                 'status':       t['status'],
                 'deletable':    t['deletable'],
             }
@@ -500,8 +519,7 @@ def laporan_transaksi(request):
     return render(request, 'laporan_transaksi.html', context)
 
 
-def _get_riwayat_transaksi(filter_tipe: str, filter_dari: str,
-                            filter_sampai: str, filter_member: str) -> list:
+def _get_riwayat_transaksi(filter_tipe: str, filter_dari: str, filter_sampai: str, filter_member: str) -> list:
     where_clauses = []
     params = []
 
@@ -523,40 +541,37 @@ def _get_riwayat_transaksi(filter_tipe: str, filter_dari: str,
     union_query = f"""
         SELECT *
         FROM (
-            -- Transfer Miles
             SELECT
                 'TR-' || email_member_1 || '-' || email_member_2 || '-' || EXTRACT(EPOCH FROM timestamp)::bigint AS id_unik,
                 'TRX-' || LPAD(ROW_NUMBER() OVER (ORDER BY timestamp)::text, 4, '0')   AS no_trx,
-                'Transfer'   AS tipe,
+                'Transfer Miles'   AS tipe,
                 email_member_1 AS email_member,
                 jumlah          AS miles,
                 timestamp,
                 'Berhasil'   AS status,
-                TRUE         AS deletable   -- Transfer boleh dihapus staf
+                TRUE         AS deletable
             FROM TRANSFER
 
             UNION ALL
 
-            -- Redeem Hadiah
             SELECT
-                'RD-' || email_member || '-' || kode_hadiah || '-' || EXTRACT(EPOCH FROM timestamp)::bigint AS id_unik,
+                'RD-' || email_member || '-' || r.kode_hadiah || '-' || EXTRACT(EPOCH FROM timestamp)::bigint AS id_unik,
                 'TRX-' || LPAD(ROW_NUMBER() OVER (ORDER BY timestamp)::text, 4, '0') AS no_trx,
-                'Redeem'     AS tipe,
+                'Redeem Hadiah'     AS tipe,
                 email_member,
                 h.miles      AS miles,
                 r.timestamp,
                 'Berhasil'   AS status,
-                TRUE         AS deletable   -- Redeem boleh dihapus staf
+                TRUE         AS deletable
             FROM REDEEM r
             JOIN HADIAH h ON h.kode_hadiah = r.kode_hadiah
 
             UNION ALL
 
-            -- Beli Award Miles Package
             SELECT
                 'PK-' || email_member || '-' || id_award_miles_package || '-' || EXTRACT(EPOCH FROM timestamp)::bigint AS id_unik,
                 'TRX-' || LPAD(ROW_NUMBER() OVER (ORDER BY timestamp)::text, 4, '0') AS no_trx,
-                'Beli Paket' AS tipe,
+                'Pembelian Package' AS tipe,
                 map.email_member,
                 amp.jumlah_award_miles AS miles,
                 map.timestamp,
@@ -567,29 +582,37 @@ def _get_riwayat_transaksi(filter_tipe: str, filter_dari: str,
 
             UNION ALL
 
-            -- Klaim Missing Miles yang Disetujui
             SELECT
                 'KM-' || id AS id_unik,
                 'TRX-' || LPAD(id::text, 4, '0') AS no_trx,
                 'Klaim Miles' AS tipe,
                 email_member,
-                1000          AS miles,   -- per spesifikasi: klaim disetujui = +1000 miles
+                1000          AS miles,
                 timestamp,
                 'Disetujui'   AS status,
-                FALSE         AS deletable  -- Klaim disetujui TIDAK boleh dihapus
+                FALSE         AS deletable
             FROM CLAIM_MISSING_MILES
             WHERE status_penerimaan = 'Disetujui'
 
         ) AS semua_transaksi
-        {where_sql}
+        {{where_sql}}
         ORDER BY timestamp DESC
     """
+    final_query = union_query.format(where_sql=where_sql)
+
     with connection.cursor() as cur:
-        cur.execute(union_query, params)
+        cur.execute(final_query, params)
         rows = cur.fetchall()
         cols = [col[0] for col in cur.description]
-        return [dict(zip(cols, row)) for row in rows]
-
+        
+        result = []
+        for row in rows:
+            d = dict(zip(cols, row))
+            d['id'] = d.get('id_unik')
+            d['email'] = d.get('email_member')
+            result.append(d)
+            
+        return result
 
 def _get_top5_member(cur) -> list:
     try:

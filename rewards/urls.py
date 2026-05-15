@@ -14,6 +14,6 @@ urlpatterns = [
 
     path('tier/', views.info_tier, name='tier_info'),
 
-    path('laporan/', TemplateView.as_view(template_name='laporan_transaksi.html'), name='laporan_transaksi'),
-    path('laporan/hapus/', TemplateView.as_view(template_name='laporan_transaksi.html'), name='laporan_hapus'),
+    path('laporan/', views.laporan_transaksi, name='laporan_transaksi'),
+    path('laporan/hapus/', views.laporan_transaksi, name='laporan_hapus'),
 ]
