@@ -12,4 +12,9 @@ urlpatterns = [
     path('hadiah/update/<str:kode_hadiah>/', views.update_hadiah, name='update_hadiah'),
     path('hadiah/delete/<str:kode_hadiah>/', views.delete_hadiah, name='delete_hadiah'),
 
+    # Mitra CUD
+    path('mitra/create/', views.create_mitra, name='create_mitra'),
+    path('mitra/update/<str:email_mitra>/', views.update_mitra, name='update_mitra'),
+    path('mitra/delete/<str:email_mitra>/', views.delete_mitra, name='delete_mitra'),
+
 ]

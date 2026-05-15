@@ -74,3 +74,67 @@ def delete_hadiah(request, kode_hadiah):
         return JsonResponse({'status': 'ok'})
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+    
+# Mitra
+@csrf_exempt
+@require_http_methods(["POST"])
+def create_mitra(request):
+    try:
+        data = json.loads(request.body)
+        with connection.cursor() as cur:
+            # Insert PENYEDIA dulu (id auto dari sequence)
+            cur.execute("INSERT INTO PENYEDIA DEFAULT VALUES RETURNING id")
+            id_penyedia = cur.fetchone()[0]
+            # Insert MITRA
+            cur.execute("""
+                INSERT INTO MITRA (email_mitra, id_penyedia, nama_mitra, tanggal_kerja_sama)
+                VALUES (%s, %s, %s, %s)
+            """, [
+                data['email_mitra'],
+                id_penyedia,
+                data['nama_mitra'],
+                data['tanggal_kerja_sama']
+            ])
+        return JsonResponse({'status': 'ok', 'id_penyedia': id_penyedia})
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def update_mitra(request, email_mitra):
+    try:
+        data = json.loads(request.body)
+        with connection.cursor() as cur:
+            cur.execute("""
+                UPDATE MITRA
+                SET nama_mitra = %s,
+                    tanggal_kerja_sama = %s
+                WHERE email_mitra = %s
+            """, [
+                data['nama_mitra'],
+                data['tanggal_kerja_sama'],
+                email_mitra
+            ])
+        return JsonResponse({'status': 'ok'})
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+
+
+@csrf_exempt
+@require_http_methods(["DELETE"])
+def delete_mitra(request, email_mitra):
+    try:
+        with connection.cursor() as cur:
+            # Ambil id_penyedia dulu
+            cur.execute("SELECT id_penyedia FROM MITRA WHERE email_mitra = %s", [email_mitra])
+            row = cur.fetchone()
+            if not row:
+                return JsonResponse({'status': 'error', 'message': 'Mitra tidak ditemukan'}, status=404)
+            id_penyedia = row[0]
+            # Hapus MITRA dulu, lalu PENYEDIA (cascade ke HADIAH)
+            cur.execute("DELETE FROM MITRA WHERE email_mitra = %s", [email_mitra])
+            cur.execute("DELETE FROM PENYEDIA WHERE id = %s", [id_penyedia])
+        return JsonResponse({'status': 'ok'})
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
