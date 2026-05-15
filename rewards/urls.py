@@ -12,7 +12,7 @@ urlpatterns = [
     path('package/', views.beli_package, name='package_list'),
     path('package/beli/', views.beli_package, name='package_beli'),
 
-    path('tier/', TemplateView.as_view(template_name='info_tier.html'), name='tier_info'),
+    path('tier/', views.info_tier, name='tier_info'),
 
     path('laporan/', TemplateView.as_view(template_name='laporan_transaksi.html'), name='laporan_transaksi'),
     path('laporan/hapus/', TemplateView.as_view(template_name='laporan_transaksi.html'), name='laporan_hapus'),

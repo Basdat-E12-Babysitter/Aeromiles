@@ -33,7 +33,7 @@
   <p class="text-sm mt-1" style="color:var(--muted)">Lihat status tier Anda dan manfaat yang bisa dinikmati di setiap level.</p>
 </div>
 
-{# ── Current Status Card (Dinamis Berdasarkan Akun Login) ── #}
+{# ── Current Status Card (Dinamis Berdasarkan Konteks 'member' Kelompokmu) ── #}
 <div class="card mb-6 relative overflow-hidden" style="padding:2rem;">
   <div class="tier-bg-deco"></div>
   <div class="relative flex flex-col sm:flex-row sm:items-center justify-between gap-6" style="z-index:1;">
@@ -44,8 +44,7 @@
       <div>
         <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Tier Anda Saat Ini</p>
         <h3 class="text-2xl font-black uppercase" style="color:var(--ink);">{{ member.nama_tier }} Member</h3>
-        {# PERBAIKAN DETAIL: Menggunakan session dinamis tanpa cadangan nama Agus #}
-        <p class="text-sm text-slate-500 mt-0.5">Akun aktif: <strong>{{ request.session.user_name }}</strong> ({{ request.session.user_email }})</p>
+        <p class="text-sm text-slate-500 mt-0.5">Akun aktif: <strong>{{ member.salutation }} {{ member.first_mid_name }} {{ member.last_name }}</strong> ({{ request.session.user_email }})</p>
       </div>
     </div>
     
@@ -53,23 +52,24 @@
       <div>
         <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Akumulasi Terbang</p>
         <p class="text-xl font-black text-blue-500">{{ member.total_miles|default:0|floatformat:0 }} <span class="text-xs font-normal text-slate-400">mi</span></p>
-        <p class="text-xs font-bold text-slate-400 mt-0.5">{{ member.frekuensi_terbang|default:0 }} Penerbangan</p>
+        <p class="text-xs font-bold text-slate-400 mt-0.5">Sisa Award Miles: {{ member.award_miles|default:0|floatformat:0 }} mi</p>
+        <p class="text-xs font-bold text-slate-500 mt-0.5">{{ frekuensi_terbang|default:0 }} Penerbangan Disetujui</p>
       </div>
     </div>
   </div>
 
-  {# Progress Bar Naik Tingkat #}
-  {% if next_tier %}
+  {# Progress Bar Naik Tingkat ── Menggunakan data-width & variabel progress_pct rior dari views #}
+  {% if tier_berikutnya %}
   <div class="relative mt-6 pt-5 border-t border-slate-100" style="z-index:1;">
     <div class="flex justify-between text-xs font-bold uppercase tracking-wider mb-2 text-slate-400">
-      <span>Progres Menuju {{ next_tier.nama_tier|upper }}</span>
-      <span>{{ progress_percent|default:0 }}%</span>
+      <span>Progres Menuju {{ tier_berikutnya.nama|upper }}</span>
+      <span>{{ progress_pct|default:0 }}%</span>
     </div>
     <div class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
-      <div id="tier-progress-fill" class="h-full bg-gradient-to-r from-blue-400 to-blue-600 transition-all" data-width="{{ progress_percent|default:0 }}"></div>
+      <div id="tier-progress-fill" class="h-full bg-gradient-to-r from-blue-400 to-blue-600 transition-all" data-width="{{ progress_pct|default:0 }}"></div>
     </div>
     <p class="text-xs text-slate-500 mt-2.5">
-      Butuh <strong>{{ miles_needed|floatformat:0 }} miles</strong> atau <strong>{{ flights_needed }} penerbangan</strong> lagi untuk naik tingkat ke level berikutnya.
+      Butuh <strong>{{ miles_kurang|floatformat:0 }} miles</strong> lagi untuk naik tingkat ke level berikutnya.
     </p>
   </div>
   {% else %}
@@ -81,34 +81,34 @@
   {% endif %}
 </div>
 
-{# ── Katalog Keuntungan Sesuai Level Keanggotaan ── #}
+{# ── Katalog Keuntungan Sesuai Level Keanggotaan (Dinamis dari 'semua_tier') ── #}
 <div class="mb-4">
   <h4 class="text-base font-extrabold text-slate-800 mb-1">Daftar Keuntungan & Syarat Tiap Level</h4>
   <p class="text-xs text-slate-400">Pelajari syarat minimum rute dan raih benefit terbaik dari maskapai.</p>
 </div>
 
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-  {% for t in all_tiers %}
+  {% for t in semua_tier %}
     
-    {# Pemisahan kartu div agar style inline tetap statis demi menghindari error CSS linter VS Code #}
-    {% if t.nama_tier|lower == member.nama_tier|lower %}
+    {# Tag pemisah div seutuhnya agar atribut style murni statis & lolos sensor linter VS Code #}
+    {% if t.id_tier == id_tier_aktif %}
       <div class="card flex flex-col overflow-hidden" style="background:white; border-radius:16px; border:2.5px solid #00BFFF; box-shadow:0 8px 30px rgba(0,191,255,0.15);">
     {% else %}
       <div class="card flex flex-col overflow-hidden" style="background:white; border-radius:16px;">
     {% endif %}
       
       <div class="tier-card-header" style="padding:1.25rem 1.25rem 1rem; display:flex; align-items:center; gap:0.875rem;">
-        {% if t.nama_tier|lower == 'blue' %}
+        {% if t.nama|lower == 'blue' %}
           <div class="tier-icon-wrap" style="width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0; background:#EFF6FF; color:#3B82F6;">
             <span class="font-black text-sm">B</span>
           </div>
           <span class="tier-name" style="font-size:1.25rem; font-weight:900; color:#1E40AF;">BLUE</span>
-        {% elif t.nama_tier|lower == 'silver' %}
+        {% elif t.nama|lower == 'silver' %}
           <div class="tier-icon-wrap" style="width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0; background:#F1F5F9; color:#64748B;">
             <span class="font-black text-sm">S</span>
           </div>
           <span class="tier-name" style="font-size:1.25rem; font-weight:900; color:#334155;">SILVER</span>
-        {% elif t.nama_tier|lower == 'gold' %}
+        {% elif t.nama|lower == 'gold' %}
           <div class="tier-icon-wrap" style="width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0; background:#FEF3C7; color:#D97706;">
             <span class="font-black text-sm">G</span>
           </div>
@@ -120,7 +120,7 @@
           <span class="tier-name" style="font-size:1.25rem; font-weight:900; color:#6B21A8;">PLATINUM</span>
         {% endif %}
 
-        {% if t.nama_tier|lower == member.nama_tier|lower %}
+        {% if t.id_tier == id_tier_aktif %}
           <span class="ml-auto text-[9px] bg-blue-100 text-blue-700 font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider">Anda</span>
         {% endif %}
       </div>
@@ -128,33 +128,30 @@
       <div class="tier-card-body" style="padding:0 1.25rem 1.25rem; display:flex; flex-direction:column; gap:0.5rem; flex:1;">
         <div class="tier-requirement" style="display:flex; align-items:center; gap:0.5rem; font-size:0.75rem; color:var(--muted); font-weight:500;">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-          <span>Min. <strong style="color:var(--ink);">{{ t.minimal_miles|floatformat:0 }}</strong> miles</span>
+          <span>Min. <strong style="color:var(--ink);">{{ t.minimal_tier_miles|floatformat:0 }}</strong> miles</span>
         </div>
         <div class="tier-requirement" style="display:flex; align-items:center; gap:0.5rem; font-size:0.75rem; color:var(--muted); font-weight:500;">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg>
-          <span>Min. <strong style="color:var(--ink);">{{ t.minimal_penerbangan|default:0 }}</strong> penerbangan</span>
+          <span>Min. <strong style="color:var(--ink);">{{ t.minimal_frekuensi_terbang|default:0 }}</strong> penerbangan</span>
         </div>
 
         <ul class="tier-benefits" style="margin-top:0.5rem; padding:0; list-style:none; display:flex; flex-direction:column; gap:0.375rem; border-top:1px solid var(--border); padding-top:0.75rem;">
           <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Manfaat Utama:</p>
-          {% if t.nama_tier|lower == 'blue' %}
+          {% if t.nama|lower == 'blue' %}
             <li class="text-xs text-slate-600 flex items-center gap-1.5"><span class="text-blue-500 font-bold">✓</span> Akumulasi Award Miles dasar</li>
             <li class="text-xs text-slate-600 flex items-center gap-1.5"><span class="text-blue-500 font-bold">✓</span> Klaim missing miles via web</li>
-          {% elif t.nama_tier|lower == 'silver' %}
+          {% elif t.nama|lower == 'silver' %}
             <li class="text-xs text-slate-600 flex items-center gap-1.5"><span class="text-slate-500 font-bold">✓</span> Bonus 10% Award Miles</li>
             <li class="text-xs text-slate-600 flex items-center gap-1.5"><span class="text-slate-500 font-bold">✓</span> Tambahan bagasi +5 kg</li>
             <li class="text-xs text-slate-600 flex items-center gap-1.5"><span class="text-slate-500 font-bold">✓</span> Prioritas check-in counter</li>
-          {% elif t.nama_tier|lower == 'gold' %}
+          {% elif t.nama|lower == 'gold' %}
             <li class="text-xs text-slate-600 flex items-center gap-1.5"><span class="text-amber-600 font-bold">✓</span> Bonus 25% Award Miles</li>
             <li class="text-xs text-slate-600 flex items-center gap-1.5"><span class="text-amber-600 font-bold">✓</span> Tambahan bagasi +15 kg</li>
             <li class="text-xs text-slate-600 flex items-center gap-1.5"><span class="text-amber-600 font-bold">✓</span> Akses Airport Lounge Mitra</li>
-            <li class="text-xs text-slate-600 flex items-center gap-1.5"><span class="text-amber-600 font-bold">✓</span> Jalur Boarding Prioritas</li>
           {% else %}
             <li class="text-xs text-slate-600 flex items-center gap-1.5"><span class="text-purple-600 font-bold">✓</span> Bonus 50% Award Miles</li>
             <li class="text-xs text-slate-600 flex items-center gap-1.5"><span class="text-purple-600 font-bold">✓</span> Tambahan bagasi +20 kg</li>
             <li class="text-xs text-slate-600 flex items-center gap-1.5"><span class="text-purple-600 font-bold">✓</span> Akses Airport Lounge Eksklusif</li>
-            <li class="text-xs text-slate-600 flex items-center gap-1.5"><span class="text-purple-600 font-bold">✓</span> Jaminan kursi penerbangan</li>
-            <li class="text-xs text-slate-600 flex items-center gap-1.5"><span class="text-purple-600 font-bold">✓</span> Bebas biaya re-schedule rute</li>
           {% endif %}
         </ul>
       </div>
