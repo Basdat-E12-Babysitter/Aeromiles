@@ -1,8 +1,6 @@
-import json
-import bcrypt
+from django.contrib.auth.hashers import make_password, check_password
 from django.db import connection
 from django.shortcuts import render, redirect
-from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
@@ -10,7 +8,6 @@ from django.views.decorators.http import require_http_methods
 @require_http_methods(["GET", "POST"])
 def login(request):
     if request.method == "GET":
-        # Kalau sudah login, redirect ke dashboard
         if request.session.get("user_email"):
             return _redirect_dashboard(request)
         return render(request, "login.html")
@@ -18,48 +15,44 @@ def login(request):
     try:
         email    = request.POST.get("email", "").strip()
         password = request.POST.get("password", "").strip()
- 
+
         if not email or not password:
-            return render(request, "login.html", {"ERROR": "Email dan password wajib diisi."})
- 
+            return render(request, "login.html", {"error": "Email dan password wajib diisi."})
+
+        # SP ambil data profil + password_hash, raise exception kalau email tidak ada
         with connection.cursor() as cur:
             cur.execute("SELECT * FROM verifikasi_login(%s)", [email])
             row  = cur.fetchone()
             cols = [col[0] for col in cur.description]
             user = dict(zip(cols, row))
- 
-        # Bandingkan password input dengan hash di DB (bcrypt)
-        password_cocok = bcrypt.checkpw(
-            password.encode("utf-8"),
-            user["password_hash"].encode("utf-8")
-        )
- 
-        if not password_cocok:
+
+        # Compare password
+        if not check_password(password, user["password_hash"]):
             return render(request, "login.html", {
-                "ERROR": "Email atau password salah, silakan coba lagi."
+                "error": "Email atau password salah, silakan coba lagi."
             })
- 
+
         # Simpan session
         request.session["user_email"]      = user["email"]
         request.session["user_role"]       = user["role"]
         request.session["user_name"]       = f"{user['first_mid_name']} {user['last_name']}"
         request.session["user_salutation"] = user["salutation"]
- 
+
         if user["role"] == "member":
             request.session["nomor_member"] = user["nomor_member"]
             request.session["id_tier"]      = user["id_tier"]
             request.session["nama_tier"]    = user["nama_tier"]
             request.session["award_miles"]  = str(user["award_miles"])
             request.session["total_miles"]  = str(user["total_miles"])
- 
+
         return _redirect_dashboard(request)
- 
+
     except Exception as e:
         error_msg = str(e)
-        # Bersihkan pesan psycopg2 yang verbose
         if "ERROR:" in error_msg:
             error_msg = error_msg.split("ERROR:")[-1].strip()
         return render(request, "login.html", {"error": error_msg})
+
 
 def _redirect_dashboard(request):
     role = request.session.get("user_role")
@@ -79,7 +72,7 @@ def logout(request):
 def register(request):
     if request.method == "GET":
         return render(request, "register.html")
- 
+
     try:
         role             = request.POST.get("reg-role", "member")
         email            = request.POST.get("email", "").strip()
@@ -93,25 +86,23 @@ def register(request):
         tanggal_lahir    = request.POST.get("tanggal_lahir", "").strip()
         kewarganegaraan  = request.POST.get("kewarganegaraan", "").strip()
         kode_maskapai    = request.POST.get("kode_maskapai", "").strip()
- 
-        # Validasi
+
         if not email or not password:
-            return render(request, "register.html", {"ERROR": "Email dan password wajib diisi."})
- 
+            return render(request, "register.html", {"error": "Email dan password wajib diisi."})
+
         if password != password_confirm:
-            return render(request, "register.html", {"ERROR": "Konfirmasi password tidak cocok."})
- 
+            return render(request, "register.html", {"error": "Konfirmasi password tidak cocok."})
+
         if len(password) < 8:
-            return render(request, "register.html", {"ERROR": "Password minimal 8 karakter."})
- 
+            return render(request, "register.html", {"error": "Password minimal 8 karakter."})
+
         if role == "staf" and not kode_maskapai:
-            return render(request, "register.html", {"ERROR": "Kode maskapai wajib diisi untuk staf."})
- 
-        # Hash password sebelum disimpan
-        hashed = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
- 
+            return render(request, "register.html", {"error": "Kode maskapai wajib diisi untuk staf."})
+
+        # Hash pakai Django built-in (PBKDF2)
+        hashed = make_password(password)
+
         with connection.cursor() as cur:
-            # insert ke tabel pengguna 
             cur.execute("""
                 INSERT INTO PENGGUNA
                     (email, password, salutation, first_mid_name, last_name,
@@ -121,31 +112,28 @@ def register(request):
                 email, hashed, salutation, first_mid_name, last_name,
                 country_code, mobile_number, tanggal_lahir, kewarganegaraan
             ])
- 
+
             if role == "member":
-                # insert ke table member (nomor_member dari sequence)
                 cur.execute("""
                     INSERT INTO MEMBER (email, tanggal_bergabung, id_tier, award_miles, total_miles)
                     VALUES (%s, CURRENT_DATE, 'T001', 0, 0)
                 """, [email])
- 
             elif role == "staf":
-                # insert ke table staf (id_staf dari sequence)
                 cur.execute("""
                     INSERT INTO STAF (email, kode_maskapai)
                     VALUES (%s, %s)
                 """, [email, kode_maskapai])
- 
+
         return render(request, "login.html", {
             "success": "Akun berhasil dibuat! Silakan login."
         })
- 
+
     except Exception as e:
         error_msg = str(e)
         if "ERROR:" in error_msg:
             error_msg = error_msg.split("ERROR:")[-1].strip()
-        return render(request, "register.html", {"ERROR": error_msg})
-    
+        return render(request, "register.html", {"error": error_msg})
+
 def _get_member(email):
     with connection.cursor() as cur:
         cur.execute("""
@@ -161,19 +149,35 @@ def _get_member(email):
         row  = cur.fetchone()
         cols = [col[0] for col in cur.description]
         return dict(zip(cols, row))
-    
+
+
+def _get_staf(email):
+    with connection.cursor() as cur:
+        cur.execute("""
+            SELECT pg.email, pg.salutation, pg.first_mid_name, pg.last_name,
+                   pg.country_code, pg.mobile_number, pg.tanggal_lahir, pg.kewarganegaraan,
+                   s.id_staf, mk.nama_maskapai, mk.kode_maskapai
+            FROM PENGGUNA pg
+            JOIN STAF     s  ON s.email          = pg.email
+            JOIN MASKAPAI mk ON mk.kode_maskapai = s.kode_maskapai
+            WHERE pg.email = %s
+        """, [email])
+        row  = cur.fetchone()
+        cols = [col[0] for col in cur.description]
+        return dict(zip(cols, row))
+
+
 @csrf_exempt
 @require_http_methods(["GET", "POST"])
 def profile_member(request):
     if not request.session.get("user_email") or request.session.get("user_role") != "member":
         return redirect("accounts:login")
- 
+
     email = request.session["user_email"]
- 
+
     if request.method == "GET":
         return render(request, "profile_member.html", {"member": _get_member(email)})
- 
-    # POST — update data pribadi
+
     try:
         with connection.cursor() as cur:
             cur.execute("""
@@ -196,7 +200,6 @@ def profile_member(request):
                 request.POST.get("kewarganegaraan"),
                 email
             ])
-        # Update session name
         request.session["user_name"]       = f"{request.POST.get('first_mid_name')} {request.POST.get('last_name')}"
         request.session["user_salutation"] = request.POST.get("salutation")
         return render(request, "profile_member.html", {
@@ -209,33 +212,17 @@ def profile_member(request):
             "error":  str(e)
         })
 
-def _get_staf(email):
-    with connection.cursor() as cur:
-        cur.execute("""
-            SELECT pg.email, pg.salutation, pg.first_mid_name, pg.last_name,
-                   pg.country_code, pg.mobile_number, pg.tanggal_lahir, pg.kewarganegaraan,
-                   s.id_staf, mk.nama_maskapai, mk.kode_maskapai
-            FROM PENGGUNA pg
-            JOIN STAF     s  ON s.email          = pg.email
-            JOIN MASKAPAI mk ON mk.kode_maskapai = s.kode_maskapai
-            WHERE pg.email = %s
-        """, [email])
-        row  = cur.fetchone()
-        cols = [col[0] for col in cur.description]
-        return dict(zip(cols, row))
-
 @csrf_exempt
 @require_http_methods(["GET", "POST"])
 def profile_staf(request):
     if not request.session.get("user_email") or request.session.get("user_role") != "staf":
         return redirect("accounts:login")
- 
+
     email = request.session["user_email"]
- 
+
     if request.method == "GET":
         return render(request, "profile_staf.html", {"staf": _get_staf(email)})
- 
-    # POST — update data pribadi
+
     try:
         with connection.cursor() as cur:
             cur.execute("""
@@ -275,77 +262,48 @@ def profile_staf(request):
 def ubah_password(request):
     if not request.session.get("user_email"):
         return redirect("accounts:login")
- 
+
     email            = request.session["user_email"]
     password_lama    = request.POST.get("password_lama", "").strip()
     password_baru    = request.POST.get("password_baru", "").strip()
     password_confirm = request.POST.get("password_confirm", "").strip()
     role             = request.session.get("user_role")
+    template         = "profile_member.html" if role == "member" else "profile_staf.html"
 
-    template = "profile_member.html" if role == "member" else "profile_staf.html"
- 
     def render_with_data(context):
-        # Re-fetch data profil supaya template tetap bisa render
-        with connection.cursor() as cur:
-            if role == "member":
-                cur.execute("""
-                    SELECT pg.email, pg.salutation, pg.first_mid_name, pg.last_name,
-                           pg.country_code, pg.mobile_number, pg.tanggal_lahir, pg.kewarganegaraan,
-                           m.nomor_member, m.tanggal_bergabung, m.award_miles, m.total_miles,
-                           t.nama AS nama_tier
-                    FROM PENGGUNA pg
-                    JOIN MEMBER m ON m.email   = pg.email
-                    JOIN TIER   t ON t.id_tier = m.id_tier
-                    WHERE pg.email = %s
-                """, [email])
-                row  = cur.fetchone()
-                cols = [col[0] for col in cur.description]
-                context["member"] = dict(zip(cols, row))
-            else:
-                cur.execute("""
-                    SELECT pg.email, pg.salutation, pg.first_mid_name, pg.last_name,
-                           pg.country_code, pg.mobile_number, pg.tanggal_lahir, pg.kewarganegaraan,
-                           s.id_staf, mk.nama_maskapai, mk.kode_maskapai
-                    FROM PENGGUNA pg
-                    JOIN STAF     s  ON s.email          = pg.email
-                    JOIN MASKAPAI mk ON mk.kode_maskapai = s.kode_maskapai
-                    WHERE pg.email = %s
-                """, [email])
-                row  = cur.fetchone()
-                cols = [col[0] for col in cur.description]
-                context["staf"] = dict(zip(cols, row))
+        if role == "member":
+            context["member"] = _get_member(email)
+        else:
+            context["staf"] = _get_staf(email)
         return render(request, template, context)
- 
-    # Validasi input
+
     if not password_lama or not password_baru or not password_confirm:
         return render_with_data({"password_error": "Semua field password wajib diisi."})
- 
+
     if len(password_baru) < 8:
         return render_with_data({"password_error": "Password baru minimal 8 karakter."})
- 
+
     if password_baru != password_confirm:
         return render_with_data({"password_error": "Konfirmasi password tidak cocok."})
- 
-    # Ambil hash password lama dari DB
+
     try:
         with connection.cursor() as cur:
             cur.execute("SELECT password FROM PENGGUNA WHERE email = %s", [email])
-            row = cur.fetchone()
-            hash_lama = row[0]
- 
-        # Verifikasi password lama
-        if not bcrypt.checkpw(password_lama.encode("utf-8"), hash_lama.encode("utf-8")):
+            hash_lama = cur.fetchone()[0]
+
+        # Compare pakai Django built-in
+        if not check_password(password_lama, hash_lama):
             return render_with_data({"password_error": "Password lama tidak sesuai."})
- 
-        # Hash password baru dan update
-        hash_baru = bcrypt.hashpw(password_baru.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
+
+        # Hash baru pakai Django built-in
+        hash_baru = make_password(password_baru)
         with connection.cursor() as cur:
             cur.execute(
                 "UPDATE PENGGUNA SET password = %s WHERE email = %s",
                 [hash_baru, email]
             )
- 
+
         return render_with_data({"password_success": "Password berhasil diubah!"})
- 
+
     except Exception as e:
         return render_with_data({"password_error": str(e)})
