@@ -2,10 +2,11 @@ from django.urls import path
 from django.views.generic import TemplateView
 from . import views
 
-urlpatterns = [
-    path('hadiah/', TemplateView.as_view(template_name='partners/kelola_hadiah.html')),
-    path('mitra/', TemplateView.as_view(template_name='partners/kelola_mitra.html')),
+app_name = 'partners'
 
+urlpatterns = [
+    path('hadiah/', TemplateView.as_view(template_name='partners/kelola_hadiah.html'), name='kelola_hadiah'),
+    path('mitra/', TemplateView.as_view(template_name='partners/kelola_mitra.html'), name='kelola_mitra'),
 
     # Hadiah CUD
     path('hadiah/create/', views.create_hadiah, name='create_hadiah'),
