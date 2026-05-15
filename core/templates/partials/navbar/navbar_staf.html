@@ -8,7 +8,7 @@
       <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21 4 19 4c-2 0-3 1-3.5 2.5L11 9l-7.8-1.8L2 8.6l6 4.4-1.8 1.8-3-.6-1.2 1.2 4.2 2.4 2.4 4.2 1.2-1.2-.6-3 1.8-1.8 4.4 6z"/>
     </svg>
   </div>
-  <div class="hidden sm:block">
+  <div>
     <span class="font-extrabold text-sm tracking-tight" style="color:var(--ink)">Aero<span style="color:var(--sky)">Miles</span></span>
     <span class="block text-xs font-semibold" style="color:var(--muted);line-height:1;margin-top:1px">Staff Portal</span>
   </div>
@@ -95,9 +95,9 @@
 {% block navbar_right %}
 <div class="flex items-center gap-2.5 flex-shrink-0 ml-1">
   <!-- Avatar + Name -->
-  <div class="hidden md:flex items-center gap-2">
+  <div class="flex items-center gap-2">
     <div class="avatar w-8 h-8 text-xs">{{ staf.first_mid_name|first|upper }}{{ staf.last_name|first|upper }}</div>
-    <div class="hidden lg:block">
+    <div>
       <p class="text-xs font-bold leading-tight" style="color:var(--ink)">{{ staf.first_mid_name }} {{ staf.last_name }}</p>
       <p class="text-xs leading-tight" style="color:var(--muted)">Staf · {{ staf.nama_maskapai }}</p>
     </div>

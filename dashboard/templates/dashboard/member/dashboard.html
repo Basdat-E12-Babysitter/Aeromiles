@@ -195,11 +195,11 @@
           <div class="mt-5">
             {% if next_tier %}
             <div class="flex justify-between text-xs mb-2 opacity-90">
-              <span>Menuju Tier {{ next_tier.nama }}</span>
+              <span>Menuju Tier {{ next_tier.nama }} ({{ progress_pct }}%)</span>
               <span class="font-semibold mono">{{ member.total_miles|floatformat:0 }} / {{ next_tier.minimal_tier_miles }} miles</span>
             </div>
             <div class="progress-track">
-              <div class="progress-fill" style="width:99%"></div>
+              <div class="progress-fill" data-progress="{{ progress_pct }}" style="width:0%"></div>
             </div>
             <p class="text-xs opacity-75 mt-1.5">Butuh <span class="font-bold">{{ miles_kurang }} miles</span> lagi untuk naik ke tier {{ next_tier.nama }}</p>
             {% else %}
@@ -326,4 +326,16 @@
 
   <div class="h-6"></div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+{{ block.super }}
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.progress-fill[data-progress]').forEach(el => {
+      const progress = Math.max(0, Math.min(100, Number(el.dataset.progress || 0)));
+      el.style.width = `${progress}%`;
+    });
+  });
+</script>
 {% endblock %}
