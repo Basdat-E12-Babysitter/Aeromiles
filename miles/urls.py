@@ -11,4 +11,7 @@ urlpatterns = [
     path('klaim/baru/', views.klaim_create, name='klaim_create'),
     path('klaim/<int:pk>/edit/', views.klaim_update, name='klaim_update'),
     path('klaim/<int:pk>/hapus/', views.klaim_delete, name='klaim_delete'),
+    # Transfer miles (member)
+    path('transfer/', views.transfer_list,   name='transfer_list'),
+    path('transfer/baru/', views.transfer_create, name='transfer_create'),
 ]

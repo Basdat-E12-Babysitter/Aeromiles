@@ -47,6 +47,12 @@ def dashboard_member(request):
             WHERE email_member = %s AND status_penerimaan = 'Menunggu'
         """, [email])
         klaim_pending_count = cur.fetchone()[0]
+
+        # Total klaim masuk di sistem (semua status)
+        cur.execute("""
+            SELECT COUNT(*) FROM CLAIM_MISSING_MILES
+        """)
+        total_claims_count = cur.fetchone()[0]
  
         # Riwayat transaksi terbaru — gabungan klaim, redeem, transfer, package
         cur.execute("""
@@ -178,6 +184,12 @@ def dashboard_staf(request):
         total_diproses = klaim_disetujui_count + klaim_ditolak_count
         pct_disetujui  = int((klaim_disetujui_count / total_diproses) * 100) if total_diproses > 0 else 0
         pct_ditolak    = int((klaim_ditolak_count   / total_diproses) * 100) if total_diproses > 0 else 0
+
+        # Total klaim masuk di sistem (semua status)
+        cur.execute("""
+            SELECT COUNT(*) FROM CLAIM_MISSING_MILES
+        """)
+        total_claims_count = cur.fetchone()[0]
  
  
     return render(request, "dashboard/staf/dashboard.html", {
@@ -188,4 +200,6 @@ def dashboard_staf(request):
         "total_diproses":         total_diproses,
         "pct_disetujui":          pct_disetujui,
         "pct_ditolak":            pct_ditolak,
+        "total_claims_count":     total_claims_count,
+        "pending_pct":            int((klaim_menunggu_count / total_claims_count) * 100) if total_claims_count > 0 else 0,
     })

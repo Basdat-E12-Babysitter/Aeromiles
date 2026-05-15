@@ -70,11 +70,11 @@
   <!-- Avatar -->
   <div class="flex items-center gap-2">
     <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white" style="background:linear-gradient(135deg,#00BFFF,#005A8C)">
-      AS
+      {{ member.first_mid_name|first|upper }}{{ member.last_name|first|upper }}
     </div>
     <div class="hidden md:block">
-      <p class="text-xs font-bold leading-tight" style="color:var(--ink); font-weight:700">Agus Setiawan</p>
-      <p class="text-xs leading-tight" style="color:var(--muted)">Blue Member</p>
+      <p class="text-xs font-bold leading-tight" style="color:var(--ink); font-weight:700">{{ member.first_mid_name }} {{ member.last_name }}</p>
+      <p class="text-xs leading-tight" style="color:var(--muted)">{{ member.nama_tier }} Member</p>
     </div>
   </div>
   <!-- Logout -->

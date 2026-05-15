@@ -206,3 +206,86 @@ def klaim_delete(request, pk):
 
     messages.success(request, "Klaim berhasil dihapus.")
     return redirect("miles:klaim_list")
+
+def transfer_list(request):
+    if not _member_required(request):
+        return redirect("accounts:login")
+
+    email = request.session["user_email"]
+
+    with connection.cursor() as cur:
+        cur.execute("""
+            SELECT
+                email_member_1,
+                email_member_2,
+                TO_CHAR(timestamp, 'YYYY-MM-DD"T"HH24:MI:SS') AS timestamp,
+                jumlah,
+                catatan
+            FROM TRANSFER
+            WHERE email_member_1 = %s OR email_member_2 = %s
+            ORDER BY timestamp DESC
+        """, [email, email])
+        cols = [col[0] for col in cur.description]
+        transfer_list = [dict(zip(cols, row)) for row in cur.fetchall()]
+
+    return render(request, "miles/transfer_miles.html", {
+        "transfer_list": transfer_list,
+        "award_miles": request.session.get("award_miles", 0),
+        "user_email": email,
+    })
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def transfer_create(request):
+    if not _member_required(request):
+        return redirect("accounts:login")
+
+    email_pengirim = request.session["user_email"]
+    email_penerima = request.POST.get("email_penerima", "").strip().lower()
+    jumlah = request.POST.get("jumlah", "").strip()
+    catatan = request.POST.get("catatan", "").strip() or None
+
+    # Validasi input dasar
+    if not email_penerima or not jumlah:
+        messages.error(request, "Email penerima dan jumlah miles wajib diisi.")
+        return redirect("miles:transfer_list")
+
+    try:
+        jumlah = int(jumlah)
+        if jumlah <= 0:
+            raise ValueError
+    except ValueError:
+        messages.error(request, "Jumlah miles harus berupa angka positif.")
+        return redirect("miles:transfer_list")
+
+    if email_pengirim == email_penerima:
+        messages.error(request, "Tidak dapat transfer ke diri sendiri.")
+        return redirect("miles:transfer_list")
+
+    try:
+        with connection.cursor() as cur:
+            # Cek penerima terdaftar sebagai member
+            cur.execute("SELECT 1 FROM MEMBER WHERE email = %s", [email_penerima])
+            if not cur.fetchone():
+                messages.error(request, "Email penerima tidak ditemukan sebagai member.")
+                return redirect("miles:transfer_list")
+
+            # INSERT
+            cur.execute("""
+                INSERT INTO TRANSFER (email_member_1, email_member_2, timestamp, jumlah, catatan)
+                VALUES (%s, %s, NOW(), %s, %s)
+            """, [email_pengirim, email_penerima, jumlah, catatan])
+
+        # Update session saldo setelah berhasil
+        saldo_lama = int(request.session.get("award_miles", 0))
+        request.session["award_miles"] = str(saldo_lama - jumlah)
+
+        messages.success(request, f"Transfer {jumlah} miles ke {email_penerima} berhasil.")
+
+    except Exception as e:
+        err = str(e)
+        if "ERROR:" in err:
+            err = err.split("ERROR:")[-1].strip()
+        messages.error(request, err)
+
+    return redirect("miles:transfer_list")
