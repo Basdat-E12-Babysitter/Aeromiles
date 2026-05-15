@@ -29,13 +29,13 @@
     </a>
 
     <!-- Klaim Miles -->
-    <a href="#" class="nav-link">
+    <a href="{% url 'miles:klaim_list' %}" class="nav-link {% nav_active 'miles:klaim_list' %}">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
       Klaim Miles
     </a>
 
     <!-- Transfer Miles -->
-    <a href="#" class="nav-link">
+    <a href="{% url 'miles:transfer_list' %}" class="nav-link {% nav_active 'miles:transfer_list' %}">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 16V4m0 0L3 8m4-4 4 4"/><path d="M17 8v12m0 0 4-4m-4 4-4-4"/></svg>
       Transfer Miles
     </a>
