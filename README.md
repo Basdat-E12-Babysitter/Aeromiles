@@ -50,6 +50,7 @@ Aeromiles/
 - **Frontend:** HTML, Tailwind CSS, JavaScript  
 - **Backend:** Django (Python)  
 - **Database:** Supabase, PostgreSQL
+- **Deployment:** Railway
 - **Tools:** GitHub, Google Docs
 
 ---
