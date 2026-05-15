@@ -8,7 +8,7 @@
 
 {% block content %}
 
-{# ── Pesan Notifikasi Sukses / Error ── #}
+{# ── Pesan Notifikasi Sukses / Error dari Views ── #}
 {% if success %}
 <div class="mb-6 rounded-xl px-4 py-3 shadow-sm transition-all" style="background:#D1FAE5; border:1px solid #A7F3D0;">
   <div class="flex items-center gap-2">
@@ -36,12 +36,14 @@
   <div class="flex items-center gap-3">
     <div class="flex items-center gap-2 px-4 py-2.5 rounded-xl" style="background:var(--surface);border:1.5px solid var(--border);">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#00BFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21 4 19 4c-2 0-3 1-3.5 2.5L11 9l-7.8-1.8L2 8.6l6 4.4-1.8 1.8-3-.6-1.2 1.2 4.2 2.4 2.4 4.2 1.2-1.2-.6-3 1.8-1.8 4.4 6z"/></svg>
-      <span class="text-sm font-extrabold" style="color:#00BFFF;">{{ award_miles }}</span>
+      <span class="text-sm font-extrabold" style="color:#00BFFF;">{{ award_miles|default:"0" }}</span>
       <span class="text-xs font-semibold" style="color:var(--muted)">Miles</span>
     </div>
     <div class="flex items-center gap-2 px-4 py-2.5 rounded-xl" style="background:var(--surface);border:1.5px solid var(--border);">
-      <div class="flex items-center justify-center rounded-full font-extrabold text-xs" style="width:28px;height:28px;flex-shrink:0;background:linear-gradient(135deg,#00BFFF,#005A8C);color:white;">AS</div>
-      <span class="text-sm font-extrabold" style="color:var(--ink)">Halo, Agus Setiawan</span>
+      <div class="flex items-center justify-center rounded-full font-extrabold text-xs" style="width:28px;height:28px;flex-shrink:0;background:linear-gradient(135deg,#00BFFF,#005A8C);color:white;">
+        {{ request.session.user_name|slice:":2"|upper }}
+      </div>
+      <span class="text-sm font-extrabold" style="color:var(--ink)">Halo, {{ request.session.user_name }}</span>
     </div>
   </div>
 </div>
@@ -64,7 +66,6 @@
 
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="katalog-grid">
     {% for item in katalog %}
-      {# Logika Penentuan Kategori #}
       {% if "voucher" in item.nama|lower or "diskon" in item.nama|lower or "cashback" in item.nama|lower or "hotel" in item.nama|lower or "lounge" in item.nama|lower %}
           <div class="hadiah-card" data-kategori="Voucher">
             <div class="flex items-start justify-between gap-2 mb-3">
@@ -184,9 +185,7 @@
         </thead>
         <tbody id="riwayat-tbody">
           {% for r in riwayat %}
-            <tr style="border-bottom:1px solid var(--border);transition:background 0.15s;"
-                onmouseover="this.style.background='rgba(0,191,255,0.04)'"
-                onmouseout="this.style.background=''">
+            <tr style="border-bottom:1px solid var(--border);transition:background 0.15s;" onmouseover="this.style.background='rgba(0,191,255,0.04)'" onmouseout="this.style.background=''">
               <td class="px-5 py-4 font-bold" style="color:#00BFFF;">RDM-{{ forloop.counter|stringformat:"03d" }}</td>
               <td class="px-5 py-4 font-bold" style="font-family:monospace;font-size:0.75rem;color:var(--ink);">{{ r.kode_hadiah }}</td>
               <td class="px-5 py-4 font-semibold" style="color:var(--ink);">{{ r.nama_hadiah }}</td>
@@ -231,10 +230,12 @@
 
     <div class="rounded-xl p-4 mb-4" style="background:var(--surface);border:1.5px solid var(--border);">
       <div class="flex items-center gap-3">
-        <div class="flex items-center justify-center rounded-full font-extrabold text-xs" style="width:36px;height:36px;flex-shrink:0;background:linear-gradient(135deg,#00BFFF,#005A8C);color:white;">AS</div>
+        <div class="flex items-center justify-center rounded-full font-extrabold text-xs" style="width:36px;height:36px;flex-shrink:0;background:linear-gradient(135deg,#00BFFF,#005A8C);color:white;">
+          {{ request.session.user_name|slice:":2"|upper }}
+        </div>
         <div>
-          <p class="text-sm font-extrabold" style="color:var(--ink);">Agus Setiawan</p>
-          <p class="text-xs" style="color:var(--muted);">{{ request.session.user_email|default:"agus.setiawan@gmail.com" }}</p>
+          <p class="text-sm font-extrabold" style="color:var(--ink);">{{ request.session.user_name }}</p>
+          <p class="text-xs" style="color:var(--muted);">{{ request.session.user_email }}</p>
         </div>
       </div>
     </div>
@@ -344,6 +345,7 @@
     document.getElementById('panel-riwayat').classList.toggle('hidden', tab !== 'riwayat');
   }
 
+  // PERBAIKAN LOGIKA UTAMA: Menggunakan manipulasi style.display murni untuk menimpa display:flex kustom
   function filterKatalog(kategori) {
     currentFilter = kategori;
     document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -356,22 +358,21 @@
     let visibleCount = 0;
     document.querySelectorAll('#katalog-grid .hadiah-card').forEach(card => {
       if (!kategori || card.dataset.kategori === kategori) {
-        card.classList.remove('hidden');
+        card.style.display = 'flex'; // Tampilkan kartu dengan flex
         visibleCount++;
       } else {
-        card.classList.add('hidden');
+        card.style.display = 'none'; // Sembunyikan total murni secara inline
       }
     });
 
     const empty = document.getElementById('katalog-empty');
     if (visibleCount === 0) {
-      empty.classList.remove('hidden');
+      empty.style.display = 'block';
     } else {
-      empty.classList.add('hidden');
+      empty.style.display = 'none';
     }
   }
 
-  // Logika baru pembaca dataset HTML5 untuk meloloskan validasi JavaScript VS Code murni
   function handleRedeemClick(buttonEl) {
     const kode = buttonEl.dataset.kode;
     const nama = buttonEl.dataset.nama;
