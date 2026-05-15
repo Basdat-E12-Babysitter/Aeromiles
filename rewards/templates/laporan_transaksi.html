@@ -273,14 +273,8 @@
 
 {# ── Script ── #}
 <script>
-  // Data Riwayat (Asli dari fitur14)
-  const dataTransaksi = [
-    { id:1, noTrx:'TRX-0001', tipe:'Transfer',    email:'giulia.ferrari@yahoo.com',  miles:1000,  tanggal:'2025-01-10', status:'Berhasil'  },
-    { id:2, noTrx:'TRX-0002', tipe:'Klaim Miles',  email:'giulia.ferrari@yahoo.com',  miles:2500,  tanggal:'2026-04-29', status:'Disetujui' },
-    { id:3, noTrx:'TRX-0003', tipe:'Redeem',       email:'agus.setiawan@gmail.com',   miles:3000,  tanggal:'2026-01-15', status:'Berhasil'  },
-    { id:4, noTrx:'TRX-0004', tipe:'Beli Paket',   email:'budi.santoso@gmail.com',    miles:5000,  tanggal:'2024-05-02', status:'Berhasil'  },
-    { id:5, noTrx:'TRX-0005', tipe:'Transfer',     email:'maya.indah@yahoo.com',      miles:5000,  tanggal:'2025-03-10', status:'Berhasil'  },
-  ];
+  // Data Riwayat 
+  const dataTransaksi = JSON.parse('{{ transaksi_json|escapejs }}');
 
   function switchMainView(view) {
     const riwayatSec = document.getElementById('section-riwayat');
