@@ -103,9 +103,11 @@
       </div>
       <form id="form-hadiah" class="modal-body space-y-5">
         <input type="hidden" id="mode-edit" value="false">
-        <div class="space-y-1">
+        <div class="space-y-1" id="field-kode" style="display:none;">
           <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Kode Hadiah</label>
-          <input type="text" id="input-kode" name="kode_hadiah" required class="w-full px-4 py-3 rounded-xl outline-none text-sm">
+          <input type="text" id="input-kode" name="kode_hadiah" disabled
+            class="w-full px-4 py-3 rounded-xl outline-none text-sm"
+            style="background:#f1f5f9; color:#94a3b8;">
         </div>
         <div class="space-y-1">
           <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Nama Hadiah</label>
@@ -208,6 +210,7 @@
     document.getElementById('input-kode').disabled = false;
     document.getElementById('input-penyedia').disabled = false;
     document.getElementById('form-hadiah').reset();
+    document.getElementById('field-kode').style.display = 'none';
     bukaModal();
   });
 
@@ -360,6 +363,7 @@
     document.getElementById('input-deskripsi').value = h.deskripsi || '';
     document.getElementById('input-valid-start').value = h.valid_start_date || '';
     document.getElementById('input-program-end').value = h.program_end || '';
+    document.getElementById('field-kode').style.display = 'block';
     bukaModal();
   }
 
