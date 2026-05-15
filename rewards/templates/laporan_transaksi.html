@@ -229,7 +229,7 @@
           {% if transaksi %}
             {% for t in transaksi %}
             
-            {# ── 1. KONDISI: TRANSFER MILES (Tombol Aktif) ── #}
+            {# ── 1. KONDISI: TRANSFER MILES ── #}
             {% if t.tipe == 'Transfer' or t.tipe == 'Transfer Miles' %}
               <tr data-tipe="{{ t.tipe }}"
                   style="border-bottom:1px solid var(--border);transition:background 0.15s;"
@@ -237,6 +237,7 @@
                   onmouseout="this.style.background=''">
                 <td class="px-5 py-4 font-bold" style="color:#00BFFF;">{{ t.no_trx }}</td>
                 <td class="px-5 py-4">
+                  {# FIX: Tag span ditutup dengan sempurna dan memuat teks variabel #}
                   <span class="tipe-badge" style="background: #EFF6FF; color: #1D4ED8;">{{ t.tipe }}</span>
                 </td>
                 <td class="px-5 py-4" style="color:var(--muted);">{{ t.email_member }}</td>
@@ -252,7 +253,7 @@
                 </td>
               </tr>
 
-            {# ── 2. KONDISI: REDEEM HADIAH (Tombol Aktif) ── #}
+            {# ── 2. KONDISI: REDEEM HADIAH ── #}
             {% elif t.tipe == 'Redeem' or t.tipe == 'Redeem Hadiah' %}
               <tr data-tipe="{{ t.tipe }}"
                   style="border-bottom:1px solid var(--border);transition:background 0.15s;"
@@ -260,6 +261,7 @@
                   onmouseout="this.style.background=''">
                 <td class="px-5 py-4 font-bold" style="color:#00BFFF;">{{ t.no_trx }}</td>
                 <td class="px-5 py-4">
+                  {# FIX: Tag span ditutup dengan sempurna dan memuat teks variabel #}
                   <span class="tipe-badge" style="background: #FFF7ED; color: #C2410C;">{{ t.tipe }}</span>
                 </td>
                 <td class="px-5 py-4" style="color:var(--muted);">{{ t.email_member }}</td>
@@ -275,7 +277,7 @@
                 </td>
               </tr>
 
-            {# ── 3. KONDISI: BELI PAKET (Tombol Aktif) ── #}
+            {# ── 3. KONDISI: PEMBELIAN PACKAGE ── #}
             {% elif t.tipe == 'Beli Paket' or t.tipe == 'Pembelian Package' %}
               <tr data-tipe="{{ t.tipe }}"
                   style="border-bottom:1px solid var(--border);transition:background 0.15s;"
@@ -292,17 +294,15 @@
                 <td class="px-5 py-4">
                   {% if t.deletable %}
                   <button onclick="openHapusModal('{{ t.id_unik }}','{{ t.no_trx }}')" class="action-btn" style="color:#EF4444;background:#FEE2E2;" title="Hapus transaksi ini">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
                   </button>
                   {% endif %}
                 </td>
               </tr>
 
-            {# ── 4. KONDISI DEFAULT: KLAIM MILES (Tetap Terkunci Gembok 🔒) ── #}
+            {# ── 4. KONDISI: KLAIM MILES (Hanya izinkan mencetak tipe Klaim Miles asli) ── #}
             {% else %}
-              {# 👇 TAMBAHKAN BARIS INI: Saring agar data duplikat tidak ikut dicetak #}
               {% if t.tipe == 'Klaim Miles' %}
-              
               <tr data-tipe="{{ t.tipe }}"
                   style="border-bottom:1px solid var(--border);transition:background 0.15s;"
                   onmouseover="this.style.background='rgba(0,191,255,0.04)'"
@@ -312,17 +312,9 @@
                   <span class="tipe-badge" style="background: #FEF3C7; color: #92400E;">{{ t.tipe }}</span>
                 </td>
                 <td class="px-5 py-4" style="color:var(--muted);">{{ t.email_member }}</td>
-                <td class="px-5 py-4 font-extrabold" style="color:#22C55E;">
-                  +{{ t.miles }} mi
-                </td>
-                <td class="px-5 py-4" style="color:var(--muted);">
-                  {{ t.timestamp|date:"d M Y, H:i" }}
-                </td>
-                <td class="px-5 py-4">
-                  <span class="status-badge" style="background:#D1FAE5;color:#065F46;">
-                    {{ t.status }}
-                  </span>
-                </td>
+                <td class="px-5 py-4 font-extrabold" style="color:#22C55E;">+{{ t.miles }} mi</td>
+                <td class="px-5 py-4" style="color:var(--muted);">{{ t.timestamp|date:"d M Y, H:i" }}</td>
+                <td class="px-5 py-4"><span class="status-badge" style="background:#D1FAE5;color:#065F46;">{{ t.status }}</span></td>
                 <td class="px-5 py-4">
                   <span title="Klaim disetujui tidak dapat dihapus"
                         style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:8px;background:#F1F5F9;color:#94A3B8;">
@@ -330,10 +322,10 @@
                   </span>
                 </td>
               </tr>
-              
-              {% endif %} {# 👈 TAMBAHKAN BARIS INI sebagai penutup filter tipe #}
+              {% endif %}
             {% endif %}
             {% endfor %}
+
           {% else %}
             <tr>
               <td colspan="7" style="padding:4rem 0;">

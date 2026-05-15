@@ -143,11 +143,9 @@ def redeem_hadiah(request):
                       _build_redeem_context(request, email, success=pesan_sukses))
 
     except Exception as e:
-        error_msg = str(e)
-        if 'ERROR:' in error_msg:
-            error_msg = error_msg.split('ERROR:')[-1].strip()
-        return render(request, 'redeem_hadiah.html',
-                      _build_redeem_context(request, email, error=error_msg))
+            error_msg = _parse_db_error(e)
+            return render(request, 'redeem_hadiah.html',
+                        _build_redeem_context(request, email, error=error_msg))
 
 
 def _kategori_hadiah(nama: str) -> str:
@@ -308,11 +306,9 @@ def beli_package(request):
                       _build_package_context(request, email, success=pesan_sukses))
 
     except Exception as e:
-        error_msg = str(e)
-        if 'ERROR:' in error_msg:
-            error_msg = error_msg.split('ERROR:')[-1].strip()
-        return render(request, 'beli_package.html',
-                      _build_package_context(request, email, error=error_msg))
+            error_msg = _parse_db_error(e)
+            return render(request, 'beli_package.html',
+                        _build_package_context(request, email, error=error_msg))
 
 
 def _build_package_context(request, email: str, success: str = None, error: str = None) -> dict:
@@ -703,9 +699,11 @@ def _hapus_transaksi(request, email_staf: str):
         success_msg = f'Transaksi {transaksi_id} berhasil dihapus.'
 
     except Exception as e:
-        error_msg = str(e)
-        if 'ERROR:' in error_msg:
-            error_msg = error_msg.split('ERROR:')[-1].strip()
+            error_msg = _parse_db_error(e)
+            context = _build_laporan_context(email_staf)
+            if error_msg:
+                context['error'] = error_msg
+            return render(request, 'laporan_transaksi.html', context)
 
     context = _build_laporan_context(email_staf)
     if success_msg:
@@ -864,3 +862,11 @@ def api_laporan_transaksi(request):
             for t in transaksi
         ]
     }, safe=False)
+
+def _parse_db_error(e):
+    error_msg = str(e)
+    if 'ERROR:' in error_msg:
+        error_msg = error_msg.split('ERROR:')[-1]
+    if 'CONTEXT:' in error_msg:
+        error_msg = error_msg.split('CONTEXT:')[0]
+    return error_msg.strip()
