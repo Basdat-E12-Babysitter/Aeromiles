@@ -15,7 +15,7 @@
  
       <!-- Left -->
       <div class="flex items-center gap-4">
-        <div class="avatar w-14 h-14 text-xl flex-shrink-0" style="border-radius:18px;font-size:1.1rem">RH</div>
+        <div class="avatar w-14 h-14 text-xl flex-shrink-0" style="border-radius:18px;font-size:1.1rem">{{ staf.first_mid_name|first|upper }}{{ staf.last_name|first|upper }}</div>
         <div>
           <p class="text-xs font-bold text-white uppercase tracking-widest mb-1" style="opacity:.65">Staf Dashboard</p>
           <h1 class="text-2xl md:text-3xl font-extrabold text-white tracking-tight leading-tight">
@@ -194,7 +194,7 @@
           Klaim menunggu mencakup semua staf · Disetujui &amp; Ditolak khusus milik Anda
         </p>
       </div>
-      <a href="#" class="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg" style="background:var(--sky-light);color:var(--sky-dark)">
+      <a href="{% url 'miles:kelola_klaim' %}" class="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg" style="background:var(--sky-light);color:var(--sky-dark)">
         Lihat Semua Klaim
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="9 18 15 12 9 6"/>
@@ -238,7 +238,7 @@
         </div>
  
         <!-- CTA -->
-        <a href="#" class="inline-flex items-center gap-1.5 text-xs font-bold" style="color:#D97706">
+        <a href="{% url 'miles:kelola_klaim' %}" class="inline-flex items-center gap-1.5 text-xs font-bold" style="color:#D97706">
           Proses sekarang
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
         </a>
@@ -277,7 +277,7 @@
           </div>
         </div>
  
-        <a href="#" class="inline-flex items-center gap-1.5 text-xs font-bold" style="color:#059669">
+        <a href="{% url 'miles:kelola_klaim' %}" class="inline-flex items-center gap-1.5 text-xs font-bold" style="color:#059669">
           Lihat riwayat persetujuan
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
         </a>
@@ -317,7 +317,7 @@
           </div>
         </div>
  
-        <a href="#" class="inline-flex items-center gap-1.5 text-xs font-bold" style="color:#DC2626">
+        <a href="{% url 'miles:kelola_klaim' %}" class="inline-flex items-center gap-1.5 text-xs font-bold" style="color:#DC2626">
           Lihat riwayat penolakan
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
         </a>
@@ -348,7 +348,7 @@
         <p class="text-xs" style="color:var(--muted)">Tambah / ubah member</p>
       </a>
  
-      <a href="#" class="card p-4 flex flex-col items-center gap-2 text-center hover:shadow-md transition-shadow group">
+      <a href="{% url 'miles:kelola_klaim' %}" class="card p-4 flex flex-col items-center gap-2 text-center hover:shadow-md transition-shadow group">
         <div class="w-11 h-11 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform" style="background:#FEF3C7">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/>
@@ -358,7 +358,7 @@
         <p class="text-xs" style="color:var(--muted)">Proses missing miles</p>
       </a>
  
-      <a href="#" class="card p-4 flex flex-col items-center gap-2 text-center hover:shadow-md transition-shadow group">
+      <a href="{% url 'partners:kelola_hadiah' %}" class="card p-4 flex flex-col items-center gap-2 text-center hover:shadow-md transition-shadow group">
         <div class="w-11 h-11 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform" style="background:#F3E8FF">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9333EA" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="20 12 20 22 4 22 4 12"/>

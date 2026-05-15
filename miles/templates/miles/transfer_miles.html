@@ -80,11 +80,6 @@
           <textarea name="catatan" class="form-input" rows="3" placeholder="cth. Hadiah ulang tahun" style="resize:none;"></textarea>
         </div>
       </div>
-      {% if messages %}
-        {% for message in messages %}
-          <p class="mt-3 text-xs font-semibold" style="color:#991B1B;">{{ message }}</p>
-        {% endfor %}
-      {% endif %}
       <div class="flex justify-end gap-3 mt-6">
         <button type="button" onclick="closeTransfer()" class="btn-outline px-5 py-2.5 text-sm font-bold">Batal</button>
         <button type="submit" class="btn-solid px-6 py-2.5 text-sm font-bold">Transfer</button>
@@ -172,11 +167,11 @@
     });
 
     const currentMemberEmail = "{{ user_email }}";
-    const allTransfer = {{ transfer_list | safe }};
+    const allTransfer = JSON.parse('{{ transfer_list_json|escapejs }}');
 
     function initTransfer() {
         const saldoEl = document.getElementById('saldo-miles');
-        if (saldoEl) saldoEl.textContent = Number({{ award_miles|default:0 }}).toLocaleString('id-ID');
+        if (saldoEl) saldoEl.textContent = Number('{{ award_miles|default:0 }}').toLocaleString('id-ID');
         renderTable(allTransfer, currentMemberEmail);
     }
 
@@ -223,7 +218,7 @@
             <p style="font-size:0.8rem;font-weight:600;">${otherParty || '—'}</p>
           </td>
           <td class="px-5 py-4">${jumlah}</td>
-          <td class="px-5 py-4" style="color:var(--muted);font-size:0.8rem;">${t.catatan || '-'}</td>
+          <td class="px-5 py-4" style="color:var(--muted);font-size:0.8rem;">${t.catatan == null ? '' : t.catatan}</td>
           <td class="px-5 py-4">${tipeBadge}</td>
           <td class="px-5 py-4">
             <button class="action-btn" style="color:#aab4c4;background:var(--surface);" title="Transfer terkunci" onclick="openLock()">

@@ -216,10 +216,6 @@
         <h2 class="font-extrabold text-base" style="color:var(--ink)">Riwayat Transaksi Terbaru</h2>
         <p class="text-xs mt-0.5" style="color:var(--muted)">5 transaksi miles terakhir</p>
       </div>
-      <a href="#" class="text-xs font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5" style="background:var(--sky-light);color:var(--sky-dark)">
-        Lihat Semua
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-      </a>
     </div>
 
     <div class="overflow-x-auto">
@@ -290,7 +286,7 @@
   <!-- ── Quick Actions ── -->
   <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
 
-    <a href="#" class="card p-4 flex flex-col items-center gap-2 text-center hover:shadow-md transition-shadow cursor-pointer group">
+    <a href="{% url 'miles:klaim_list' %}" class="card p-4 flex flex-col items-center gap-2 text-center hover:shadow-md transition-shadow cursor-pointer group">
       <div class="w-12 h-12 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform" style="background:var(--sky-light)">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00BFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
       </div>
@@ -306,7 +302,7 @@
       <p class="text-xs" style="color:var(--muted)">Tukar award miles</p>
     </a>
 
-    <a href="#" class="card p-4 flex flex-col items-center gap-2 text-center hover:shadow-md transition-shadow cursor-pointer group">
+    <a href="{% url 'miles:transfer_list' %}" class="card p-4 flex flex-col items-center gap-2 text-center hover:shadow-md transition-shadow cursor-pointer group">
       <div class="w-12 h-12 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform" style="background:#DCFCE7">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#15803D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 16V4m0 0L3 8m4-4 4 4"/><path d="M17 8v12m0 0 4-4m-4 4-4-4"/></svg>
       </div>
