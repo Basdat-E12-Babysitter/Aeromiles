@@ -8,6 +8,7 @@
 
 {% block content %}
 <div>
+
   <div class="flex items-center justify-between mb-8 w-full">
     <div>
       <h1 class="text-3xl font-extrabold" style="color:var(--ink)">
@@ -25,6 +26,17 @@
       <span class="text-xl">+</span>
       Tambah Hadiah
     </button>
+  </div>
+
+  <div class="flex gap-4 mb-4">
+    <select id="filter-penyedia" class="px-4 py-2 rounded-xl text-sm outline-none bg-white border border-slate-200">
+      <option value="">Semua Penyedia</option>
+    </select>
+    <select id="filter-status" class="px-4 py-2 rounded-xl text-sm outline-none bg-white border border-slate-200">
+      <option value="">Semua Status</option>
+      <option value="aktif">Aktif</option>
+      <option value="tidak_aktif">Tidak Aktif</option>
+    </select>
   </div>
 
   <div class="bg-white rounded-2xl shadow-sm overflow-x-auto">
@@ -179,6 +191,9 @@
 
   const modal = document.getElementById('modal-nayra');
   const modalDelete = document.getElementById('modal-delete');
+  let allHadiah = [];
+  let allPenyedia = {};
+
   let hadiahYangMauDihapus = null;
 
   function bukaModal() {
@@ -285,69 +300,102 @@
     }
   });
 
-  // ========== LOAD TABEL (tetap Supabase JS) ==========
-  async function loadTabelHadiah() {
-    try {
-      const sb = window.AeroMilesSupabase;
-      const hadiah = await sb.fetchTable('hadiah', { orderBy: { column: 'kode_hadiah', ascending: true } });
-      const mitra = await sb.fetchTable('mitra');
-      const maskapai = await sb.fetchTable('maskapai');
+  // ========== LOAD TABEL ==========
+    async function loadTabelHadiah() {
+      try {
+        const sb = window.AeroMilesSupabase;
+        const hadiah = await sb.fetchTable('hadiah', { orderBy: { column: 'kode_hadiah', ascending: true } });
+        const mitra = await sb.fetchTable('mitra');
+        const maskapai = await sb.fetchTable('maskapai');
+        
+
+        const mapPenyedia = {};
+        mitra.forEach(m => { mapPenyedia[m.id_penyedia] = { nama: m.nama_mitra, tipe: 'partner' }; });
+        maskapai.forEach(mk => { mapPenyedia[mk.id_penyedia] = { nama: mk.nama_maskapai, tipe: 'airline' }; });
+
+        const selectPenyedia = document.getElementById('input-penyedia');
+        selectPenyedia.innerHTML = `<option value="" disabled selected>Pilih penyedia</option>`;
+        mitra.forEach(m => {
+          selectPenyedia.innerHTML += `<option value="${m.id_penyedia}">${m.nama_mitra}</option>`;
+        });
+
+        maskapai.forEach(mk => {
+          selectPenyedia.innerHTML += `<option value="${mk.id_penyedia}">${mk.nama_maskapai}</option>`;
+        });
+
+        allHadiah = hadiah;
+        allPenyedia = mapPenyedia;
+
+        const filterPenyedia = document.getElementById('filter-penyedia');
+        filterPenyedia.innerHTML = '<option value="">Semua Penyedia</option>';
+        Object.entries(mapPenyedia).forEach(([id, p]) => {
+          filterPenyedia.innerHTML += `<option value="${id}">${p.nama}</option>`;
+        });
+
       
+        renderTabel(allHadiah);
 
-      const mapPenyedia = {};
-      mitra.forEach(m => { mapPenyedia[m.id_penyedia] = { nama: m.nama_mitra, tipe: 'partner' }; });
-      maskapai.forEach(mk => { mapPenyedia[mk.id_penyedia] = { nama: mk.nama_maskapai, tipe: 'airline' }; });
-
-      const selectPenyedia = document.getElementById('input-penyedia');
-      selectPenyedia.innerHTML = `<option value="" disabled selected>Pilih penyedia</option>`;
-      mitra.forEach(m => {
-        selectPenyedia.innerHTML += `<option value="${m.id_penyedia}">${m.nama_mitra}</option>`;
-      });
-
-      maskapai.forEach(mk => {
-        selectPenyedia.innerHTML += `<option value="${mk.id_penyedia}">${mk.nama_maskapai}</option>`;
-      });
-
-      const tbody = document.getElementById('tbody-hadiah');
-      tbody.innerHTML = hadiah.map(h => {
-        const penyedia = mapPenyedia[h.id_penyedia];
-        const namaPenyedia = penyedia ? penyedia.nama : '-';
-        const badgeText = penyedia ? penyedia.tipe : '-';
-        const badgeClass = badgeText === 'airline' ? 'bg-sky-100 text-sky-700' : 'bg-orange-100 text-orange-600';
-        const periode = `${h.valid_start_date || '-'} — ${h.program_end || '-'}`;
-        return `
-          <tr class="hover:bg-slate-50 align-middle">
-            <td class="px-6 py-6 align-middle" style="white-space:nowrap; min-width:90px;">
-              <span class="font-mono text-xs text-sky-600 font-bold">${h.kode_hadiah}</span>
-            </td>
-            <td class="px-6 py-6 font-semibold text-slate-800 whitespace-nowrap">${h.nama}</td>
-            <td class="px-6 py-6 text-xs text-slate-500 leading-relaxed max-w-[250px]">
-              <div class="line-clamp-2">${h.deskripsi || '-'}</div>
-            </td>
-            <td class="px-6 py-6 align-middle whitespace-nowrap">
-              <div class="flex items-center gap-2">
-                <span class="font-semibold text-slate-700">${namaPenyedia}</span>
-                <span class="px-2 py-1 rounded-md text-[10px] font-bold uppercase ${badgeClass}">${badgeText}</span>
-              </div>
-            </td>
-            <td class="px-6 py-6 font-bold text-slate-700 whitespace-nowrap">${h.miles?.toLocaleString('id-ID') || 0}</td>
-            <td class="px-6 py-6 text-xs text-slate-500 whitespace-nowrap">${periode}</td>
-            <td class="px-6 py-6">
-              <div class="flex items-center gap-3">
-                <button onclick='editHadiah(${JSON.stringify(h)})'
-                  class="text-slate-400 hover:text-sky-500 bg-transparent border-none cursor-pointer text-base">✎</button>
-                <button onclick='bukaModalDelete(${JSON.stringify(h)})'
-                  class="text-slate-400 hover:text-red-500 bg-transparent border-none cursor-pointer text-base">🗑</button>
-              </div>
-            </td>
-          </tr>
-        `;
-      }).join('');
-    } catch (e) {
-      console.error(e);
-      document.getElementById('tbody-hadiah').innerHTML = `
-        <tr><td colspan="7" class="text-center py-10 text-red-400">Terjadi kesalahan saat mengambil data</td></tr>`;
+      } catch (e) {
+        console.error(e);
+        document.getElementById('tbody-hadiah').innerHTML = `
+          <tr><td colspan="7" class="text-center py-10 text-red-400">Terjadi kesalahan saat mengambil data</td></tr>`;
+      }
     }
+
+    function renderTabel(data) {
+    const tbody = document.getElementById('tbody-hadiah');
+    if (data.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7" class="text-center py-10 text-slate-400">Tidak ada data</td></tr>';
+      return;
+    }
+    tbody.innerHTML = data.map(h => {
+      const penyedia = allPenyedia[h.id_penyedia];
+      const namaPenyedia = penyedia ? penyedia.nama : '-';
+      const badgeText = penyedia ? penyedia.tipe : '-';
+      const badgeClass = badgeText === 'airline' ? 'bg-sky-100 text-sky-700' : 'bg-orange-100 text-orange-600';
+      const periode = `${h.valid_start_date || '-'} — ${h.program_end || '-'}`;
+      return `
+        <tr class="hover:bg-slate-50 align-middle">
+          <td class="px-6 py-6 align-middle" style="white-space:nowrap; min-width:90px;">
+            <span class="font-mono text-xs text-sky-600 font-bold">${h.kode_hadiah}</span>
+          </td>
+          <td class="px-6 py-6 font-semibold text-slate-800 whitespace-nowrap">${h.nama}</td>
+          <td class="px-6 py-6 text-xs text-slate-500 leading-relaxed max-w-[250px]">
+            <div class="line-clamp-2">${h.deskripsi || '-'}</div>
+          </td>
+          <td class="px-6 py-6 align-middle whitespace-nowrap">
+            <div class="flex items-center gap-2">
+              <span class="font-semibold text-slate-700">${namaPenyedia}</span>
+              <span class="px-2 py-1 rounded-md text-[10px] font-bold uppercase ${badgeClass}">${badgeText}</span>
+            </div>
+          </td>
+          <td class="px-6 py-6 font-bold text-slate-700 whitespace-nowrap">${h.miles?.toLocaleString('id-ID') || 0}</td>
+          <td class="px-6 py-6 text-xs text-slate-500 whitespace-nowrap">${periode}</td>
+          <td class="px-6 py-6">
+            <div class="flex items-center gap-3">
+              <button onclick='editHadiah(${JSON.stringify(h)})'
+                class="text-slate-400 hover:text-sky-500 bg-transparent border-none cursor-pointer text-base">✎</button>
+              <button onclick='bukaModalDelete(${JSON.stringify(h)})'
+                class="text-slate-400 hover:text-red-500 bg-transparent border-none cursor-pointer text-base">🗑</button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  document.getElementById('filter-penyedia').addEventListener('change', applyFilter);
+  document.getElementById('filter-status').addEventListener('change', applyFilter);
+
+  function applyFilter() {
+    const penyedia = document.getElementById('filter-penyedia').value;
+    const status = document.getElementById('filter-status').value;
+    const today = new Date().toISOString().split('T')[0];
+    let filtered = allHadiah;
+    if (penyedia) filtered = filtered.filter(h => h.id_penyedia == penyedia);
+    if (status === 'aktif') filtered = filtered.filter(h => h.program_end >= today);
+    else if (status === 'tidak_aktif') filtered = filtered.filter(h => h.program_end < today);
+    renderTabel(filtered);
   }
 
   function editHadiah(h) {
