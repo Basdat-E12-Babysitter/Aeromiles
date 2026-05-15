@@ -8,253 +8,204 @@
 
 {% block content %}
 
+{# ── Pesan Notifikasi Sukses / Error dari Views.py ── #}
+{% if success %}
+<div class="mb-6 rounded-xl px-4 py-3 shadow-sm transition-all" style="background:#D1FAE5; border:1px solid #A7F3D0;">
+  <div class="flex items-center gap-2">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#065F46" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+    <p class="text-sm font-bold" style="color:#065F46;">{{ success }}</p>
+  </div>
+</div>
+{% endif %}
+
+{% if error %}
+<div class="mb-6 rounded-xl px-4 py-3 shadow-sm transition-all" style="background:#FEE2E2; border:1px solid #FCA5A5;">
+  <div class="flex items-center gap-2">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#991B1B" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    <p class="text-sm font-bold" style="color:#991B1B;">{{ error }}</p>
+  </div>
+</div>
+{% endif %}
+
 {# ── Page Header ── #}
 <div class="flex items-center justify-between mb-6">
   <div>
     <h2 class="text-2xl font-extrabold" style="color:var(--ink)">Beli Package Miles</h2>
     <p class="text-sm mt-1" style="color:var(--muted)">Tambah saldo miles Anda dengan membeli paket yang tersedia.</p>
   </div>
-  <div class="flex items-center gap-2 px-4 py-2.5 rounded-xl" style="background:var(--surface);border:1.5px solid var(--border);">
-    <div class="flex items-center justify-center rounded-full font-extrabold text-xs" style="width:28px;height:28px;flex-shrink:0;background:linear-gradient(135deg,#00BFFF,#005A8C);color:white;">AS</div>
-    <span class="text-sm font-extrabold" style="color:var(--ink)">Halo, Agus Setiawan</span>
+  <div class="flex items-center gap-3">
+    <div class="flex items-center gap-2 px-4 py-2.5 rounded-xl" style="background:var(--surface);border:1.5px solid var(--border);">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#00BFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21 4 19 4c-2 0-3 1-3.5 2.5L11 9l-7.8-1.8L2 8.6l6 4.4-1.8 1.8-3-.6-1.2 1.2 4.2 2.4 2.4 4.2 1.2-1.2-.6-3 1.8-1.8 4.4 6z"/></svg>
+      <span class="text-sm font-extrabold" style="color:#00BFFF;">{{ award_miles|default:"0" }}</span>
+      <span class="text-xs font-semibold" style="color:var(--muted)">Miles</span>
+    </div>
+    <div class="flex items-center gap-2 px-4 py-2.5 rounded-xl" style="background:var(--surface);border:1.5px solid var(--border);">
+      <div class="flex items-center justify-center rounded-full font-extrabold text-xs" style="width:28px;height:28px;flex-shrink:0;background:linear-gradient(135deg,#00BFFF,#005A8C);color:white;">
+        {{ request.session.user_name|slice:":2"|upper }}
+      </div>
+      <span class="text-sm font-extrabold" style="color:var(--ink)">Halo, {{ request.session.user_name }}</span>
+    </div>
   </div>
 </div>
 
 {# ── Info Banner ── #}
 <div class="flex gap-2.5 items-start rounded-xl px-4 py-3 mb-6" style="background:#E0F7FF;border:1px solid #B3EAFF;">
-  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#005A8C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-top:1px;flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-  <p class="text-xs leading-relaxed" style="color:#005A8C;">
-    Miles yang dibeli akan langsung ditambahkan ke saldo akun Anda setelah pembayaran dikonfirmasi. Transaksi bersifat <strong>tidak dapat dibatalkan</strong>.
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#005A8C" stroke-width="2.5" style="margin-top:2px;flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+  <p class="text-xs font-medium" style="color:#005A8C;line-height:1.4;">
+    <strong>Informasi Penting:</strong> Pembelian paket miles akan langsung menambahkan jumlah <strong>Award Miles</strong> Anda setelah transaksi berhasil disubmit. Paket yang sudah dibeli tidak dapat dibatalkan atau direfund.
   </p>
 </div>
 
-{# ── Package Grid ── #}
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-
-  {# AMP-001 #}
-  <div class="package-card">
-    <div class="flex items-center justify-between mb-3">
-      <span class="pkg-kode-badge">AMP-001</span>
-      <span class="pkg-label-badge" style="background:#F0FDF4;color:#15803D;border-color:#BBF7D0;">Paket Hemat</span>
-    </div>
-    <div class="flex items-end gap-1 mb-1">
-      <span class="pkg-miles">1.000</span>
-      <span class="pkg-miles-unit">miles</span>
-    </div>
-    <p class="text-xs mb-4" style="color:var(--muted);">Cocok untuk penukaran hadiah ringan.</p>
-    <div class="pkg-footer">
-      <div>
-        <p class="text-xs" style="color:var(--muted);">Harga</p>
-        <p class="text-base font-extrabold" style="color:var(--ink);">Rp 150.000</p>
-      </div>
-      <button onclick="openBeliModal('AMP-001','Paket Hemat',1000,150000)" class="btn-solid px-4 py-2 text-xs font-bold rounded-xl flex items-center gap-1.5">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-        Beli Sekarang
-      </button>
-    </div>
-  </div>
-
-  {# AMP-002 #}
-  <div class="package-card">
-    <div class="flex items-center justify-between mb-3">
-      <span class="pkg-kode-badge">AMP-002</span>
-      <span class="pkg-label-badge" style="background:#EFF6FF;color:#1D4ED8;border-color:#BFDBFE;">Paket Standar</span>
-    </div>
-    <div class="flex items-end gap-1 mb-1">
-      <span class="pkg-miles">5.000</span>
-      <span class="pkg-miles-unit">miles</span>
-    </div>
-    <p class="text-xs mb-4" style="color:var(--muted);">Ideal untuk anggota yang aktif terbang.</p>
-    <div class="pkg-footer">
-      <div>
-        <p class="text-xs" style="color:var(--muted);">Harga</p>
-        <p class="text-base font-extrabold" style="color:var(--ink);">Rp 650.000</p>
-      </div>
-      <button onclick="openBeliModal('AMP-002','Paket Standar',5000,650000)" class="btn-solid px-4 py-2 text-xs font-bold rounded-xl flex items-center gap-1.5">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-        Beli Sekarang
-      </button>
-    </div>
-  </div>
-
-  {# AMP-003 — Popular #}
-  <div class="package-card package-popular">
-    <div class="popular-badge">⭐ Terpopuler</div>
-    <div class="flex items-center justify-between mb-3">
-      <span class="pkg-kode-badge">AMP-003</span>
-      <span class="pkg-label-badge" style="background:#FFF7ED;color:#C2410C;border-color:#FED7AA;">Paket Populer</span>
-    </div>
-    <div class="flex items-end gap-1 mb-1">
-      <span class="pkg-miles">10.000</span>
-      <span class="pkg-miles-unit">miles</span>
-    </div>
-    <p class="text-xs mb-4" style="color:var(--muted);">Hemat lebih dengan paket unggulan kami.</p>
-    <div class="pkg-footer">
-      <div>
-        <p class="text-xs" style="color:var(--muted);">Harga</p>
-        <p class="text-base font-extrabold" style="color:var(--ink);">Rp 1.200.000</p>
-      </div>
-      <button onclick="openBeliModal('AMP-003','Paket Populer',10000,1200000)" class="btn-solid px-4 py-2 text-xs font-bold rounded-xl flex items-center gap-1.5">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-        Beli Sekarang
-      </button>
-    </div>
-  </div>
-
-  {# AMP-004 #}
-  <div class="package-card">
-    <div class="flex items-center justify-between mb-3">
-      <span class="pkg-kode-badge">AMP-004</span>
-      <span class="pkg-label-badge" style="background:#FDF4FF;color:#7E22CE;border-color:#E9D5FF;">Paket Premium</span>
-    </div>
-    <div class="flex items-end gap-1 mb-1">
-      <span class="pkg-miles">25.000</span>
-      <span class="pkg-miles-unit">miles</span>
-    </div>
-    <p class="text-xs mb-4" style="color:var(--muted);">Untuk pelancong setia yang sering terbang.</p>
-    <div class="pkg-footer">
-      <div>
-        <p class="text-xs" style="color:var(--muted);">Harga</p>
-        <p class="text-base font-extrabold" style="color:var(--ink);">Rp 2.750.000</p>
-      </div>
-      <button onclick="openBeliModal('AMP-004','Paket Premium',25000,2750000)" class="btn-solid px-4 py-2 text-xs font-bold rounded-xl flex items-center gap-1.5">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-        Beli Sekarang
-      </button>
-    </div>
-  </div>
-
-  {# AMP-005 #}
-  <div class="package-card">
-    <div class="flex items-center justify-between mb-3">
-      <span class="pkg-kode-badge">AMP-005</span>
-      <span class="pkg-label-badge" style="background:linear-gradient(135deg,#FEF3C7,#FDE68A);color:#92400E;border-color:#FCD34D;">Paket Ultimate</span>
-    </div>
-    <div class="flex items-end gap-1 mb-1">
-      <span class="pkg-miles">50.000</span>
-      <span class="pkg-miles-unit">miles</span>
-    </div>
-    <p class="text-xs mb-4" style="color:var(--muted);">Maksimalkan miles untuk perjalanan impian.</p>
-    <div class="pkg-footer">
-      <div>
-        <p class="text-xs" style="color:var(--muted);">Harga</p>
-        <p class="text-base font-extrabold" style="color:var(--ink);">Rp 5.000.000</p>
-      </div>
-      <button onclick="openBeliModal('AMP-005','Paket Ultimate',50000,5000000)" class="btn-solid px-4 py-2 text-xs font-bold rounded-xl flex items-center gap-1.5">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-        Beli Sekarang
-      </button>
-    </div>
-  </div>
-
+{# ── View Mode Tabs ── #}
+<div class="flex gap-2 mb-6 flex-wrap" id="main-tabs">
+  <button onclick="switchTab('katalog')" class="tab-btn active-tab px-5 py-1.5 rounded-full text-xs font-bold transition-all" data-tab="katalog">Katalog Paket</button>
+  <button onclick="switchTab('riwayat')" class="tab-btn px-5 py-1.5 rounded-full text-xs font-bold transition-all border" style="background:var(--surface);color:var(--muted);border-color:var(--border);" data-tab="riwayat">Riwayat Pembelian</button>
 </div>
 
-{# ── Riwayat Pembelian ── #}
-<div class="flex items-center justify-between mb-4">
-  <div>
-    <h3 class="text-base font-extrabold" style="color:var(--ink)">Riwayat Pembelian</h3>
-    <p class="text-xs mt-0.5" style="color:var(--muted)">Histori pembelian package miles Anda.</p>
+{# ── PANEL 1: Katalog Paket ── #}
+<div id="panel-katalog">
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    {% for item in packages %}
+      <div class="package-card">
+        <div class="flex items-start justify-between gap-2">
+          <div class="icon-box">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00BFFF" stroke-width="2.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+          </div>
+          <span class="text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider" style="background:#E0F7FF;color:#005A8C;border:1px solid #B3EAFF;">Paket Miles</span>
+        </div>
+        
+        <div class="my-2">
+          <p class="text-xs font-bold uppercase tracking-wide mb-0.5" style="color:var(--muted);font-family:monospace;">ID: {{ item.id }}</p>
+          <h4 class="text-lg font-black leading-tight" style="color:var(--ink);">Paket {{ item.jumlah_award_miles|floatformat:0 }} Miles</h4>
+        </div>
+
+        <div class="rounded-xl p-3 flex items-center justify-between" style="background:var(--surface);border:1px solid var(--border);">
+          <div>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Mendapat</p>
+            <p class="text-base font-black text-green-600">+{{ item.jumlah_award_miles|floatformat:0 }} <span class="text-xs font-bold text-slate-400">mi</span></p>
+          </div>
+          <div class="text-right">
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Harga</p>
+            <p class="text-sm font-extrabold" style="color:var(--ink)">Rp {{ item.harga_paket|floatformat:0 }}</p>
+          </div>
+        </div>
+
+        <button onclick="handleBeliClick(this)"
+                data-kode="{{ item.id }}"
+                data-nama="Paket {{ item.jumlah_award_miles|floatformat:0 }} Miles"
+                data-miles="{{ item.jumlah_award_miles }}"
+                data-harga="{{ item.harga_paket }}"
+                class="btn-solid w-full justify-center flex items-center gap-2 mt-2 py-2.5 text-xs font-bold rounded-xl shadow-sm">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+          Pilih Paket
+        </button>
+      </div>
+    {% empty %}
+      <div class="col-span-full card flex flex-col items-center justify-center py-16 gap-3">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#C1D3E3" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        {# PERBAIKAN SINTAKS LINE 107: Mengembalikan titik dua dan var CSS murni #}
+        <p class="text-sm font-semibold" style="color:var(--muted);">Tidak ada paket miles yang tersedia saat ini.</p>
+      </div>
+    {% endfor %}
   </div>
 </div>
 
-<div class="card overflow-hidden">
-  <div class="overflow-x-auto">
-    <table class="w-full text-sm">
-      <thead>
-        <tr style="background:var(--surface);border-bottom:1.5px solid var(--border);">
-          <th class="text-left px-5 py-3.5 font-bold text-xs uppercase tracking-wide" style="color:var(--muted)">No.</th>
-          <th class="text-left px-5 py-3.5 font-bold text-xs uppercase tracking-wide" style="color:var(--muted)">Tanggal</th>
-          <th class="text-left px-5 py-3.5 font-bold text-xs uppercase tracking-wide" style="color:var(--muted)">Kode Paket</th>
-          <th class="text-left px-5 py-3.5 font-bold text-xs uppercase tracking-wide" style="color:var(--muted)">Nama Paket</th>
-          <th class="text-left px-5 py-3.5 font-bold text-xs uppercase tracking-wide" style="color:var(--muted)">Miles</th>
-          <th class="text-left px-5 py-3.5 font-bold text-xs uppercase tracking-wide" style="color:var(--muted)">Harga</th>
-          <th class="text-left px-5 py-3.5 font-bold text-xs uppercase tracking-wide" style="color:var(--muted)">Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr style="border-bottom:1px solid var(--border);transition:background 0.15s;"
-            onmouseover="this.style.background='rgba(0,191,255,0.04)'"
-            onmouseout="this.style.background=''">
-          <td class="px-5 py-4 font-bold" style="color:#00BFFF;">PKG-001</td>
-          <td class="px-5 py-4" style="color:var(--muted);">01 Mei 2024</td>
-          <td class="px-5 py-4 font-bold" style="font-family:monospace;font-size:0.75rem;color:var(--ink);">AMP-001</td>
-          <td class="px-5 py-4 font-semibold" style="color:var(--ink);">Paket Hemat</td>
-          <td class="px-5 py-4 font-extrabold" style="color:#00BFFF;">+1.000 <span style="font-size:0.7rem;font-weight:600;color:var(--muted);">mi</span></td>
-          <td class="px-5 py-4 font-semibold" style="color:var(--ink);">Rp 150.000</td>
-          <td class="px-5 py-4"><span class="status-badge" style="background:#D1FAE5;color:#065F46;">✓ Berhasil</span></td>
-        </tr>
-        <tr style="transition:background 0.15s;"
-            onmouseover="this.style.background='rgba(0,191,255,0.04)'"
-            onmouseout="this.style.background=''">
-          <td class="px-5 py-4 font-bold" style="color:#00BFFF;">PKG-002</td>
-          <td class="px-5 py-4" style="color:var(--muted);">20 Mei 2024</td>
-          <td class="px-5 py-4 font-bold" style="font-family:monospace;font-size:0.75rem;color:var(--ink);">AMP-005</td>
-          <td class="px-5 py-4 font-semibold" style="color:var(--ink);">Paket Ultimate</td>
-          <td class="px-5 py-4 font-extrabold" style="color:#00BFFF;">+50.000 <span style="font-size:0.7rem;font-weight:600;color:var(--muted);">mi</span></td>
-          <td class="px-5 py-4 font-semibold" style="color:var(--ink);">Rp 5.000.000</td>
-          <td class="px-5 py-4"><span class="status-badge" style="background:#D1FAE5;color:#065F46;">✓ Berhasil</span></td>
-        </tr>
-      </tbody>
-    </table>
+{# ── PANEL 2: Riwayat Pembelian Paket ── #}
+<div id="panel-riwayat" class="hidden">
+  <div class="card overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr style="background:var(--surface);border-bottom:1.5px solid var(--border);">
+            <th class="text-left px-5 py-3.5 font-bold text-xs uppercase tracking-wide" style="color:var(--muted)">No. Transaksi</th>
+            <th class="text-left px-5 py-3.5 font-bold text-xs uppercase tracking-wide" style="color:var(--muted)">ID Paket</th>
+            <th class="text-left px-5 py-3.5 font-bold text-xs uppercase tracking-wide" style="color:var(--muted)">Jumlah Miles</th>
+            <th class="text-left px-5 py-3.5 font-bold text-xs uppercase tracking-wide" style="color:var(--muted)">Total Bayar</th>
+            <th class="text-left px-5 py-3.5 font-bold text-xs uppercase tracking-wide" style="color:var(--muted)">Waktu Pembelian</th>
+            <th class="text-left px-5 py-3.5 font-bold text-xs uppercase tracking-wide" style="color:var(--muted)">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in riwayat_beli %}
+            <tr style="border-bottom:1px solid var(--border);transition:background 0.15s;" onmouseover="this.style.background='rgba(0,191,255,0.04)'" onmouseout="this.style.background=''">
+              <td class="px-5 py-4 font-bold font-mono text-xs text-blue-500">TRX-PK-{{ forloop.counter|stringformat:"03d" }}</td>
+              <td class="px-5 py-4 font-bold" style="font-family:monospace;font-size:0.75rem;color:var(--ink);">{{ r.package_id }}</td>
+              <td class="px-5 py-4 font-black text-green-600">+{{ r.jumlah_award_miles|floatformat:0 }}<span style="font-size:0.7rem;font-weight:600;color:var(--muted);"> mi</span></td>
+              <td class="px-5 py-4 font-semibold" style="color:var(--ink);">Rp {{ r.harga_paket|floatformat:0 }}</td>
+              <td class="px-5 py-4" style="font-size:0.75rem;color:var(--muted);">{{ r.timestamp }}</td>
+              <td class="px-5 py-4">
+                <span class="status-badge" style="background:#D1FAE5;color:#065F46;">✓ Berhasil</span>
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="6" style="padding:4rem 0;">
+                <div style="display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;color:var(--muted);">
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#C1D3E3" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                  <p style="font-size:0.875rem;font-weight:600;">Belum ada riwayat pembelian paket miles.</p>
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 
 {# ── MODAL: Konfirmasi Pembelian ── #}
 <div id="modal-beli-backdrop" class="modal-backdrop modal-closed" onclick="closeBeliModal()">
-  <div class="modal-box" style="max-width:440px;" onclick="event.stopPropagation()">
+  <div class="modal-box" style="max-width:420px;" onclick="event.stopPropagation()">
     <div class="flex items-center justify-between mb-5">
       <div>
         <h3 class="text-lg font-extrabold" style="color:var(--ink)">Konfirmasi Pembelian</h3>
-        <p class="text-xs mt-0.5" style="color:var(--muted)">Periksa detail paket sebelum melanjutkan.</p>
+        <p class="text-xs mt-0.5" style="color:var(--muted)">Silakan periksa kembali paket pilihan Anda.</p>
       </div>
       <button onclick="closeBeliModal()" class="modal-close-btn">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
 
-    {# Identitas Member #}
-    <div class="flex items-center gap-3 rounded-xl px-4 py-3 mb-4" style="background:var(--surface);border:1.5px solid var(--border);">
-      <div class="flex items-center justify-center rounded-full font-extrabold text-xs" style="width:36px;height:36px;flex-shrink:0;background:linear-gradient(135deg,#00BFFF,#005A8C);color:white;">AS</div>
-      <div>
-        <p class="text-sm font-extrabold" style="color:var(--ink);">Agus Setiawan</p>
-        <p class="text-xs" style="color:var(--muted);">agus.setiawan@gmail.com</p>
-      </div>
-    </div>
-
-    {# Detail Paket #}
     <div class="rounded-xl p-4 mb-4" style="background:var(--surface);border:1.5px solid var(--border);">
       <div class="flex items-center gap-3">
-        <div class="flex items-center justify-center rounded-xl" style="width:42px;height:42px;flex-shrink:0;background:linear-gradient(135deg,#00BFFF22,#005A8C22);">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00BFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21 4 19 4c-2 0-3 1-3.5 2.5L11 9l-7.8-1.8L2 8.6l6 4.4-1.8 1.8-3-.6-1.2 1.2 4.2 2.4 2.4 4.2 1.2-1.2-.6-3 1.8-1.8 4.4 6z"/></svg>
+        <div class="flex items-center justify-center rounded-full font-extrabold text-xs" style="width:36px;height:36px;flex-shrink:0;background:linear-gradient(135deg,#00BFFF,#005A8C);color:white;">
+          {{ request.session.user_name|slice:":2"|upper }}
         </div>
         <div>
-          <p class="text-xs font-bold uppercase tracking-wide mb-0.5" style="color:var(--muted);font-family:monospace;" id="modal-kode">—</p>
-          <p class="text-base font-extrabold" style="color:var(--ink);" id="modal-nama">—</p>
+          <p class="text-sm font-extrabold" style="color:var(--ink);">{{ request.session.user_name }}</p>
+          <p class="text-xs" style="color:var(--muted);">{{ request.session.user_email }}</p>
         </div>
       </div>
     </div>
 
-    <div class="space-y-2.5 mb-5">
-      <div class="flex items-center justify-between px-4 py-3 rounded-xl" style="background:var(--surface);border:1px solid var(--border);">
-        <span class="text-sm" style="color:var(--muted);">Miles yang didapat</span>
-        <span class="text-sm font-extrabold" style="color:#00BFFF;" id="modal-miles">—</span>
-      </div>
-      <div class="flex items-center justify-between px-4 py-3 rounded-xl" style="background:#E0F7FF;border:1px solid #B3EAFF;">
-        <span class="text-sm font-semibold" style="color:#005A8C;">Total Pembayaran</span>
-        <span class="text-base font-extrabold" style="color:#005A8C;" id="modal-harga">—</span>
+    <div class="rounded-xl p-4 mb-5" style="background:var(--surface);border:1.5px solid var(--border);">
+      <div class="flex items-start gap-3">
+        <div class="flex items-center justify-center rounded-xl" style="width:42px;height:42px;flex-shrink:0;background:linear-gradient(135deg,#00BFFF22,#005A8C22);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00BFFF" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        </div>
+        <div>
+          <p class="text-xs font-bold uppercase tracking-wide mb-1" style="color:var(--muted)" id="modal-kode">—</p>
+          <p class="text-base font-extrabold" style="color:var(--ink)" id="modal-nama">—</p>
+          <p class="text-xs font-bold text-green-600 mt-1" id="modal-miles">—</p>
+        </div>
       </div>
     </div>
 
-    <p class="text-xs mb-5" style="color:var(--muted);">Dengan melanjutkan, Anda menyetujui bahwa transaksi ini <strong>tidak dapat dibatalkan</strong> setelah pembayaran dikonfirmasi.</p>
+    <div class="flex items-center justify-between px-4 py-3 rounded-xl mb-5" style="background:#F0FDF4;border:1px solid #BBF7D0;">
+      <span class="text-sm font-semibold" style="color:#166534;">Total Pembayaran</span>
+      {# PERBAIKAN SINTAKS LINE 119: Menambahkan tanda kutip penutup pada class font-black #}
+      <span class="text-base font-black" style="color:#166534;" id="modal-harga">—</span>
+    </div>
 
     <div class="flex justify-end gap-3">
       <button onclick="closeBeliModal()" class="btn-outline px-5 py-2.5 text-sm font-bold">Batal</button>
+      
       <form method="POST" action="{% url 'rewards:package_beli' %}" id="form-beli">
         {% csrf_token %}
         <input type="hidden" name="package_kode" id="input-package-kode">
         <button type="submit" class="btn-solid px-6 py-2.5 text-sm font-bold flex items-center gap-2">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-          Konfirmasi Beli
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Konfirmasi & Bayar
         </button>
       </form>
     </div>
@@ -264,43 +215,20 @@
 {# ── Styles ── #}
 <style>
   .package-card {
-    position:relative;
     background:var(--card,#fff);
     border:1.5px solid var(--border,#E2ECF5);
-    border-radius:16px;
-    padding:1.5rem;
-    display:flex;flex-direction:column;
-    transition:box-shadow 0.18s,transform 0.18s,border-color 0.18s;
+    border-radius:16px;padding:1.25rem;
+    transition:box-shadow 0.18s, transform 0.18s, border-color 0.18s;
+    display:flex;flex-direction:column;gap:0.75rem;
   }
   .package-card:hover {
-    box-shadow:0 8px 28px rgba(0,191,255,0.14);
-    transform:translateY(-3px);
-    border-color:#B3EAFF;
+    box-shadow:0 8px 24px rgba(0,191,255,0.12);
+    transform:translateY(-2px);border-color:#B3EAFF;
   }
-  .package-popular {
-    border-color:#00BFFF;
-    box-shadow:0 4px 20px rgba(0,191,255,0.15);
-  }
-  .popular-badge {
-    position:absolute;top:-1px;left:50%;transform:translateX(-50%);
-    background:linear-gradient(135deg,#00BFFF,#005A8C);
-    color:white;font-size:0.65rem;font-weight:800;
-    padding:3px 14px;border-radius:0 0 10px 10px;
-    white-space:nowrap;letter-spacing:0.03em;
-  }
-  .pkg-kode-badge {
-    font-size:0.7rem;font-weight:700;padding:3px 10px;border-radius:9999px;
-    background:#E0F7FF;color:#005A8C;border:1px solid #B3EAFF;font-family:monospace;
-  }
-  .pkg-label-badge {
-    font-size:0.7rem;font-weight:600;padding:3px 10px;border-radius:9999px;
-    border:1px solid transparent;
-  }
-  .pkg-miles { font-size:1.875rem;font-weight:900;color:#00BFFF;line-height:1; }
-  .pkg-miles-unit { font-size:0.875rem;font-weight:700;color:var(--muted);margin-bottom:3px; }
-  .pkg-footer {
-    display:flex;align-items:center;justify-content:space-between;
-    padding-top:0.75rem;border-top:1px solid var(--border);margin-top:auto;
+  .icon-box {
+    width:40px;height:40px;flex-shrink:0;
+    background:#E0F7FF;border:1px solid #B3EAFF;
+    display:flex;align-items:center;justify-content:center;border-radius:12px;
   }
   .status-badge {
     display:inline-flex;align-items:center;gap:4px;
@@ -329,24 +257,48 @@
   .btn-outline {
     border:1.5px solid var(--border,#E2ECF5);background:transparent;
     color:var(--muted,#6B7A95);border-radius:12px;cursor:pointer;
-    font-family:inherit;transition:background 0.15s,color 0.15s;
+    transition:background 0.15s,color 0.15s;
   }
   .btn-outline:hover { background:var(--surface);color:var(--ink); }
+  .active-tab {
+    background:linear-gradient(135deg,#00BFFF,#005A8C) !important;
+    color:#fff !important;border-color:transparent !important;
+  }
   @keyframes fadeIn { from{opacity:0}to{opacity:1} }
   @keyframes slideUp { from{transform:translateY(24px);opacity:0}to{transform:translateY(0);opacity:1} }
 </style>
 
 {# ── Script ── #}
 <script>
+  function switchTab(tab) {
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      const match = btn.dataset.tab === tab;
+      btn.classList.toggle('active-tab', match);
+      if (!match) { btn.style.background='var(--surface)'; btn.style.color='var(--muted)'; btn.style.borderColor='var(--border)'; }
+      else { btn.style.background = btn.style.color = btn.style.borderColor = ''; }
+    });
+    document.getElementById('panel-katalog').classList.toggle('hidden', tab !== 'katalog');
+    document.getElementById('panel-riwayat').classList.toggle('hidden', tab !== 'riwayat');
+  }
+
+  function handleBeliClick(buttonEl) {
+    const kode = buttonEl.dataset.kode;
+    const nama = buttonEl.dataset.nama;
+    const miles = buttonEl.dataset.miles;
+    const harga = buttonEl.dataset.harga;
+    openBeliModal(kode, nama, miles, harga);
+  }
+
   function openBeliModal(kode, nama, miles, harga) {
     document.getElementById('modal-kode').textContent  = kode;
     document.getElementById('modal-nama').textContent  = nama;
-    document.getElementById('modal-miles').textContent = Number(miles).toLocaleString('id-ID') + ' miles';
+    document.getElementById('modal-miles').textContent = '+' + Number(miles).toLocaleString('id-ID') + ' miles';
     document.getElementById('modal-harga').textContent = 'Rp ' + Number(harga).toLocaleString('id-ID');
     document.getElementById('input-package-kode').value = kode;
     document.getElementById('modal-beli-backdrop').classList.remove('modal-closed');
     document.body.style.overflow = 'hidden';
   }
+
   function closeBeliModal() {
     document.getElementById('modal-beli-backdrop').classList.add('modal-closed');
     document.body.style.overflow = '';

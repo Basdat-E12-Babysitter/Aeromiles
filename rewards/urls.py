@@ -1,17 +1,18 @@
 # rewards/urls.py
 from django.urls import path
 from django.views.generic import TemplateView
+from . import views
 
 app_name = 'rewards'
 
 urlpatterns = [
-    path('redeem/', TemplateView.as_view(template_name='redeem_hadiah.html'), name='redeem_list'), 
-    path('redeem/create/', TemplateView.as_view(template_name='redeem_hadiah.html'), name='redeem_create'),
+    path('redeem/', views.redeem_hadiah, name='redeem_hadiah'),
+    path('redeem/list/', views.redeem_hadiah, name='redeem_list'),
 
-    path('package/', TemplateView.as_view(template_name='beli_package.html'), name='package_list'),
-    path('package/beli/', TemplateView.as_view(template_name='beli_package.html'), name='package_beli'),
+    path('package/', views.beli_package, name='package_list'),
+    path('package/beli/', views.beli_package, name='package_beli'),
 
-    path('tier/', TemplateView.as_view(template_name='info_tier.html'), name='tier_info'),
+    path('tier/', views.info_tier, name='tier_info'),
 
     path('laporan/', TemplateView.as_view(template_name='laporan_transaksi.html'), name='laporan_transaksi'),
     path('laporan/hapus/', TemplateView.as_view(template_name='laporan_transaksi.html'), name='laporan_hapus'),

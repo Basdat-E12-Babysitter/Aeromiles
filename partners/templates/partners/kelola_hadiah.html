@@ -8,18 +8,16 @@
 
 {% block content %}
 <div>
+
   <div class="flex items-center justify-between mb-8 w-full">
-    
     <div>
       <h1 class="text-3xl font-extrabold" style="color:var(--ink)">
         Kelola <span style="color:var(--sky)">Hadiah & Penyedia</span>
       </h1>
-
       <p class="text-sm opacity-60" style="color:var(--ink)">
         Daftar hadiah yang tersedia di AeroMiles
       </p>
     </div>
-
     <button
       id="btn-tambah-utama"
       class="flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all active:scale-95 shadow-lg cursor-pointer text-white border-none outline-none"
@@ -28,17 +26,23 @@
       <span class="text-xl">+</span>
       Tambah Hadiah
     </button>
+  </div>
 
+  <div class="flex gap-4 mb-4">
+    <select id="filter-penyedia" class="px-4 py-2 rounded-xl text-sm outline-none bg-white border border-slate-200">
+      <option value="">Semua Penyedia</option>
+    </select>
+    <select id="filter-status" class="px-4 py-2 rounded-xl text-sm outline-none bg-white border border-slate-200">
+      <option value="">Semua Status</option>
+      <option value="aktif">Aktif</option>
+      <option value="tidak_aktif">Tidak Aktif</option>
+    </select>
   </div>
 
   <div class="bg-white rounded-2xl shadow-sm overflow-x-auto">
-
     <div class="overflow-x-auto">
-
       <table class="tabel-hadiah text-sm">
-
         <thead class="bg-slate-50 border-b border-slate-200">
-
           <tr>
             <th class="px-4 py-4 text-left font-bold text-slate-700 whitespace-nowrap min-w-[100px]">Kode</th>
             <th class="px-4 py-4 text-left font-bold text-slate-700 whitespace-nowrap min-w-[120px]">Nama</th>
@@ -47,26 +51,17 @@
             <th class="px-4 py-4 text-left font-bold text-slate-700 whitespace-nowrap min-w-[80px]">Miles</th>
             <th class="px-4 py-4 text-left font-bold text-slate-700 whitespace-nowrap min-w-[180px]">Periode</th>
             <th class="px-4 py-4 text-left font-bold text-slate-700 whitespace-nowrap">Aksi</th>
-           
-            
           </tr>
-
         </thead>
-
         <tbody id="tbody-hadiah" class="text-slate-800">
-
           <tr>
             <td colspan="7" class="text-center py-10 text-slate-400">
               Loading data hadiah...
             </td>
           </tr>
-
         </tbody>
-
       </table>
-
     </div>
-
   </div>
 </div>
 {% endblock %}
@@ -75,312 +70,119 @@
 {{ block.super }}
 
 <style>
-  #modal-nayra,
-  #modal-delete {
-    display: none;
-    position: fixed;
-    inset: 0;
-    z-index: 99999;
-    overflow-y: auto;
-    isolation: isolate;
+  #modal-nayra, #modal-delete {
+    display: none; position: fixed; inset: 0; z-index: 99999; overflow-y: auto; isolation: isolate;
   }
-
-  #modal-nayra.aktif,
-  #modal-delete.aktif {
-    display: block;
+  #modal-nayra.aktif, #modal-delete.aktif { display: block; }
+  #overlay-modal, #overlay-delete {
+    position: fixed; inset: 0; background: rgba(15,23,42,0.65); backdrop-filter: blur(4px);
   }
-
-  #overlay-modal,
-  #overlay-delete {
-    position: fixed;
-    inset: 0;
-    background: rgba(15, 23, 42, 0.65);
-    backdrop-filter: blur(4px);
-  }
-
-#tbody-hadiah td {
-    white-space: nowrap;
-}
-
-#tbody-hadiah tr {
-  height: 60px;
-}
-
-#modal-nayra .modal-box {
-  opacity: 1 !important;
-  transform: none !important;
-  pointer-events: auto !important;
-}
-
-
+  #tbody-hadiah td { white-space: nowrap; }
+  #tbody-hadiah tr { height: 60px; }
+  #modal-nayra .modal-box { opacity: 1 !important; transform: none !important; pointer-events: auto !important; }
   .modal-inner {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    min-height: 100vh;
-    align-items: center;
-    justify-content: center;
-    padding: 1.5rem;
+    position: relative; z-index: 1; display: flex; min-height: 100vh;
+    align-items: center; justify-content: center; padding: 1.5rem;
   }
-
   .modal-box {
-    background: #fff;
-    width: 100%;
-    max-width: 32rem;
-    border-radius: 1.5rem;
-    box-shadow: 0 25px 60px -10px rgba(0,0,0,0.35);
-    overflow: hidden;
-    max-height: 90vh;
-    display: flex;
-    flex-direction: column;
-    border: none;
+    background: #fff; width: 100%; max-width: 32rem; border-radius: 1.5rem;
+    box-shadow: 0 25px 60px -10px rgba(0,0,0,0.35); overflow: hidden;
+    max-height: 90vh; display: flex; flex-direction: column; border: none;
   }
-
   .modal-box-delete {
-    background: #fff;
-    width: 100%;
-    max-width: 32rem;
-    border-radius: 1.5rem;
-    box-shadow: 0 25px 60px -10px rgba(0,0,0,0.35);
-    overflow: hidden;
-    border: none;
+    background: #fff; width: 100%; max-width: 32rem; border-radius: 1.5rem;
+    box-shadow: 0 25px 60px -10px rgba(0,0,0,0.35); overflow: hidden; border: none;
   }
-
-  .modal-box input,
-  .modal-box textarea,
-  .modal-box select {
-    border: none !important;
-    box-shadow: none !important;
-    background: #f8fafc;
+  .modal-box input, .modal-box textarea, .modal-box select {
+    border: none !important; box-shadow: none !important; background: #f8fafc;
   }
-
   .modal-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1.25rem 2rem;
-    border-bottom: 1px solid #f1f5f9;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9;
   }
-
-  .modal-body {
-    padding: 2rem;
-    overflow-y: auto;
-    flex: 1;
-  }
-
-.tabel-hadiah {
-    min-width: 900px;
-}
-
+  .modal-body { padding: 2rem; overflow-y: auto; flex: 1; }
+  .tabel-hadiah { min-width: 900px; }
 </style>
 
 <!-- MODAL TAMBAH / EDIT -->
 <div id="modal-nayra">
-
   <div id="overlay-modal"></div>
-
   <div class="modal-inner">
-
     <div class="modal-box">
-
       <div class="modal-header">
-
-        <h2
-          id="judul-modal"
-          class="font-extrabold text-xl text-slate-800"
-        >
-          Tambah Hadiah Baru
-        </h2>
-
-        <button
-          id="btn-tutup-modal"
-          style="background:none;border:none;cursor:pointer;font-size:1.4rem;color:#94a3b8;"
-        >
-          ✕
-        </button>
-
+        <h2 id="judul-modal" class="font-extrabold text-xl text-slate-800">Tambah Hadiah Baru</h2>
+        <button id="btn-tutup-modal" style="background:none;border:none;cursor:pointer;font-size:1.4rem;color:#94a3b8;">✕</button>
       </div>
-
       <form id="form-hadiah" class="modal-body space-y-5">
-
         <input type="hidden" id="mode-edit" value="false">
-
-        <div class="space-y-1">
-
-          <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
-            Kode Hadiah
-          </label>
-
-          <input
-            type="text"
-            id="input-kode"
-            name="kode_hadiah"
-            required
+        <div class="space-y-1" id="field-kode" style="display:none;">
+          <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Kode Hadiah</label>
+          <input type="text" id="input-kode" name="kode_hadiah" disabled
             class="w-full px-4 py-3 rounded-xl outline-none text-sm"
-          >
-
+            style="background:#f1f5f9; color:#94a3b8;">
         </div>
-
         <div class="space-y-1">
-
-          <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
-            Nama Hadiah
-          </label>
-
-          <input
-            type="text"
-            id="input-nama"
-            name="nama"
-            required
-            class="w-full px-4 py-3 rounded-xl outline-none text-sm"
-          >
-
+          <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Nama Hadiah</label>
+          <input type="text" id="input-nama" name="nama" required class="w-full px-4 py-3 rounded-xl outline-none text-sm">
         </div>
-
         <div class="grid grid-cols-2 gap-5">
-
           <div class="space-y-1">
-
-            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
-              Penyedia
-            </label>
-
-            <select
-              id="input-penyedia"
-              name="id_penyedia"
-              class="w-full px-4 py-3 rounded-xl outline-none text-sm"
-            >
-              <option value="" disabled selected>
-                Pilih penyedia
-              </option>
+            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Penyedia</label>
+            <select id="input-penyedia" name="id_penyedia" class="w-full px-4 py-3 rounded-xl outline-none text-sm">
+              <option value="" disabled selected>Pilih penyedia</option>
             </select>
-
           </div>
-
           <div class="space-y-1">
-
-            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
-              Miles Dibutuhkan
-            </label>
-
-            <input
-              type="number"
-              id="input-miles"
-              name="miles"
-              required
-              class="w-full px-4 py-3 rounded-xl outline-none text-sm"
-            >
-
+            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Miles Dibutuhkan</label>
+            <input type="number" id="input-miles" name="miles" required class="w-full px-4 py-3 rounded-xl outline-none text-sm">
           </div>
-
         </div>
-
         <div class="space-y-1">
-
-          <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
-            Deskripsi
-          </label>
-
-          <textarea
-            id="input-deskripsi"
-            name="deskripsi"
-            rows="2"
-            class="w-full px-4 py-3 rounded-xl outline-none text-sm resize-none"
-          ></textarea>
-
+          <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Deskripsi</label>
+          <textarea id="input-deskripsi" name="deskripsi" rows="2" class="w-full px-4 py-3 rounded-xl outline-none text-sm resize-none"></textarea>
         </div>
-
         <div class="grid grid-cols-2 gap-5">
-
           <div class="space-y-1">
-
-            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
-              Valid Start
-            </label>
-
-            <input
-              type="date"
-              id="input-valid-start"
-              name="valid_start"
-              class="w-full px-4 py-3 rounded-xl outline-none text-sm"
-            >
-
+            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Valid Start</label>
+            <input type="date" id="input-valid-start" name="valid_start" class="w-full px-4 py-3 rounded-xl outline-none text-sm">
           </div>
-
           <div class="space-y-1">
-
-            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
-              Program End
-            </label>
-
-            <input
-              type="date"
-              id="input-program-end"
-              name="program_end"
-              class="w-full px-4 py-3 rounded-xl outline-none text-sm"
-            >
-
+            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Program End</label>
+            <input type="date" id="input-program-end" name="program_end" class="w-full px-4 py-3 rounded-xl outline-none text-sm">
           </div>
-
         </div>
-
-        <button
-          type="submit"
-          id="btn-submit-modal"
+        <button type="submit" id="btn-submit-modal"
           class="w-full text-white py-4 rounded-2xl font-bold active:scale-95 shadow-lg border-none cursor-pointer mt-2"
-          style="background:var(--sky);"
-        >
+          style="background:var(--sky);">
           Simpan
         </button>
-
       </form>
-
     </div>
-
   </div>
-
 </div>
 
 <!-- MODAL DELETE -->
 <div id="modal-delete">
-
   <div id="overlay-delete"></div>
-
   <div class="modal-inner">
-
     <div class="modal-box-delete">
-
       <div class="modal-header">
         <h2 class="font-extrabold text-xl text-slate-800">Hapus Hadiah</h2>
-        <button id="btn-close-delete"
-          style="background:none;border:none;cursor:pointer;font-size:1.4rem;color:#94a3b8;">✕</button>
+        <button id="btn-close-delete" style="background:none;border:none;cursor:pointer;font-size:1.4rem;color:#94a3b8;">✕</button>
       </div>
-
-      <div class="px-8 pt-6 pb-8" style="padding-bottom: 2rem;">
-        <h3 id="delete-title" class="font-bold text-slate-800 text-base mb-1">
-          Yakin ingin menghapus hadiah?
-        </h3>
+      <div class="px-8 pt-6 pb-8">
+        <h3 id="delete-title" class="font-bold text-slate-800 text-base mb-1">Yakin ingin menghapus hadiah?</h3>
         <p class="text-sm text-slate-500 leading-relaxed mb-6">
-          Jika hadiah sudah pernah diredeem oleh member,
-          riwayat redeem dapat terpengaruh setelah penghapusan data dilakukan.
+          Jika hadiah sudah pernah diredeem oleh member, riwayat redeem dapat terpengaruh setelah penghapusan data dilakukan.
         </p>
+        <div id="delete-error" class="text-red-500 text-sm mb-4 hidden"></div>
         <div class="flex justify-end gap-3 pt-4 border-t border-slate-100">
-          <button id="btn-batal-delete"
-            class="px-5 py-2 rounded-xl font-semibold bg-slate-100 text-slate-600 border-none cursor-pointer">
-            Batal
-          </button>
-          <button id="btn-confirm-delete"
-            class="px-6 py-2 rounded-xl font-semibold text-white border-none cursor-pointer"
-            style="background:#ef4444;">
-            Hapus
-          </button>
+          <button id="btn-batal-delete" class="px-5 py-2 rounded-xl font-semibold bg-slate-100 text-slate-600 border-none cursor-pointer">Batal</button>
+          <button id="btn-confirm-delete" class="px-6 py-2 rounded-xl font-semibold text-white border-none cursor-pointer" style="background:#ef4444;">Hapus</button>
         </div>
       </div>
-
     </div>
-
   </div>
-
 </div>
 
 <script>
@@ -389,6 +191,8 @@
 
   const modal = document.getElementById('modal-nayra');
   const modalDelete = document.getElementById('modal-delete');
+  let allHadiah = [];
+  let allPenyedia = {};
 
   let hadiahYangMauDihapus = null;
 
@@ -397,238 +201,224 @@
     document.body.style.overflow = 'hidden';
     window.scrollTo(0, 0);
   }
-
   function tutupModal() {
     modal.classList.remove('aktif');
     document.body.style.overflow = '';
   }
-
   function bukaModalDelete(h) {
-
     hadiahYangMauDihapus = h;
-
-    document.getElementById('delete-title').innerText =
-      `Hapus hadiah "${h.nama}"?`;
-
+    document.getElementById('delete-title').innerText = `Hapus hadiah "${h.nama}"?`;
+    document.getElementById('delete-error').classList.add('hidden');
+    document.getElementById('delete-error').innerText = '';
     modalDelete.classList.add('aktif');
-
     document.body.style.overflow = 'hidden';
   }
-
   function tutupModalDelete() {
     modalDelete.classList.remove('aktif');
     document.body.style.overflow = '';
   }
 
-  document.getElementById('btn-tambah-utama')
-    .addEventListener('click', () => {
+  document.getElementById('btn-tambah-utama').addEventListener('click', () => {
+    document.getElementById('judul-modal').innerText = 'Tambah Hadiah Baru';
+    document.getElementById('btn-submit-modal').innerText = 'Simpan';
+    document.getElementById('mode-edit').value = 'false';
+    document.getElementById('input-kode').disabled = false;
+    document.getElementById('input-penyedia').disabled = false;
+    document.getElementById('form-hadiah').reset();
+    document.getElementById('field-kode').style.display = 'none';
+    bukaModal();
+  });
 
-      document.getElementById('judul-modal').innerText =
-        'Tambah Hadiah Baru';
+  document.getElementById('btn-tutup-modal').addEventListener('click', tutupModal);
+  document.getElementById('overlay-modal').addEventListener('click', tutupModal);
+  document.getElementById('btn-close-delete').addEventListener('click', tutupModalDelete);
+  document.getElementById('overlay-delete').addEventListener('click', tutupModalDelete);
+  document.getElementById('btn-batal-delete').addEventListener('click', tutupModalDelete);
 
-      document.getElementById('btn-submit-modal').innerText =
-        'Simpan';
+  // ========== FORM SUBMIT (CREATE / UPDATE) ==========
+  document.getElementById('form-hadiah').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const isEdit = document.getElementById('mode-edit').value === 'true';
+    const kode = document.getElementById('input-kode').value;
 
-      document.getElementById('mode-edit').value = 'false';
-
-      document.getElementById('form-hadiah').reset();
-
-      bukaModal();
-    });
-
-  document.getElementById('btn-tutup-modal')
-    .addEventListener('click', tutupModal);
-
-  document.getElementById('overlay-modal')
-    .addEventListener('click', tutupModal);
-
-  document.getElementById('btn-close-delete')
-    .addEventListener('click', tutupModalDelete);
-
-  document.getElementById('overlay-delete')
-    .addEventListener('click', tutupModalDelete);
-
-  document.getElementById('btn-batal-delete')
-    .addEventListener('click', tutupModalDelete);
-
-  document.getElementById('btn-confirm-delete')
-    .addEventListener('click', async () => {
-
-      console.log(
-        'hapus hadiah:',
-        hadiahYangMauDihapus
-      );
-
-      tutupModalDelete();
-    });
-
-  async function loadTabelHadiah() {
+    const payload = {
+      nama: document.getElementById('input-nama').value,
+      miles: parseInt(document.getElementById('input-miles').value),
+      deskripsi: document.getElementById('input-deskripsi').value,
+      valid_start_date: document.getElementById('input-valid-start').value,
+      program_end: document.getElementById('input-program-end').value,
+      id_penyedia: parseInt(document.getElementById('input-penyedia').value),
+    };
 
     try {
+      let res;
+      if (isEdit) {
+        res = await fetch(`/partners/hadiah/update/${kode}/`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+          body: JSON.stringify(payload)
+        });
+      } else {
+        res = await fetch('/partners/hadiah/create/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+          body: JSON.stringify(payload)
+        });
+      }
 
-      const sb = window.AeroMilesSupabase;
+      const result = await res.json();
+      if (result.status === 'ok') {
+        tutupModal();
+        loadTabelHadiah();
+      } else {
+        alert('Gagal: ' + result.message);
+      }
+    } catch (err) {
+      alert('Terjadi kesalahan: ' + err.message);
+    }
+  });
 
-      const hadiah = await sb.fetchTable('hadiah', {
-        orderBy: {
-          column: 'kode_hadiah',
-          ascending: true
-        }
+  // ========== CONFIRM DELETE ==========
+  document.getElementById('btn-confirm-delete').addEventListener('click', async () => {
+    if (!hadiahYangMauDihapus) return;
+    try {
+      const res = await fetch(`/partners/hadiah/delete/${hadiahYangMauDihapus.kode_hadiah}/`, {
+        method: 'DELETE',
+        headers: { 'X-CSRFToken': getCookie('csrftoken') }
       });
+      const result = await res.json();
+      if (result.status === 'ok') {
+        tutupModalDelete();
+        loadTabelHadiah();
+      } else {
+        document.getElementById('delete-error').innerText = result.message;
+        document.getElementById('delete-error').classList.remove('hidden');
+      }
+    } catch (err) {
+      document.getElementById('delete-error').innerText = 'Terjadi kesalahan: ' + err.message;
+      document.getElementById('delete-error').classList.remove('hidden');
+    }
+  });
 
-      const mitra = await sb.fetchTable('mitra');
+  // ========== LOAD TABEL ==========
+    async function loadTabelHadiah() {
+      try {
+        const sb = window.AeroMilesSupabase;
+        const hadiah = await sb.fetchTable('hadiah', { orderBy: { column: 'kode_hadiah', ascending: true } });
+        const mitra = await sb.fetchTable('mitra');
+        const maskapai = await sb.fetchTable('maskapai');
+        
 
-      const mapMitra = {};
+        const mapPenyedia = {};
+        mitra.forEach(m => { mapPenyedia[m.id_penyedia] = { nama: m.nama_mitra, tipe: 'partner' }; });
+        maskapai.forEach(mk => { mapPenyedia[mk.id_penyedia] = { nama: mk.nama_maskapai, tipe: 'airline' }; });
 
-      mitra.forEach(m => {
-        mapMitra[m.id_penyedia] = m.nama_mitra;
-      });
+        const selectPenyedia = document.getElementById('input-penyedia');
+        selectPenyedia.innerHTML = `<option value="" disabled selected>Pilih penyedia</option>`;
+        mitra.forEach(m => {
+          selectPenyedia.innerHTML += `<option value="${m.id_penyedia}">${m.nama_mitra}</option>`;
+        });
 
-      const selectPenyedia =
-        document.getElementById('input-penyedia');
+        maskapai.forEach(mk => {
+          selectPenyedia.innerHTML += `<option value="${mk.id_penyedia}">${mk.nama_maskapai}</option>`;
+        });
 
-      selectPenyedia.innerHTML =
-        `<option value="" disabled selected>Pilih penyedia</option>`;
+        allHadiah = hadiah;
+        allPenyedia = mapPenyedia;
 
-      mitra.forEach(m => {
+        const filterPenyedia = document.getElementById('filter-penyedia');
+        filterPenyedia.innerHTML = '<option value="">Semua Penyedia</option>';
+        Object.entries(mapPenyedia).forEach(([id, p]) => {
+          filterPenyedia.innerHTML += `<option value="${id}">${p.nama}</option>`;
+        });
 
-        selectPenyedia.innerHTML += `
-          <option value="${m.id_penyedia}">
-            ${m.nama_mitra}
-          </option>
-        `;
-      });
+      
+        renderTabel(allHadiah);
 
-      const tbody = document.getElementById('tbody-hadiah');
+      } catch (e) {
+        console.error(e);
+        document.getElementById('tbody-hadiah').innerHTML = `
+          <tr><td colspan="7" class="text-center py-10 text-red-400">Terjadi kesalahan saat mengambil data</td></tr>`;
+      }
+    }
 
-      tbody.innerHTML = hadiah.map(h => {
-
-        const namaPenyedia =
-          mapMitra[h.id_penyedia] || '-';
-
-        const badgeClass =
-          h.id_penyedia == 1
-            ? 'bg-sky-100 text-sky-700'
-            : 'bg-orange-100 text-orange-600';
-
-        const badgeText =
-          h.id_penyedia == 1
-            ? 'airline'
-            : 'partner';
-
-        const periode =
-          `${h.valid_start_date || '-'} — ${h.program_end || '-'}`;
-
-        return `
-          <tr class="hover:bg-slate-50 align-middle">
-
-            <td class="px-6 py-6 align-middle" style="white-space:nowrap; min-width:90px;">
-                <span class="font-mono text-xs text-sky-600 font-bold">
-                    ${h.kode_hadiah}
-                </span>
-            </td>
-
-            <td class="px-6 py-6 font-semibold text-slate-800 whitespace-nowrap">
-              ${h.nama}
-            </td>
-
-            <td class="px-6 py-6 text-xs text-slate-500 leading-relaxed max-w-[250px]">
-              <div class="line-clamp-2">
-                ${h.deskripsi || '-'}
-              </div>
-            </td>
-
-            <td class="px-6 py-6 align-middle whitespace-nowrap">
-              <div class="flex items-center gap-2">
-
-                <span class="font-semibold text-slate-700">
-                  ${namaPenyedia}
-                </span>
-
-                <span class="px-2 py-1 rounded-md text-[10px] font-bold uppercase ${badgeClass}">
-                  ${badgeText}
-                </span>
-
-              </div>
-            </td>
-
-            <td class="px-6 py-6 font-bold text-slate-700 whitespace-nowrap">
-              ${h.miles?.toLocaleString('id-ID') || 0}
-            </td>
-
-            <td class="px-6 py-6 text-xs text-slate-500 whitespace-nowrap">
-              ${periode}
-            </td>
-
-            <td class="px-6 py-6">
-              <div class="flex items-center gap-3">
-
-                <button
-                  onclick='editHadiah(${JSON.stringify(h)})'
-                  class="text-slate-400 hover:text-sky-500 bg-transparent border-none cursor-pointer text-base"
-                >
-                  ✎
-                </button>
-
-                <button
-                  onclick='bukaModalDelete(${JSON.stringify(h)})'
-                  class="text-slate-400 hover:text-red-500 bg-transparent border-none cursor-pointer text-base"
-                >
-                  🗑
-                </button>
-
-              </div>
-            </td>
-
-          </tr>
-        `;
-      }).join('');
-
-    } catch (e) {
-
-      console.error(e);
-
-      document.getElementById('tbody-hadiah').innerHTML = `
-        <tr>
-          <td colspan="7" class="text-center py-10 text-red-400">
-            Terjadi kesalahan saat mengambil data
+    function renderTabel(data) {
+    const tbody = document.getElementById('tbody-hadiah');
+    if (data.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7" class="text-center py-10 text-slate-400">Tidak ada data</td></tr>';
+      return;
+    }
+    tbody.innerHTML = data.map(h => {
+      const penyedia = allPenyedia[h.id_penyedia];
+      const namaPenyedia = penyedia ? penyedia.nama : '-';
+      const badgeText = penyedia ? penyedia.tipe : '-';
+      const badgeClass = badgeText === 'airline' ? 'bg-sky-100 text-sky-700' : 'bg-orange-100 text-orange-600';
+      const periode = `${h.valid_start_date || '-'} — ${h.program_end || '-'}`;
+      return `
+        <tr class="hover:bg-slate-50 align-middle">
+          <td class="px-6 py-6 align-middle" style="white-space:nowrap; min-width:90px;">
+            <span class="font-mono text-xs text-sky-600 font-bold">${h.kode_hadiah}</span>
+          </td>
+          <td class="px-6 py-6 font-semibold text-slate-800 whitespace-nowrap">${h.nama}</td>
+          <td class="px-6 py-6 text-xs text-slate-500 leading-relaxed max-w-[250px]">
+            <div class="line-clamp-2">${h.deskripsi || '-'}</div>
+          </td>
+          <td class="px-6 py-6 align-middle whitespace-nowrap">
+            <div class="flex items-center gap-2">
+              <span class="font-semibold text-slate-700">${namaPenyedia}</span>
+              <span class="px-2 py-1 rounded-md text-[10px] font-bold uppercase ${badgeClass}">${badgeText}</span>
+            </div>
+          </td>
+          <td class="px-6 py-6 font-bold text-slate-700 whitespace-nowrap">${h.miles?.toLocaleString('id-ID') || 0}</td>
+          <td class="px-6 py-6 text-xs text-slate-500 whitespace-nowrap">${periode}</td>
+          <td class="px-6 py-6">
+            <div class="flex items-center gap-3">
+              <button onclick='editHadiah(${JSON.stringify(h)})'
+                class="text-slate-400 hover:text-sky-500 bg-transparent border-none cursor-pointer text-base">✎</button>
+              <button onclick='bukaModalDelete(${JSON.stringify(h)})'
+                class="text-slate-400 hover:text-red-500 bg-transparent border-none cursor-pointer text-base">🗑</button>
+            </div>
           </td>
         </tr>
       `;
-    }
+    }).join('');
+  }
+
+  document.getElementById('filter-penyedia').addEventListener('change', applyFilter);
+  document.getElementById('filter-status').addEventListener('change', applyFilter);
+
+  function applyFilter() {
+    const penyedia = document.getElementById('filter-penyedia').value;
+    const status = document.getElementById('filter-status').value;
+    const today = new Date().toISOString().split('T')[0];
+    let filtered = allHadiah;
+    if (penyedia) filtered = filtered.filter(h => h.id_penyedia == penyedia);
+    if (status === 'aktif') filtered = filtered.filter(h => h.program_end >= today);
+    else if (status === 'tidak_aktif') filtered = filtered.filter(h => h.program_end < today);
+    renderTabel(filtered);
   }
 
   function editHadiah(h) {
-
-    document.getElementById('judul-modal').innerText =
-      'Edit Hadiah';
-
-    document.getElementById('btn-submit-modal').innerText =
-      'Update Hadiah';
-
+    document.getElementById('judul-modal').innerText = 'Edit Hadiah';
+    document.getElementById('btn-submit-modal').innerText = 'Update Hadiah';
     document.getElementById('mode-edit').value = 'true';
-
-    document.getElementById('input-kode').value =
-      h.kode_hadiah || '';
-
-    document.getElementById('input-nama').value =
-      h.nama || '';
-
-    document.getElementById('input-penyedia').value =
-      h.id_penyedia || '';
-
-    document.getElementById('input-miles').value =
-      h.miles || '';
-
-    document.getElementById('input-deskripsi').value =
-      h.deskripsi || '';
-
-    document.getElementById('input-valid-start').value =
-      h.valid_start_date || '';
-
-    document.getElementById('input-program-end').value =
-      h.program_end || '';
-
+    document.getElementById('input-kode').value = h.kode_hadiah || '';
+    document.getElementById('input-kode').disabled = true;
+    document.getElementById('input-nama').value = h.nama || '';
+    document.getElementById('input-penyedia').value = h.id_penyedia || '';
+    document.getElementById('input-penyedia').disabled = true;
+    document.getElementById('input-miles').value = h.miles || '';
+    document.getElementById('input-deskripsi').value = h.deskripsi || '';
+    document.getElementById('input-valid-start').value = h.valid_start_date || '';
+    document.getElementById('input-program-end').value = h.program_end || '';
+    document.getElementById('field-kode').style.display = 'block';
     bukaModal();
+  }
+
+  function getCookie(name) {
+    const val = `; ${document.cookie}`;
+    const parts = val.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
   }
 
   window.addEventListener('load', loadTabelHadiah);

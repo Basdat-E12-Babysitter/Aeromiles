@@ -9,6 +9,7 @@ db.sqlite3
 env/
 venv/
 .env
+.venv/
 
 # Tailwind 
 node_modules/

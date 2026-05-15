@@ -7,7 +7,6 @@
 {% endblock %}
 
 {% block content %}
-
 <div class="flex items-center justify-between mb-8">
   <div>
     <h1 class="text-2xl font-extrabold" style="color:var(--ink)">
@@ -15,7 +14,7 @@
     </h1>
   </div>
   <button id="btn-tambah-mitra"
-    class="px-8 py-3 rounded-xl font-bold text-white shadow-lg"
+    class="px-8 py-3 rounded-xl font-bold text-white shadow-lg border-none cursor-pointer"
     style="background:var(--sky)">
     + Tambah Mitra
   </button>
@@ -29,6 +28,7 @@
     <table class="w-full text-sm">
       <thead>
         <tr style="background:var(--surface); border-bottom:1px solid var(--border)">
+          <th class="px-6 py-3 text-left text-xs font-bold">ID Penyedia</th>
           <th class="px-6 py-3 text-left text-xs font-bold">Email</th>
           <th class="px-6 py-3 text-left text-xs font-bold">Nama</th>
           <th class="px-6 py-3 text-left text-xs font-bold">Tanggal Kerja Sama</th>
@@ -37,15 +37,12 @@
       </thead>
       <tbody id="tbody-mitra">
         <tr>
-          <td colspan="4" class="px-6 py-10 text-center" style="color:var(--muted)">
-            Loading...
-          </td>
+          <td colspan="4" class="px-6 py-10 text-center" style="color:var(--muted)">Loading...</td>
         </tr>
       </tbody>
     </table>
   </div>
 </div>
-
 {% endblock %}
 
 {% block scripts %}
@@ -53,106 +50,60 @@
 
 <style>
   #modal-mitra, #modal-delete {
-    display: none;
-    position: fixed;
-    inset: 0;
-    z-index: 99999;
-    overflow-y: auto;
+    display: none; position: fixed; inset: 0; z-index: 99999; overflow-y: auto;
   }
-  #modal-mitra.aktif, #modal-delete.aktif {
-    display: block;
-  }
-
-  #tbody-mitra td,
-  thead tr th {
-    text-align: left;
-  }
-
+  #modal-mitra.aktif, #modal-delete.aktif { display: block; }
+  #tbody-mitra td, thead tr th { text-align: left; }
   .modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(15, 23, 42, 0.65);
-    backdrop-filter: blur(4px);
+    position: fixed; inset: 0; background: rgba(15,23,42,0.65); backdrop-filter: blur(4px);
   }
   .modal-wrap {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    min-height: 100vh;
-    align-items: center;
-    justify-content: center;
-    padding: 1.5rem;
+    position: relative; z-index: 1; display: flex; min-height: 100vh;
+    align-items: center; justify-content: center; padding: 1.5rem;
   }
   .modal-card {
-    background: #fff;
-    width: 100%;
-    max-width: 28rem;
-    border-radius: 1.5rem;
-    box-shadow: 0 25px 60px -10px rgba(0,0,0,0.3);
-    overflow: hidden;
+    background: #fff; width: 100%; max-width: 28rem; border-radius: 1.5rem;
+    box-shadow: 0 25px 60px -10px rgba(0,0,0,0.3); overflow: hidden;
   }
   .modal-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1.25rem 2rem;
-    border-bottom: 1px solid #f1f5f9;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9;
   }
-  .modal-content {
-    padding: 2rem;
-  }
-  .field {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    margin-bottom: 1.25rem;
-  }
-  .field label {
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: #64748b;
-  }
+  .modal-content { padding: 2rem; }
+  .field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 1.25rem; }
+  .field label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; }
   .field input {
-    padding: 10px 14px;
-    border: 1.5px solid #bae6fd;
-    border-radius: 10px;
-    outline: none;
-    font-size: 14px;
-    background: #f8fafc;
-    transition: border-color 0.2s;
+    padding: 10px 14px; border: 1.5px solid #bae6fd; border-radius: 10px;
+    outline: none; font-size: 14px; background: #f8fafc; transition: border-color 0.2s;
   }
-  .field input:focus {
-    border-color: #0ea5e9;
-    box-shadow: 0 0 0 3px rgba(14,165,233,0.1);
-  }
+  .field input:focus { border-color: #0ea5e9; box-shadow: 0 0 0 3px rgba(14,165,233,0.1); }
+  .field input:disabled { background: #e2e8f0; color: #94a3b8; cursor: not-allowed; }
 </style>
 
-
+<!-- MODAL TAMBAH / EDIT -->
 <div id="modal-mitra">
   <div class="modal-overlay" id="overlay-mitra"></div>
   <div class="modal-wrap">
     <div class="modal-card">
       <div class="modal-head">
         <h2 id="judul-modal" class="font-extrabold text-lg text-slate-800">Tambah Mitra</h2>
-        <button id="close-modal"
-          style="background:none;border:none;cursor:pointer;font-size:1.4rem;color:#94a3b8;">✕</button>
+        <button id="close-modal" style="background:none;border:none;cursor:pointer;font-size:1.4rem;color:#94a3b8;">✕</button>
       </div>
       <div class="modal-content">
         <form id="form-mitra">
           <div class="field">
             <label>Email Mitra</label>
-            <input type="email" name="email_mitra" placeholder="contoh@email.com" required>
-          </div>
+            <input type="email" id="input-email" name="email_mitra" placeholder="contoh@email.com" required>
+          </div> 
           <div class="field">
             <label>Nama Mitra</label>
-            <input type="text" name="nama_mitra" placeholder="Nama perusahaan" required>
+            <input type="text" id="input-nama" name="nama_mitra" placeholder="Nama perusahaan" required>
           </div>
           <div class="field">
             <label>Tanggal Kerja Sama</label>
-            <input type="date" name="tanggal_kerja_sama" required>
+            <input type="date" id="input-tanggal" name="tanggal_kerja_sama" required>
           </div>
+          <div id="form-error" class="text-red-500 text-sm mb-3 hidden"></div>
           <button type="submit" id="btn-submit"
             class="w-full py-3 rounded-xl font-bold text-white border-none cursor-pointer mt-2"
             style="background:var(--sky);">
@@ -170,7 +121,8 @@
   <div class="modal-wrap">
     <div class="modal-card" style="max-width:22rem; padding:2rem;">
       <p id="delete-title" class="font-bold text-slate-800 text-base mb-2">Hapus mitra ini?</p>
-      <p class="text-sm text-slate-500 mb-6">Penghapusan mitra akan berpengaruh pada hadiah yang disediakan oleh mitra ini.</p>
+      <p class="text-sm text-slate-500 mb-4">Penghapusan mitra akan berpengaruh pada hadiah yang disediakan oleh mitra ini.</p>
+      <div id="delete-error" class="text-red-500 text-sm mb-3 hidden"></div>
       <div class="flex justify-end items-center gap-3">
         <button id="cancel-delete"
           class="px-6 py-2 rounded-xl font-semibold bg-slate-100 text-slate-600 border-none cursor-pointer">
@@ -191,7 +143,7 @@
   document.body.appendChild(document.getElementById('modal-delete'));
 
   let editMode = false;
-  let selectedDeleteId = null;
+  let selectedDeleteEmail = null;
 
   function bukaModalMitra() {
     document.getElementById('modal-mitra').classList.add('aktif');
@@ -202,6 +154,8 @@
     document.body.style.overflow = '';
   }
   function bukaModalDelete() {
+    document.getElementById('delete-error').classList.add('hidden');
+    document.getElementById('delete-error').innerText = '';
     document.getElementById('modal-delete').classList.add('aktif');
     document.body.style.overflow = 'hidden';
   }
@@ -210,10 +164,18 @@
     document.body.style.overflow = '';
   }
 
+  function getCookie(name) {
+    const val = `; ${document.cookie}`;
+    const parts = val.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+  }
+
   document.getElementById('btn-tambah-mitra').onclick = () => {
     editMode = false;
-    document.getElementById('judul-modal').innerText = 'Tambah Mitra';
+    document.getElementById('judul-modal').innerText = 'Tambah Mitra Baru';
     document.getElementById('btn-submit').innerText = 'Simpan';
+    document.getElementById('input-email').disabled = false;
+    document.getElementById('form-error').classList.add('hidden');
     document.getElementById('form-mitra').reset();
     bukaModalMitra();
   };
@@ -222,19 +184,19 @@
   document.getElementById('overlay-mitra').onclick = tutupModalMitra;
   document.getElementById('overlay-delete').onclick = tutupModalDelete;
   document.getElementById('cancel-delete').onclick = tutupModalDelete;
-
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') { tutupModalMitra(); tutupModalDelete(); }
   });
 
+  // ========== LOAD DATA (tetap Supabase JS) ==========
   async function loadData() {
     try {
       const mitra = await window.AeroMilesSupabase.fetchTable('mitra', {
         orderBy: { column: 'nama_mitra', ascending: true }
       });
-
       document.getElementById('tbody-mitra').innerHTML = mitra.map(m => `
         <tr style="border-bottom:1px solid var(--border)">
+          <td class="px-6 py-4 text-xs text-slate-500">${m.id_penyedia}</td>
           <td class="px-6 py-4 text-xs" style="color:var(--sky)">${m.email_mitra}</td>
           <td class="px-6 py-4 font-semibold text-slate-800">${m.nama_mitra}</td>
           <td class="px-6 py-4 text-xs text-slate-500">${m.tanggal_kerja_sama ?? '-'}</td>
@@ -255,47 +217,87 @@
     }
   }
 
+  // ========== FORM SUBMIT (CREATE / UPDATE) ==========
   document.getElementById('form-mitra').onsubmit = async (e) => {
     e.preventDefault();
-    const data = Object.fromEntries(new FormData(e.target));
+    const formError = document.getElementById('form-error');
+    formError.classList.add('hidden');
+
+    const payload = {
+      email_mitra: document.getElementById('input-email').value,
+      nama_mitra: document.getElementById('input-nama').value,
+      tanggal_kerja_sama: document.getElementById('input-tanggal').value,
+    };
+
     try {
+      let res;
       if (editMode) {
-        await window.AeroMilesSupabase.update('mitra', data, { email_mitra: data.email_mitra });
+        res = await fetch(`/partners/mitra/update/${encodeURIComponent(payload.email_mitra)}/`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+          body: JSON.stringify(payload)
+        });
       } else {
-        await window.AeroMilesSupabase.insert('mitra', data);
+        res = await fetch('/partners/mitra/create/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+          body: JSON.stringify(payload)
+        });
       }
-      tutupModalMitra();
-      loadData();
-    } catch(e) {
-      console.error(e);
-      alert('Gagal menyimpan data');
+
+      const result = await res.json();
+      if (result.status === 'ok') {
+        tutupModalMitra();
+        loadData();
+      } else {
+        formError.innerText = result.message;
+        formError.classList.remove('hidden');
+      }
+    } catch(err) {
+      formError.innerText = 'Terjadi kesalahan: ' + err.message;
+      formError.classList.remove('hidden');
     }
   };
 
+  // ========== EDIT ==========
   function editMitra(m) {
     editMode = true;
     document.getElementById('judul-modal').innerText = 'Edit Mitra';
     document.getElementById('btn-submit').innerText = 'Update';
-    document.querySelector('[name="email_mitra"]').value = m.email_mitra;
-    document.querySelector('[name="nama_mitra"]').value = m.nama_mitra;
-    document.querySelector('[name="tanggal_kerja_sama"]').value = m.tanggal_kerja_sama;
+    document.getElementById('input-email').value = m.email_mitra;
+    document.getElementById('input-email').disabled = true; // email = PK, tidak bisa diubah
+    document.getElementById('input-nama').value = m.nama_mitra;
+    document.getElementById('input-tanggal').value = m.tanggal_kerja_sama;
+    document.getElementById('form-error').classList.add('hidden');
     bukaModalMitra();
   }
 
+  // ========== DELETE ==========
   function openDelete(m) {
-    selectedDeleteId = m.email_mitra;
+    selectedDeleteEmail = m.email_mitra;
     document.getElementById('delete-title').innerText = `Hapus mitra "${m.nama_mitra}"?`;
     bukaModalDelete();
   }
 
   document.getElementById('confirm-delete').onclick = async () => {
+    if (!selectedDeleteEmail) return;
+    const deleteError = document.getElementById('delete-error');
     try {
-      await window.AeroMilesSupabase.delete('mitra', { email_mitra: selectedDeleteId });
-      tutupModalDelete();
-      loadData();
-    } catch(e) {
-      console.error(e);
-      alert('Gagal menghapus data');
+      const res = await fetch(`/partners/mitra/delete/${encodeURIComponent(selectedDeleteEmail)}/`, {
+        method: 'DELETE',
+        headers: { 'X-CSRFToken': getCookie('csrftoken') }
+      });
+      const result = await res.json();
+      if (result.status === 'ok') {
+        tutupModalDelete();
+        loadData();
+      } else {
+        deleteError.innerText = result.message;
+        deleteError.classList.remove('hidden');
+      }
+    } catch(err) {
+      deleteError.innerText = 'Terjadi kesalahan: ' + err.message;
+      deleteError.classList.remove('hidden');
     }
   };
 
