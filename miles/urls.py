@@ -14,4 +14,6 @@ urlpatterns = [
     # Transfer miles (member)
     path('transfer/', views.transfer_list,   name='transfer_list'),
     path('transfer/baru/', views.transfer_create, name='transfer_create'),
+    # Kelola miles (staff)
+    path('kelola/', views.kelola_klaim, name='kelola_klaim'),
 ]

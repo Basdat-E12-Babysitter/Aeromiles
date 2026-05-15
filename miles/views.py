@@ -289,3 +289,63 @@ def transfer_create(request):
         messages.error(request, err)
 
     return redirect("miles:transfer_list")
+
+@csrf_exempt
+@require_http_methods(["GET", "POST"])
+def kelola_klaim(request):
+    if not _staf_required(request):
+        return redirect("accounts:login")
+
+    if request.method == "POST":
+        klaim_id = request.POST.get("klaim_id")
+        aksi = request.POST.get("aksi")
+        staf_email = request.session["user_email"]
+
+        if aksi not in ("Disetujui", "Ditolak"):
+            messages.error(request, "Aksi tidak valid.")
+            return redirect("miles:kelola_klaim")
+
+        with connection.cursor() as cur:
+            cur.execute("""
+                UPDATE CLAIM_MISSING_MILES
+                SET status_penerimaan = %s,
+                    email_staf = %s
+                WHERE id = %s
+                  AND status_penerimaan = 'Menunggu'
+            """, [aksi, staf_email, klaim_id])
+            updated = cur.rowcount
+
+        if updated == 0:
+            messages.error(request, "Klaim tidak ditemukan atau sudah diproses.")
+        else:
+            messages.success(request, f"Klaim berhasil di-{aksi.lower()}.")
+
+        return redirect("miles:kelola_klaim")
+
+    # SELECT
+    with connection.cursor() as cur:
+        cur.execute("""
+            SELECT
+                c.id,
+                c.email_member,
+                mk.nama_maskapai AS maskapai,
+                c.bandara_asal,
+                c.bandara_tujuan,
+                TO_CHAR(c.tanggal_penerbangan, 'YYYY-MM-DD') AS tanggal_penerbangan,
+                c.flight_number,
+                c.nomor_tiket,
+                c.kelas_kabin,
+                c.pnr,
+                c.status_penerimaan,
+                TO_CHAR(c.timestamp, 'YYYY-MM-DD"T"HH24:MI:SS') AS timestamp,
+                CASE WHEN c.email_staf IS NULL THEN '' ELSE c.email_staf END
+            FROM CLAIM_MISSING_MILES c
+            JOIN MASKAPAI mk ON mk.kode_maskapai = c.maskapai
+            ORDER BY c.timestamp DESC
+        """)
+        cols  = [col[0] for col in cur.description]
+        klaim = [dict(zip(cols, row)) for row in cur.fetchall()]
+
+    return render(request, "miles/kelola_klaim.html", {
+        "klaim_list": klaim,
+    })
