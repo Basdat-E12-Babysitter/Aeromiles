@@ -291,8 +291,9 @@
       const maskapai = await sb.fetchTable('maskapai');
       
 
-      const mapMitra = {};
-      mitra.forEach(m => { mapMitra[m.id_penyedia] = m.nama_mitra; });
+      const mapPenyedia = {};
+      mitra.forEach(m => { mapPenyedia[m.id_penyedia] = { nama: m.nama_mitra, tipe: 'partner' }; });
+      maskapai.forEach(mk => { mapPenyedia[mk.id_penyedia] = { nama: mk.nama_maskapai, tipe: 'airline' }; });
 
       const selectPenyedia = document.getElementById('input-penyedia');
       selectPenyedia.innerHTML = `<option value="" disabled selected>Pilih penyedia</option>`;
@@ -306,9 +307,10 @@
 
       const tbody = document.getElementById('tbody-hadiah');
       tbody.innerHTML = hadiah.map(h => {
-        const namaPenyedia = mapMitra[h.id_penyedia] || '-';
-        const badgeClass = h.id_penyedia == 1 ? 'bg-sky-100 text-sky-700' : 'bg-orange-100 text-orange-600';
-        const badgeText = h.id_penyedia == 1 ? 'airline' : 'partner';
+        const penyedia = mapPenyedia[h.id_penyedia];
+        const namaPenyedia = penyedia ? penyedia.nama : '-';
+        const badgeText = penyedia ? penyedia.tipe : '-';
+        const badgeClass = badgeText === 'airline' ? 'bg-sky-100 text-sky-700' : 'bg-orange-100 text-orange-600';
         const periode = `${h.valid_start_date || '-'} — ${h.program_end || '-'}`;
         return `
           <tr class="hover:bg-slate-50 align-middle">
