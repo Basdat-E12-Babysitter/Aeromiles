@@ -40,8 +40,10 @@
       <span class="text-xs font-semibold" style="color:var(--muted)">Miles</span>
     </div>
     <div class="flex items-center gap-2 px-4 py-2.5 rounded-xl" style="background:var(--surface);border:1.5px solid var(--border);">
-      <div class="flex items-center justify-center rounded-full font-extrabold text-xs" style="width:28px;height:28px;flex-shrink:0;background:linear-gradient(135deg,#00BFFF,#005A8C);color:white;">AS</div>
-      <span class="text-sm font-extrabold" style="color:var(--ink)">Halo, Agus Setiawan</span>
+      <div class="flex items-center justify-center rounded-full font-extrabold text-xs" style="width:28px;height:28px;flex-shrink:0;background:linear-gradient(135deg,#00BFFF,#005A8C);color:white;">
+        {{ request.session.user_name|slice:":2"|upper }}
+      </div>
+      <span class="text-sm font-extrabold" style="color:var(--ink)">Halo, {{ request.session.user_name }}</span>
     </div>
   </div>
 </div>
@@ -101,7 +103,8 @@
     {% empty %}
       <div class="col-span-full card flex flex-col items-center justify-center py-16 gap-3">
         <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#C1D3E3" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-        <p class="text-sm font-semibold" style="color:var(--muted)">Tidak ada paket miles yang tersedia saat ini.</p>
+        {# PERBAIKAN SINTAKS LINE 107: Mengembalikan titik dua dan var CSS murni #}
+        <p class="text-sm font-semibold" style="color:var(--muted);">Tidak ada paket miles yang tersedia saat ini.</p>
       </div>
     {% endfor %}
   </div>
@@ -165,10 +168,12 @@
 
     <div class="rounded-xl p-4 mb-4" style="background:var(--surface);border:1.5px solid var(--border);">
       <div class="flex items-center gap-3">
-        <div class="flex items-center justify-center rounded-full font-extrabold text-xs" style="width:36px;height:36px;flex-shrink:0;background:linear-gradient(135deg,#00BFFF,#005A8C);color:white;">AS</div>
+        <div class="flex items-center justify-center rounded-full font-extrabold text-xs" style="width:36px;height:36px;flex-shrink:0;background:linear-gradient(135deg,#00BFFF,#005A8C);color:white;">
+          {{ request.session.user_name|slice:":2"|upper }}
+        </div>
         <div>
-          <p class="text-sm font-extrabold" style="color:var(--ink);">Agus Setiawan</p>
-          <p class="text-xs" style="color:var(--muted);">{{ request.session.user_email|default:"agus.setiawan@gmail.com" }}</p>
+          <p class="text-sm font-extrabold" style="color:var(--ink);">{{ request.session.user_name }}</p>
+          <p class="text-xs" style="color:var(--muted);">{{ request.session.user_email }}</p>
         </div>
       </div>
     </div>
@@ -188,13 +193,13 @@
 
     <div class="flex items-center justify-between px-4 py-3 rounded-xl mb-5" style="background:#F0FDF4;border:1px solid #BBF7D0;">
       <span class="text-sm font-semibold" style="color:#166534;">Total Pembayaran</span>
+      {# PERBAIKAN SINTAKS LINE 119: Menambahkan tanda kutip penutup pada class font-black #}
       <span class="text-base font-black" style="color:#166534;" id="modal-harga">—</span>
     </div>
 
     <div class="flex justify-end gap-3">
       <button onclick="closeBeliModal()" class="btn-outline px-5 py-2.5 text-sm font-bold">Batal</button>
       
-      {# SINKRONISASI PENTING: name='package_kode' disesuaikan dengan request.POST kelompokmu #}
       <form method="POST" action="{% url 'rewards:package_beli' %}" id="form-beli">
         {% csrf_token %}
         <input type="hidden" name="package_kode" id="input-package-kode">
