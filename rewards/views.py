@@ -541,6 +541,7 @@ def _get_riwayat_transaksi(filter_tipe: str, filter_dari: str, filter_sampai: st
     union_query = f"""
         SELECT *
         FROM (
+            -- 1. Transfer Miles (Hanya bisa dihapus jika umurnya > 1 tahun)
             SELECT
                 'TR-' || email_member_1 || '-' || email_member_2 || '-' || EXTRACT(EPOCH FROM timestamp)::bigint AS id_unik,
                 'TRX-' || LPAD(ROW_NUMBER() OVER (ORDER BY timestamp)::text, 4, '0')   AS no_trx,
@@ -549,11 +550,13 @@ def _get_riwayat_transaksi(filter_tipe: str, filter_dari: str, filter_sampai: st
                 jumlah          AS miles,
                 timestamp,
                 'Berhasil'   AS status,
-                TRUE         AS deletable
+                -- PERBAIKAN LOGIKA: Jika waktu transaksi lebih lama dari 1 tahun lalu, maka TRUE
+                CASE WHEN timestamp < NOW() - INTERVAL '1 year' THEN TRUE ELSE FALSE END AS deletable
             FROM TRANSFER
 
             UNION ALL
 
+            -- 2. Redeem Hadiah (Hanya bisa dihapus jika umurnya > 1 tahun)
             SELECT
                 'RD-' || email_member || '-' || r.kode_hadiah || '-' || EXTRACT(EPOCH FROM timestamp)::bigint AS id_unik,
                 'TRX-' || LPAD(ROW_NUMBER() OVER (ORDER BY timestamp)::text, 4, '0') AS no_trx,
@@ -562,12 +565,14 @@ def _get_riwayat_transaksi(filter_tipe: str, filter_dari: str, filter_sampai: st
                 h.miles      AS miles,
                 r.timestamp,
                 'Berhasil'   AS status,
-                TRUE         AS deletable
+                -- PERBAIKAN LOGIKA: Bandingkan r.timestamp dengan batas aman 1 tahun
+                CASE WHEN r.timestamp < NOW() - INTERVAL '1 year' THEN TRUE ELSE FALSE END AS deletable
             FROM REDEEM r
             JOIN HADIAH h ON h.kode_hadiah = r.kode_hadiah
 
             UNION ALL
 
+            -- 3. Pembelian Package (Hanya bisa dihapus jika umurnya > 1 tahun)
             SELECT
                 'PK-' || email_member || '-' || id_award_miles_package || '-' || EXTRACT(EPOCH FROM timestamp)::bigint AS id_unik,
                 'TRX-' || LPAD(ROW_NUMBER() OVER (ORDER BY timestamp)::text, 4, '0') AS no_trx,
@@ -576,12 +581,14 @@ def _get_riwayat_transaksi(filter_tipe: str, filter_dari: str, filter_sampai: st
                 amp.jumlah_award_miles AS miles,
                 map.timestamp,
                 'Berhasil'   AS status,
-                TRUE         AS deletable
+                -- PERBAIKAN LOGIKA: Hitung umur record transaksi paket dari tabel map
+                CASE WHEN map.timestamp < NOW() - INTERVAL '1 year' THEN TRUE ELSE FALSE END AS deletable
             FROM MEMBER_AWARD_MILES_PACKAGE map
             JOIN AWARD_MILES_PACKAGE amp ON amp.id = map.id_award_miles_package
 
             UNION ALL
 
+            -- 4. Klaim Missing Miles yang Disetujui (TETAP SAMA: KUNCI TOTAL SAMA SEKALI GAK BISA DIHAPUS)
             SELECT
                 'KM-' || id AS id_unik,
                 'TRX-' || LPAD(id::text, 4, '0') AS no_trx,
@@ -590,7 +597,7 @@ def _get_riwayat_transaksi(filter_tipe: str, filter_dari: str, filter_sampai: st
                 1000          AS miles,
                 timestamp,
                 'Disetujui'   AS status,
-                FALSE         AS deletable
+                FALSE         AS deletable -- Selalu FALSE tanpa memandang waktu log data
             FROM CLAIM_MISSING_MILES
             WHERE status_penerimaan = 'Disetujui'
 
