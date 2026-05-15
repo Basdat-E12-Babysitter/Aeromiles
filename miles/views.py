@@ -1,5 +1,6 @@
 # miles/views.py
 
+import json
 from django.shortcuts import render, redirect
 from django.db import connection, IntegrityError
 from django.contrib import messages
@@ -230,6 +231,7 @@ def transfer_list(request):
 
     return render(request, "miles/transfer_miles.html", {
         "transfer_list": transfer_list,
+        "transfer_list_json": json.dumps(transfer_list),
         "award_miles": request.session.get("award_miles", 0),
         "user_email": email,
     })
@@ -264,6 +266,10 @@ def transfer_create(request):
 
     try:
         with connection.cursor() as cur:
+            db_connection = connection.connection
+            if db_connection is not None and hasattr(db_connection, "notices"):
+                db_connection.notices.clear()
+
             # Cek penerima terdaftar sebagai member
             cur.execute("SELECT 1 FROM MEMBER WHERE email = %s", [email_penerima])
             if not cur.fetchone():
@@ -276,11 +282,19 @@ def transfer_create(request):
                 VALUES (%s, %s, NOW(), %s, %s)
             """, [email_pengirim, email_penerima, jumlah, catatan])
 
+        notice_text = None
+        if db_connection is not None and hasattr(db_connection, "notices") and db_connection.notices:
+            notice_text = db_connection.notices[-1].strip()
+            if notice_text.startswith("NOTICE:"):
+                notice_text = notice_text.split("NOTICE:", 1)[1].strip()
+
+
+        messages.success(request, notice_text)
+
+
         # Update session saldo setelah berhasil
         saldo_lama = int(request.session.get("award_miles", 0))
         request.session["award_miles"] = str(saldo_lama - jumlah)
-
-        messages.success(request, f"Transfer {jumlah} miles ke {email_penerima} berhasil.")
 
     except Exception as e:
         err = str(e)

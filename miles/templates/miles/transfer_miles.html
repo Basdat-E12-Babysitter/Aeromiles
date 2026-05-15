@@ -167,11 +167,11 @@
     });
 
     const currentMemberEmail = "{{ user_email }}";
-    const allTransfer = {{ transfer_list | safe }};
+    const allTransfer = JSON.parse('{{ transfer_list_json|escapejs }}');
 
     function initTransfer() {
         const saldoEl = document.getElementById('saldo-miles');
-        if (saldoEl) saldoEl.textContent = Number({{ award_miles|default:0 }}).toLocaleString('id-ID');
+        if (saldoEl) saldoEl.textContent = Number('{{ award_miles|default:0 }}').toLocaleString('id-ID');
         renderTable(allTransfer, currentMemberEmail);
     }
 
@@ -218,7 +218,7 @@
             <p style="font-size:0.8rem;font-weight:600;">${otherParty || '—'}</p>
           </td>
           <td class="px-5 py-4">${jumlah}</td>
-          <td class="px-5 py-4" style="color:var(--muted);font-size:0.8rem;">${t.catatan || '-'}</td>
+          <td class="px-5 py-4" style="color:var(--muted);font-size:0.8rem;">${t.catatan == null ? '' : t.catatan}</td>
           <td class="px-5 py-4">${tipeBadge}</td>
           <td class="px-5 py-4">
             <button class="action-btn" style="color:#aab4c4;background:var(--surface);" title="Transfer terkunci" onclick="openLock()">
