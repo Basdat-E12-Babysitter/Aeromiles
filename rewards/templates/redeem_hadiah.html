@@ -8,6 +8,25 @@
 
 {% block content %}
 
+{# ── Pesan Notifikasi Sukses / Error ── #}
+{% if success %}
+<div class="mb-6 rounded-xl px-4 py-3 shadow-sm transition-all" style="background:#D1FAE5; border:1px solid #A7F3D0;">
+  <div class="flex items-center gap-2">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#065F46" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+    <p class="text-sm font-bold" style="color:#065F46;">{{ success }}</p>
+  </div>
+</div>
+{% endif %}
+
+{% if error %}
+<div class="mb-6 rounded-xl px-4 py-3 shadow-sm transition-all" style="background:#FEE2E2; border:1px solid #FCA5A5;">
+  <div class="flex items-center gap-2">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#991B1B" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    <p class="text-sm font-bold" style="color:#991B1B;">{{ error }}</p>
+  </div>
+</div>
+{% endif %}
+
 {# ── Page Header ── #}
 <div class="flex items-center justify-between mb-6">
   <div>
@@ -17,7 +36,7 @@
   <div class="flex items-center gap-3">
     <div class="flex items-center gap-2 px-4 py-2.5 rounded-xl" style="background:var(--surface);border:1.5px solid var(--border);">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#00BFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21 4 19 4c-2 0-3 1-3.5 2.5L11 9l-7.8-1.8L2 8.6l6 4.4-1.8 1.8-3-.6-1.2 1.2 4.2 2.4 2.4 4.2 1.2-1.2-.6-3 1.8-1.8 4.4 6z"/></svg>
-      <span class="text-sm font-extrabold" style="color:#00BFFF;">8.450</span>
+      <span class="text-sm font-extrabold" style="color:#00BFFF;">{{ award_miles }}</span>
       <span class="text-xs font-semibold" style="color:var(--muted)">Miles</span>
     </div>
     <div class="flex items-center gap-2 px-4 py-2.5 rounded-xl" style="background:var(--surface);border:1.5px solid var(--border);">
@@ -44,7 +63,99 @@
   </div>
 
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="katalog-grid">
-    {# Hadiah cards — akan diisi via JS / Django template loop #}
+    {% for item in katalog %}
+      {# Logika Penentuan Kategori #}
+      {% if "voucher" in item.nama|lower or "diskon" in item.nama|lower or "cashback" in item.nama|lower or "hotel" in item.nama|lower or "lounge" in item.nama|lower %}
+          <div class="hadiah-card" data-kategori="Voucher">
+            <div class="flex items-start justify-between gap-2 mb-3">
+              <div class="flex items-center justify-center rounded-xl" style="width:40px;height:40px;flex-shrink:0;background:#FFF7ED;border:1px solid #FED7AA;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/></svg>
+              </div>
+              <span class="text-xs font-bold px-2.5 py-1 rounded-full" style="background:#FFF7ED;color:#F97316;border:1px solid #FED7AA;">Voucher</span>
+            </div>
+            <div class="mb-3">
+              <p class="text-xs font-bold uppercase tracking-wide mb-0.5" style="color:var(--muted);font-family:monospace;">{{ item.kode_hadiah }}</p>
+              <p class="text-base font-extrabold leading-tight" style="color:var(--ink);">{{ item.nama }}</p>
+              <p class="text-xs mt-1" style="color:var(--muted);">{{ item.nama_penyedia }}</p>
+            </div>
+            <div class="flex items-center justify-between pt-3" style="border-top:1px solid var(--border);margin-top:auto;">
+              <div>
+                <p class="text-xs" style="color:var(--muted);">Harga</p>
+                <p class="text-base font-extrabold" style="color:#00BFFF;">{{ item.miles|floatformat:0 }} <span class="text-xs font-semibold" style="color:var(--muted);">miles</span></p>
+              </div>
+              <button onclick="handleRedeemClick(this)"
+                data-kode="{{ item.kode_hadiah }}"
+                data-nama="{{ item.nama }}"
+                data-penyedia="{{ item.nama_penyedia }}"
+                data-miles="{{ item.miles }}"
+                class="btn-solid flex items-center gap-1.5 px-4 py-2 text-xs font-bold rounded-xl">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/></svg>
+                Redeem
+              </button>
+            </div>
+          </div>
+      {% elif "upgrade" in item.nama|lower or "kabin" in item.nama|lower or "business" in item.nama|lower or "first" in item.nama|lower %}
+          <div class="hadiah-card" data-kategori="Upgrade">
+            <div class="flex items-start justify-between gap-2 mb-3">
+              <div class="flex items-center justify-center rounded-xl" style="width:40px;height:40px;flex-shrink:0;background:#EFF6FF;border:1px solid #BFDBFE;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/></svg>
+              </div>
+              <span class="text-xs font-bold px-2.5 py-1 rounded-full" style="background:#EFF6FF;color:#3B82F6;border:1px solid #BFDBFE;">Upgrade Kabin</span>
+            </div>
+            <div class="mb-3">
+              <p class="text-xs font-bold uppercase tracking-wide mb-0.5" style="color:var(--muted);font-family:monospace;">{{ item.kode_hadiah }}</p>
+              <p class="text-base font-extrabold leading-tight" style="color:var(--ink);">{{ item.nama }}</p>
+              <p class="text-xs mt-1" style="color:var(--muted);">{{ item.nama_penyedia }}</p>
+            </div>
+            <div class="flex items-center justify-between pt-3" style="border-top:1px solid var(--border);margin-top:auto;">
+              <div>
+                <p class="text-xs" style="color:var(--muted);">Harga</p>
+                <p class="text-base font-extrabold" style="color:#00BFFF;">{{ item.miles|floatformat:0 }} <span class="text-xs font-semibold" style="color:var(--muted);">miles</span></p>
+              </div>
+              <button onclick="handleRedeemClick(this)"
+                data-kode="{{ item.kode_hadiah }}"
+                data-nama="{{ item.nama }}"
+                data-penyedia="{{ item.nama_penyedia }}"
+                data-miles="{{ item.miles }}"
+                class="btn-solid flex items-center gap-1.5 px-4 py-2 text-xs font-bold rounded-xl">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/></svg>
+                Redeem
+              </button>
+            </div>
+          </div>
+      {% else %}
+          <div class="hadiah-card" data-kategori="Merchandise">
+            <div class="flex items-start justify-between gap-2 mb-3">
+              <div class="flex items-center justify-center rounded-xl" style="width:40px;height:40px;flex-shrink:0;background:#F0FDF4;border:1px solid #BBF7D0;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/></svg>
+              </div>
+              <span class="text-xs font-bold px-2.5 py-1 rounded-full" style="background:#F0FDF4;color:#22C55E;border:1px solid #BBF7D0;">Merchandise</span>
+            </div>
+            <div class="mb-3">
+              <p class="text-xs font-bold uppercase tracking-wide mb-0.5" style="color:var(--muted);font-family:monospace;">{{ item.kode_hadiah }}</p>
+              <p class="text-base font-extrabold leading-tight" style="color:var(--ink);">{{ item.nama }}</p>
+              <p class="text-xs mt-1" style="color:var(--muted);">{{ item.nama_penyedia }}</p>
+            </div>
+            <div class="flex items-center justify-between pt-3" style="border-top:1px solid var(--border);margin-top:auto;">
+              <div>
+                <p class="text-xs" style="color:var(--muted);">Harga</p>
+                <p class="text-base font-extrabold" style="color:#00BFFF;">{{ item.miles|floatformat:0 }} <span class="text-xs font-semibold" style="color:var(--muted);">miles</span></p>
+              </div>
+              <button onclick="handleRedeemClick(this)"
+                data-kode="{{ item.kode_hadiah }}"
+                data-nama="{{ item.nama }}"
+                data-penyedia="{{ item.nama_penyedia }}"
+                data-miles="{{ item.miles }}"
+                class="btn-solid flex items-center gap-1.5 px-4 py-2 text-xs font-bold rounded-xl">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/></svg>
+                Redeem
+              </button>
+            </div>
+          </div>
+      {% endif %}
+    {% empty %}
+      <script>document.getElementById('katalog-empty').classList.remove('hidden');</script>
+    {% endfor %}
   </div>
 
   <div id="katalog-empty" class="hidden">
@@ -72,14 +183,33 @@
           </tr>
         </thead>
         <tbody id="riwayat-tbody">
-          <tr id="riwayat-loading-row">
-            <td colspan="7" class="px-5 py-16" style="color:var(--muted);">
-              <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;width:100%;text-align:center;">
-                <svg class="animate-spin" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00BFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
-                <p style="font-size:0.875rem;font-weight:600;">Memuat riwayat redeem...</p>
-              </div>
-            </td>
-          </tr>
+          {% for r in riwayat %}
+            <tr style="border-bottom:1px solid var(--border);transition:background 0.15s;"
+                onmouseover="this.style.background='rgba(0,191,255,0.04)'"
+                onmouseout="this.style.background=''">
+              <td class="px-5 py-4 font-bold" style="color:#00BFFF;">RDM-{{ forloop.counter|stringformat:"03d" }}</td>
+              <td class="px-5 py-4 font-bold" style="font-family:monospace;font-size:0.75rem;color:var(--ink);">{{ r.kode_hadiah }}</td>
+              <td class="px-5 py-4 font-semibold" style="color:var(--ink);">{{ r.nama_hadiah }}</td>
+              <td class="px-5 py-4" style="color:var(--muted);">{{ r.penyedia }}</td>
+              <td class="px-5 py-4 font-extrabold" style="color:#00BFFF;">
+                {{ r.miles_digunakan|floatformat:0 }}
+                <span style="font-size:0.7rem;font-weight:600;color:var(--muted);"> mi</span>
+              </td>
+              <td class="px-5 py-4" style="font-size:0.75rem;color:var(--muted);">{{ r.timestamp|date:"d M Y, H:i" }}</td>
+              <td class="px-5 py-4">
+                <span class="status-badge" style="background:#D1FAE5;color:#065F46;">✓ Berhasil</span>
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="7" style="padding:4rem 0;">
+                <div style="display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;color:var(--muted);">
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#C1D3E3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/></svg>
+                  <p style="font-size:0.875rem;font-weight:600;">Belum ada riwayat redeem.</p>
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
         </tbody>
       </table>
     </div>
@@ -104,7 +234,7 @@
         <div class="flex items-center justify-center rounded-full font-extrabold text-xs" style="width:36px;height:36px;flex-shrink:0;background:linear-gradient(135deg,#00BFFF,#005A8C);color:white;">AS</div>
         <div>
           <p class="text-sm font-extrabold" style="color:var(--ink);">Agus Setiawan</p>
-          <p class="text-xs" style="color:var(--muted);">agus.setiawan@gmail.com</p>
+          <p class="text-xs" style="color:var(--muted);">{{ request.session.user_email|default:"agus.setiawan@gmail.com" }}</p>
         </div>
       </div>
     </div>
@@ -133,9 +263,10 @@
 
     <div class="flex justify-end gap-3">
       <button onclick="closeRedeemModal()" class="btn-outline px-5 py-2.5 text-sm font-bold">Batal</button>
-      <form method="POST" action="{% url 'rewards:redeem_create' %}" id="form-redeem">
+      
+      <form method="POST" action="{% url 'rewards:redeem_hadiah' %}" id="form-redeem">
         {% csrf_token %}
-        <input type="hidden" name="hadiah_id" id="input-hadiah-id">
+        <input type="hidden" name="kode_hadiah" id="input-hadiah-id">
         <button type="submit" class="btn-solid px-6 py-2.5 text-sm font-bold flex items-center gap-2">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/></svg>
           Redeem Sekarang
@@ -196,37 +327,12 @@
   }
   @keyframes fadeIn { from{opacity:0}to{opacity:1} }
   @keyframes slideUp { from{transform:translateY(24px);opacity:0}to{transform:translateY(0);opacity:1} }
-  @keyframes spin { to{transform:rotate(360deg)} }
-  .animate-spin { animation:spin 1s linear infinite; }
 </style>
 
 {# ── Script ── #}
 <script>
-  // ── Data Katalog Hadiah ──
-  const dataKatalog = [
-    { id:1, kode_hadiah:'HDH-001', nama_hadiah:'Voucher Makan Siang',    penyedia:'Restoran Garuda',  kategori:'Voucher',     harga_miles:500  },
-    { id:2, kode_hadiah:'HDH-002', nama_hadiah:'Voucher Belanja Online',  penyedia:'Tokopedia',        kategori:'Voucher',     harga_miles:1000 },
-    { id:3, kode_hadiah:'HDH-003', nama_hadiah:'Voucher Hotel Bintang 4', penyedia:'Traveloka',        kategori:'Voucher',     harga_miles:3000 },
-    { id:4, kode_hadiah:'HDH-004', nama_hadiah:'Upgrade ke Business',     penyedia:'Aero Miles',       kategori:'Upgrade',     harga_miles:5000 },
-    { id:5, kode_hadiah:'HDH-005', nama_hadiah:'Upgrade ke First Class',  penyedia:'Aero Miles',       kategori:'Upgrade',     harga_miles:8000 },
-    { id:6, kode_hadiah:'HDH-006', nama_hadiah:'Kaos Aero Miles',         penyedia:'Aero Miles Store', kategori:'Merchandise', harga_miles:800  },
-    { id:7, kode_hadiah:'HDH-007', nama_hadiah:'Tumbler Eksklusif',       penyedia:'Aero Miles Store', kategori:'Merchandise', harga_miles:1200 },
-    { id:8, kode_hadiah:'HDH-008', nama_hadiah:'Voucher Kopi Nusantara',  penyedia:'Kopi Kenangan',    kategori:'Voucher',     harga_miles:300  },
-  ];
-
-  // ── Data Riwayat Redeem Agus Setiawan ──
-  const dataRiwayat = [
-    { id:1, kode_hadiah:'HDH-008', nama_hadiah:'Voucher Kopi Nusantara',  penyedia:'Kopi Kenangan',    miles_digunakan:300,  waktu:'2024-03-10T09:15:00', status:'Berhasil' },
-    { id:2, kode_hadiah:'HDH-001', nama_hadiah:'Voucher Makan Siang',     penyedia:'Restoran Garuda',  miles_digunakan:500,  waktu:'2024-05-22T13:30:00', status:'Berhasil' },
-    { id:3, kode_hadiah:'HDH-006', nama_hadiah:'Kaos Aero Miles',         penyedia:'Aero Miles Store', miles_digunakan:800,  waktu:'2024-08-04T10:00:00', status:'Berhasil' },
-    { id:4, kode_hadiah:'HDH-004', nama_hadiah:'Upgrade ke Business',     penyedia:'Aero Miles',       miles_digunakan:5000, waktu:'2025-01-17T07:45:00', status:'Berhasil' },
-    { id:5, kode_hadiah:'HDH-002', nama_hadiah:'Voucher Belanja Online',  penyedia:'Tokopedia',        miles_digunakan:1000, waktu:'2025-03-29T16:20:00', status:'Diproses' },
-  ];
-
-  let allHadiah = [...dataKatalog];
   let currentFilter = '';
 
-  // ── Tab Switching ──
   function switchTab(tab) {
     document.querySelectorAll('.tab-btn').forEach(btn => {
       const match = btn.dataset.tab === tab;
@@ -236,10 +342,8 @@
     });
     document.getElementById('panel-katalog').classList.toggle('hidden', tab !== 'katalog');
     document.getElementById('panel-riwayat').classList.toggle('hidden', tab !== 'riwayat');
-    if (tab === 'riwayat') renderRiwayat(dataRiwayat);
   }
 
-  // ── Filter Kategori ──
   function filterKatalog(kategori) {
     currentFilter = kategori;
     document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -248,120 +352,50 @@
       if (!match) { btn.style.background='var(--surface)'; btn.style.color='var(--muted)'; btn.style.borderColor='var(--border)'; }
       else { btn.style.background = btn.style.color = btn.style.borderColor = ''; }
     });
-    const filtered = kategori ? allHadiah.filter(h => h.kategori === kategori) : allHadiah;
-    renderKatalog(filtered);
-  }
 
-  // ── Render Katalog Cards ──
-  function renderKatalog(data) {
-    const grid  = document.getElementById('katalog-grid');
+    let visibleCount = 0;
+    document.querySelectorAll('#katalog-grid .hadiah-card').forEach(card => {
+      if (!kategori || card.dataset.kategori === kategori) {
+        card.classList.remove('hidden');
+        visibleCount++;
+      } else {
+        card.classList.add('hidden');
+      }
+    });
+
     const empty = document.getElementById('katalog-empty');
-    if (!data || !data.length) {
-      grid.innerHTML = '';
+    if (visibleCount === 0) {
       empty.classList.remove('hidden');
-      return;
+    } else {
+      empty.classList.add('hidden');
     }
-    empty.classList.add('hidden');
-
-    const catCfg = {
-      'Voucher':     { bg:'#FFF7ED', border:'#FED7AA', icon:'#F97316' },
-      'Upgrade':     { bg:'#EFF6FF', border:'#BFDBFE', icon:'#3B82F6' },
-      'Merchandise': { bg:'#F0FDF4', border:'#BBF7D0', icon:'#22C55E' },
-    };
-
-    grid.innerHTML = data.map(h => {
-      const c = catCfg[h.kategori] || { bg:'#F4F9FD', border:'#E2ECF5', icon:'#00BFFF' };
-      const kodeEsc = (h.kode_hadiah||'').replace(/'/g,"\\'");
-      const namaEsc = (h.nama_hadiah||'').replace(/'/g,"\\'");
-      const penyEsc = (h.penyedia||'').replace(/'/g,"\\'");
-      return `
-        <div class="hadiah-card">
-          <div class="flex items-start justify-between gap-2 mb-3">
-            <div class="flex items-center justify-center rounded-xl" style="width:40px;height:40px;flex-shrink:0;background:${c.bg};border:1px solid ${c.border};">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${c.icon}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/></svg>
-            </div>
-            <span class="text-xs font-bold px-2.5 py-1 rounded-full" style="background:${c.bg};color:${c.icon};border:1px solid ${c.border};">${h.kategori}</span>
-          </div>
-          <div class="mb-3">
-            <p class="text-xs font-bold uppercase tracking-wide mb-0.5" style="color:var(--muted);font-family:monospace;">${h.kode_hadiah}</p>
-            <p class="text-base font-extrabold leading-tight" style="color:var(--ink);">${h.nama_hadiah}</p>
-            <p class="text-xs mt-1" style="color:var(--muted);">${h.penyedia}</p>
-          </div>
-          <div class="flex items-center justify-between pt-3" style="border-top:1px solid var(--border);margin-top:auto;">
-            <div>
-              <p class="text-xs" style="color:var(--muted);">Harga</p>
-              <p class="text-base font-extrabold" style="color:#00BFFF;">${Number(h.harga_miles).toLocaleString('id-ID')} <span class="text-xs font-semibold" style="color:var(--muted);">miles</span></p>
-            </div>
-            <button onclick="openRedeemModal(${h.id},'${kodeEsc}','${namaEsc}','${penyEsc}',${h.harga_miles})"
-              class="btn-solid flex items-center gap-1.5 px-4 py-2 text-xs font-bold rounded-xl">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/></svg>
-              Redeem
-            </button>
-          </div>
-        </div>`;
-    }).join('');
   }
 
-  // ── Render Riwayat Table ──
-  function renderRiwayat(data) {
-    const tbody = document.getElementById('riwayat-tbody');
-    if (!data || !data.length) {
-      tbody.innerHTML = `
-        <tr><td colspan="7" style="padding:4rem 0;">
-          <div style="display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;color:var(--muted);">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#C1D3E3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/></svg>
-            <p style="font-size:0.875rem;font-weight:600;">Belum ada riwayat redeem.</p>
-          </div>
-        </td></tr>`;
-      return;
-    }
-    const badgeCfg = {
-      'Berhasil': 'background:#D1FAE5;color:#065F46;',
-      'Diproses': 'background:#FEF3C7;color:#92400E;',
-      'Gagal':    'background:#FEE2E2;color:#991B1B;',
-    };
-    tbody.innerHTML = data.map(r => {
-      const noRedeem = `RDM-${String(r.id).padStart(3,'0')}`;
-      const waktu = new Date(r.waktu).toLocaleString('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
-      const bStyle = badgeCfg[r.status] || 'background:var(--surface);color:var(--muted);';
-      const statusIcon = r.status === 'Berhasil' ? '✓' : r.status === 'Diproses' ? '⏳' : '✕';
-      return `
-        <tr style="border-bottom:1px solid var(--border);transition:background 0.15s;"
-            onmouseover="this.style.background='rgba(0,191,255,0.04)'"
-            onmouseout="this.style.background=''">
-          <td class="px-5 py-4 font-bold" style="color:#00BFFF;">${noRedeem}</td>
-          <td class="px-5 py-4 font-bold" style="font-family:monospace;font-size:0.75rem;color:var(--ink);">${r.kode_hadiah}</td>
-          <td class="px-5 py-4 font-semibold" style="color:var(--ink);">${r.nama_hadiah}</td>
-          <td class="px-5 py-4" style="color:var(--muted);">${r.penyedia}</td>
-          <td class="px-5 py-4 font-extrabold" style="color:#00BFFF;">
-            ${Number(r.miles_digunakan).toLocaleString('id-ID')}
-            <span style="font-size:0.7rem;font-weight:600;color:var(--muted);"> mi</span>
-          </td>
-          <td class="px-5 py-4" style="font-size:0.75rem;color:var(--muted);">${waktu}</td>
-          <td class="px-5 py-4"><span class="status-badge" style="${bStyle}">${statusIcon} ${r.status}</span></td>
-        </tr>`;
-    }).join('');
+  // Logika baru pembaca dataset HTML5 untuk meloloskan validasi JavaScript VS Code murni
+  function handleRedeemClick(buttonEl) {
+    const kode = buttonEl.dataset.kode;
+    const nama = buttonEl.dataset.nama;
+    const penyedia = buttonEl.dataset.penyedia;
+    const harga = buttonEl.dataset.miles;
+    openRedeemModal(kode, nama, penyedia, harga);
   }
 
-  // ── Modal Redeem ──
-  function openRedeemModal(id, kode, nama, penyedia, harga) {
+  function openRedeemModal(kode, nama, penyedia, harga) {
     document.getElementById('modal-kode-hadiah').textContent  = kode;
     document.getElementById('modal-nama-hadiah').textContent  = nama;
     document.getElementById('modal-penyedia').textContent     = penyedia;
     document.getElementById('modal-harga-miles').textContent  = Number(harga).toLocaleString('id-ID') + ' miles';
-    document.getElementById('input-hadiah-id').value = id;
+    document.getElementById('input-hadiah-id').value = kode;
     document.getElementById('redeem-error').classList.add('hidden');
     document.getElementById('modal-redeem-backdrop').classList.remove('modal-closed');
     document.body.style.overflow = 'hidden';
   }
+  
   function closeRedeemModal() {
     document.getElementById('modal-redeem-backdrop').classList.add('modal-closed');
     document.body.style.overflow = '';
   }
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeRedeemModal(); });
-
-  // ── Init ──
-  document.addEventListener('DOMContentLoaded', () => renderKatalog(dataKatalog));
 </script>
 
 {% endblock %}
