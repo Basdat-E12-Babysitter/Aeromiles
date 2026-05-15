@@ -49,6 +49,7 @@ def login(request):
 
     except Exception as e:
         error_msg = str(e)
+        error_msg = error_msg.split("\n")[0]
         if "ERROR:" in error_msg:
             error_msg = error_msg.split("ERROR:")[-1].strip()
         return render(request, "login.html", {"error": error_msg})
@@ -98,8 +99,23 @@ def register(request):
 
         if role == "staf" and not kode_maskapai:
             return render(request, "register.html", {"error": "Kode maskapai wajib diisi untuk staf."})
+        
+        if not salutation or not first_mid_name or not last_name:
+            return render(request, "register.html", {"error": "Semua field wajib diisi."})
 
-        # Hash pakai Django built-in (PBKDF2)
+        if not tanggal_lahir:
+            return render(request, "register.html", {"error": "Tanggal lahir wajib diisi."})
+
+        if not kewarganegaraan:
+            return render(request, "register.html", {"error": "Kewarganegaraan wajib diisi."})
+
+        if not country_code:
+            return render(request, "register.html", {"error": "Kode negara wajib diisi."})
+
+        if not mobile_number:
+            return render(request, "register.html", {"error": "Nomor HP wajib diisi."})
+
+        # Hash pakai Django built-in
         hashed = make_password(password)
 
         with connection.cursor() as cur:
@@ -130,6 +146,7 @@ def register(request):
 
     except Exception as e:
         error_msg = str(e)
+        error_msg = error_msg.split("\n")[0]
         if "ERROR:" in error_msg:
             error_msg = error_msg.split("ERROR:")[-1].strip()
         return render(request, "register.html", {"error": error_msg})
