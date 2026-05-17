@@ -18,6 +18,12 @@ def _staf_required(request):
         request.session.get("user_role") == "staf"
     )
 
+def _db_error_message(error):
+    msg = str(error)
+    if "ERROR:" in msg:
+        msg = msg.split("ERROR:")[-1].strip()
+    return msg
+
 # KLAIM MISSING MILES (MEMBER)
 
 def klaim_list(request):
@@ -94,16 +100,10 @@ def klaim_create(request):
         messages.success(request, "Klaim berhasil diajukan.")
 
     except IntegrityError as e:
-        err = str(e)
-        if "ERROR:" in err:
-            err = err.split("ERROR:")[-1].strip()
-        messages.error(request, err)
+        messages.error(request, _db_error_message(e))
 
     except Exception as e:
-        err = str(e)
-        if "ERROR:" in err:
-            err = err.split("ERROR:")[-1].strip()
-        messages.error(request, err)
+        messages.error(request, _db_error_message(e))
 
     return redirect("miles:klaim_list")
 
@@ -162,16 +162,10 @@ def klaim_update(request, pk):
         messages.success(request, "Klaim berhasil diperbarui.")
 
     except IntegrityError as e:
-        err = str(e)
-        if "ERROR:" in err:
-            err = err.split("ERROR:")[-1].strip()
-        messages.error(request, err)
+        messages.error(request, _db_error_message(e))
 
     except Exception as e:
-        err = str(e)
-        if "ERROR:" in err:
-            err = err.split("ERROR:")[-1].strip()
-        messages.error(request, err)
+        messages.error(request, _db_error_message(e))
 
     return redirect("miles:klaim_list")
 
@@ -283,10 +277,7 @@ def transfer_create(request):
         messages.success(request, f"Transfer {jumlah} miles ke {email_penerima} berhasil.")
 
     except Exception as e:
-        err = str(e)
-        if "ERROR:" in err:
-            err = err.split("ERROR:")[-1].strip()
-        messages.error(request, err)
+        messages.error(request, _db_error_message(e))
 
     return redirect("miles:transfer_list")
 
