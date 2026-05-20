@@ -11,6 +11,65 @@
 <body class="bg-pattern">
   {% block navbar %}{% endblock %}
 
+  <div id="toast-container" style="position:fixed;top:1rem;right:1rem;z-index:60;display:flex;flex-direction:column;gap:0.5rem;pointer-events:none;"></div>
+
+  {% if messages %}
+  <div id="django-messages" style="display:none;">
+    {% for message in messages %}
+      <div data-tags="{{ message.tags }}" data-text="{{ message|escapejs }}"></div>
+    {% endfor %}
+  </div>
+  <script>
+  (function(){
+    const container = document.getElementById('toast-container');
+    const msgsEl = document.getElementById('django-messages');
+    if (!container || !msgsEl) return;
+    const nodes = msgsEl.querySelectorAll('div[data-text]');
+
+    function makeToast(m){
+      const el = document.createElement('div');
+      el.style.pointerEvents = 'auto';
+      el.style.minWidth = '220px';
+      el.style.padding = '10px 14px';
+      el.style.borderRadius = '12px';
+      el.style.boxShadow = '0 8px 24px rgba(2,6,23,0.12)';
+      el.style.fontSize = '0.95rem';
+      el.style.fontWeight = '600';
+      el.style.display = 'flex';
+      el.style.alignItems = 'center';
+      el.style.justifyContent = 'space-between';
+      el.style.gap = '12px';
+      el.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
+      el.style.opacity = '1';
+
+      if (m.tags && m.tags.indexOf('success') !== -1) {
+        el.style.background = '#ECFDF5'; el.style.color = '#065F46'; el.style.border = '1px solid #A7F3D0';
+      } else if (m.tags && m.tags.indexOf('error') !== -1) {
+        el.style.background = '#FEF2F2'; el.style.color = '#991B1B'; el.style.border = '1px solid #FECACA';
+      } else {
+        el.style.background = '#F4F9FD'; el.style.color = '#0A1628'; el.style.border = '1px solid #E2ECF5';
+      }
+
+      const txt = document.createElement('div'); txt.textContent = m.text; txt.style.flex = '1'; txt.style.marginRight = '8px';
+      const btn = document.createElement('button'); btn.innerHTML = '&#215;'; btn.style.background = 'transparent'; btn.style.border = 'none'; btn.style.cursor = 'pointer'; btn.style.fontSize = '14px'; btn.style.marginLeft = '8px'; btn.style.color = 'inherit';
+      btn.onclick = function(){ el.style.opacity = '0'; setTimeout(()=>el.remove(),250); };
+
+      el.appendChild(txt); el.appendChild(btn);
+      container.appendChild(el);
+      // entrance
+      el.style.transform = 'translateY(-6px)'; setTimeout(()=>el.style.transform = 'translateY(0)',10);
+      // auto-hide
+      setTimeout(()=>{ el.style.opacity = '0'; setTimeout(()=>el.remove(),300); }, 4200);
+    }
+
+    nodes.forEach(n => {
+      const m = { tags: n.dataset.tags || '', text: n.dataset.text || '' };
+      makeToast(m);
+    });
+  })();
+  </script>
+  {% endif %}
+
   <main class="max-w-screen-xl mx-auto px-8 py-10 md:py-16">
     {% block content %}{% endblock %}
   </main>
